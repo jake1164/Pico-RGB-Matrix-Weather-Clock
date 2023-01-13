@@ -25,23 +25,23 @@ INTERVAL = os.getenv('NTP_INTERVAL')
 
 def get_time():       
     # Need better connection testing
-    attempt = 0
+    attempt = 1
     while(attempt <= RETRY):
-        if wifi.radio.ipv4_address is not None:            
-            pool = socketpool.SocketPool(wifi.radio)
-            ntp = adafruit_ntp.NTP(pool, tz_offset=TZ, server=NTP_HOST)
-            return ntp.datetime
-        
-        attempt += 1
         print('attempting to get time: try ', attempt)
         try:
-            wifi.radio.connect(SSID, PASS)
-            pool = socketpool.SocketPool(wifi.radio)
-            ntp = adafruit_ntp.NTP(pool, tz_offset=TZ, server=NTP_HOST)
-            return ntp.datetime
+            if wifi.radio.ipv4_address is not None:
+                pool = socketpool.SocketPool(wifi.radio)
+                ntp = adafruit_ntp.NTP(pool, tz_offset=TZ, server=NTP_HOST)
+                return ntp.datetime
+            else:
+                wifi.radio.connect(SSID, PASS)
+                pool = socketpool.SocketPool(wifi.radio)
+                ntp = adafruit_ntp.NTP(pool, tz_offset=TZ, server=NTP_HOST)
+                return ntp.datetime
         except Exception as e:
             print(e)
-        
+            
+        attempt += 1
     raise Exception('Unable to connect')
             
 

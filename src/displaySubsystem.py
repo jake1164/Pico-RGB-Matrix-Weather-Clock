@@ -47,8 +47,12 @@ def _ymd2ord(year, month, day):
     return _days_before_year(year) + _days_before_month(year, month) + day
 
 def _update():
-    new_time = ntp_client.get_time()
-    rtc.datetime = new_time
+    try:
+        new_time = ntp_client.get_time()
+        rtc.datetime = new_time
+        print('updated RTC datetime')
+    except Exception as e:
+        print(e)
     
 class DISPLAYSUBSYSTEM:
     def __init__(self, timeFormat):
@@ -193,7 +197,7 @@ class DISPLAYSUBSYSTEM:
         
     def network_update(self):
         _update()
-        print('updated RTC datetime')
+        
     
     def get_interval(self):
         return ntp_client.get_interval()
