@@ -11,7 +11,6 @@ import framebufferio
 import rgbmatrix
 import terminalio
 import circuitpython_schedule as schedule
-#import ntp_client
 import displaySubsystem
 import keyInput
 from driver_buzzer import *
@@ -49,7 +48,7 @@ bit_depth_value = 1
 base_width = 64
 base_height = 32
 chain_across = 1
-tile_down = 2
+tile_down = 1
 serpentine_value = True
 
 width_value = base_width * chain_across
@@ -58,98 +57,6 @@ height_value = base_height * tile_down
 # If there was a display before (protomatter, LCD, or E-paper), release it so
 # we can create ours
 displayio.release_displays()
-
-# send register
-R1 = DigitalInOut(board.GP2)
-G1 = DigitalInOut(board.GP3)
-B1 = DigitalInOut(board.GP4)
-R2 = DigitalInOut(board.GP5)
-G2 = DigitalInOut(board.GP8)
-B2 = DigitalInOut(board.GP9)
-CLK = DigitalInOut(board.GP11)
-STB = DigitalInOut(board.GP12)
-OE = DigitalInOut(board.GP13)
-
-R1.direction = Direction.OUTPUT
-G1.direction = Direction.OUTPUT
-B1.direction = Direction.OUTPUT
-R2.direction = Direction.OUTPUT
-G2.direction = Direction.OUTPUT
-B2.direction = Direction.OUTPUT
-CLK.direction = Direction.OUTPUT
-STB.direction = Direction.OUTPUT
-OE.direction = Direction.OUTPUT
-
-OE.value = True
-STB.value = False
-CLK.value = False
-
-MaxLed = 64
-
-c12 = [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-c13 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]
-
-for l in range(0, MaxLed):
-    y = l % 16
-    R1.value = False
-    G1.value = False
-    B1.value = False
-    R2.value = False
-    G2.value = False
-    B2.value = False
-
-    if c12[y] == 1:
-        R1.value = True
-        G1.value = True
-        B1.value = True
-        R2.value = True
-        G2.value = True
-        B2.value = True
-    if l > (MaxLed - 12):
-        STB.value = True
-    else:
-        STB.value = False
-    CLK.value = True
-    # time.sleep(0.000002)
-    CLK.value = False
-STB.value = False
-CLK.value = False
-
-for l in range(0, MaxLed):
-    y = l % 16
-    R1.value = False
-    G1.value = False
-    B1.value = False
-    R2.value = False
-    G2.value = False
-    B2.value = False
-
-    if c13[y] == 1:
-        R1.value = True
-        G1.value = True
-        B1.value = True
-        R2.value = True
-        G2.value = True
-        B2.value = True
-    if l > (MaxLed - 13):
-        STB.value = True
-    else:
-        STB.value = False
-    CLK.value = True
-    # time.sleep(0.000002)
-    CLK.value = False
-STB.value = False
-CLK.value = False
-
-R1.deinit()
-G1.deinit()
-B1.deinit()
-R2.deinit()
-G2.deinit()
-B2.deinit()
-CLK.deinit()
-STB.deinit()
-OE.deinit()
 
 # This next call creates the RGB Matrix object itself. It has the given width
 # and height. bit_depth can range from 1 to 6; higher numbers allow more color
@@ -173,7 +80,7 @@ matrix = rgbmatrix.RGBMatrix(
 
 # Associate the RGB matrix with a Display so that we can use displayio features
 display = framebufferio.FramebufferDisplay(matrix, auto_refresh=True)
-display.rotation = 180
+display.rotation = 0
 
 
 line1 = adafruit_display_text.label.Label(terminalio.FONT, color=0x00DD00)
@@ -219,7 +126,7 @@ def judgmentBuzzerSwitch():
         startBeepFlag = 1
 
 
-def isLeapYear(year):  # 判断是否为闰年
+def isLeapYear(year):
     if year % 4 == 0 and year % 100 != 0:
         return True
     if year % 400 == 0:
@@ -227,12 +134,11 @@ def isLeapYear(year):  # 判断是否为闰年
     return False
 
 
-def getMaxDay(month, year):  # 获取月份的最大天数
+def getMaxDay(month, year):
     if month < 1 or month > 12:
         print("error month")
         return -1
     maxDay = MaxDays[month]
-    # 判断2月天数
     if year != -1 and month == 2:
         if isLeapYear(year):
             maxDay += 1
@@ -371,7 +277,7 @@ def keyProcessing(keyValue):
     if keyValue == KEY_UP:
         keyUpValue += 1
 
-    if startBeepFlag == 1:  # 有按键按下
+    if startBeepFlag == 1:
         beepCount += 1
         if beepCount == 3:
             BUZZEROFF()
