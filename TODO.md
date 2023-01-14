@@ -1,0 +1,24 @@
+# Basic Roadmap of clock
+
+  * Reformat Code
+    * key up/down Processing functions (merge to single function)
+    * Move all key functionality into separate file / class
+  * Look into updating of local storage settings
+  * Better wifi support
+    * When not connected open webserver with settings to connect via browser (app?)
+    * Show icon in settings if connected / not connected?
+  * Change layout (Add layout) of screen to support more information than just clock
+
+
+## Layout Ideas
+ * [adafruit weather](https://learn.adafruit.com/weather-display-matrix?view=all)
+ * [ESP32 remix](https://github.com/lmirel/MorphingClockRemix)
+ * [myWeatherPanel](https://github.com/yaturner/myWeatherPanel)
+
+
+## Technical Links
+  * [settings.toml](https://learn.adafruit.com/pico-w-wifi-with-circuitpython/create-your-settings-toml-file)
+  * circuitpython
+    * [tricks](https://github.com/todbot/circuitpython-tricks)
+    * [workflows](https://docs.circuitpython.org/en/latest/docs/workflows.html)
+    
