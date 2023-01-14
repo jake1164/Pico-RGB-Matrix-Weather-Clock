@@ -8,7 +8,9 @@
     * When not connected open webserver with settings to connect via browser (app?)
     * Show icon in settings if connected / not connected?
   * Change layout (Add layout) of screen to support more information than just clock
-
+  * Remove globals
+  * Compile releases to mpy files
+  * Add inline documention
 
 ## Layout Ideas
  * [adafruit weather](https://learn.adafruit.com/weather-display-matrix?view=all)
@@ -21,4 +23,7 @@
   * circuitpython
     * [tricks](https://github.com/todbot/circuitpython-tricks)
     * [workflows](https://docs.circuitpython.org/en/latest/docs/workflows.html)
-    
+
+## Graphics
+ * svg to [vectorio](https://blog.adafruit.com/2022/07/01/john-parks-circuitpython-parsec-svg-to-vectorio-adafruit-johnedgarpark-adafruit-circuitpython/)
+  * [PathToPoints](https://todbot.github.io/PathToPoints/)

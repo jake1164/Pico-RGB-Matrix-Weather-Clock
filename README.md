@@ -23,3 +23,6 @@ Connects to a Network Time Protocol server (0.adafruit.pool.ntp.org) and sets th
 ## Weather Plugin
 Not implemented yetS
 
+## Images
+![figure 1](/images/12hr.jpg)
+![figure 2](/images/24hr.jpg)
