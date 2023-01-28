@@ -8,11 +8,12 @@ import adafruit_display_text.label
 import board
 import displayio
 import framebufferio
-import rgbmatrix
+
 import terminalio
 import circuitpython_schedule as schedule
 import displaySubsystem
 import keyInput
+from rgbmatrix import RGBMatrix
 from driver_buzzer import *
 from driver_lightSensor import *
 
@@ -69,7 +70,7 @@ displayio.release_displays()
 # If you have a matrix with a different width or height, change that too.
 # If you have a 16x32 display, try with just a single line of text.
 
-matrix = rgbmatrix.RGBMatrix(
+matrix = RGBMatrix(
     width=width_value,height=height_value,bit_depth=bit_depth_value,
     rgb_pins=[board.GP2, board.GP3, board.GP4, board.GP5, board.GP8, board.GP9],
     addr_pins=[board.GP10, board.GP16, board.GP18, board.GP20],
