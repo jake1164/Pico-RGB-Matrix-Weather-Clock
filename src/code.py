@@ -3,6 +3,14 @@
 # and it is possible to modify the example to use other fonts and non-standard
 # characters.
 
+## To ignore the code.py overriding the std lib error add the following
+## to your .vscode.json config file.
+##  "python.languageServer": "Pylance",
+##  [...]
+##  "python.analysis.diagnosticSeverityOverrides": {
+##      "reportShadowedImports": "none"
+##  },
+
 import time
 import adafruit_display_text.label
 import board
@@ -110,7 +118,7 @@ showSystem.network_update()
 # Update the RTC every 60 min (settable via settings.toml file
 schedule.every(showSystem.get_interval()).minutes.do(showSystem.network_update)
 
-
+# Main loop
 def checkLightSensor():
     if autoLightFlag == 1:
         lightSensorValue = get_voltage()
@@ -119,14 +127,14 @@ def checkLightSensor():
         else:
             display.brightness = 0.1
 
-
+# checked at keypress
 def judgmentBuzzerSwitch():
     global startBeepFlag
     if beepFlag == 1 and startBeepFlag == 0:
         BUZZERON()
         startBeepFlag = 1
 
-
+# used in getMaxDay
 def isLeapYear(year):
     if year % 4 == 0 and year % 100 != 0:
         return True
@@ -134,7 +142,7 @@ def isLeapYear(year):
         return True
     return False
 
-
+# Used in keydown & keyup processing to set date
 def getMaxDay(month, year):
     if month < 1 or month > 12:
         print("error month")
@@ -145,7 +153,7 @@ def getMaxDay(month, year):
             maxDay += 1
     return maxDay
 
-
+# Used in keyprocessing
 def keyMenuProcessingFunction():
     global pageID, timeSettingLabel
     if pageID == 2 and selectSettingOptions <= 1:
@@ -156,7 +164,7 @@ def keyMenuProcessingFunction():
     if pageID > 2:
         pageID = 2
 
-
+# Used in keyProcessing
 def keyDownProcessingFunction():
     global selectSettingOptions, timeTemp, dateTemp, beepFlag, autoLightFlag, timeFormatFlag
     if pageID == 1:
@@ -207,7 +215,7 @@ def keyDownProcessingFunction():
                 timeFormatFlag = 1 # 24 hour
             showSystem.setTimeFormat(timeFormatFlag)
 
-
+# Used in KeyProcessing
 def keyUpProcessingFunction():
     global selectSettingOptions, timeTemp, dateTemp, beepFlag, autoLightFlag, timeFormatFlag
     if pageID == 1:
@@ -258,7 +266,7 @@ def keyUpProcessingFunction():
                 timeFormatFlag = 1 # 24 hour
             showSystem.setTimeFormat(timeFormatFlag)
 
-
+# used in KeyProcessing
 def keyExitProcessingFunction():
     global pageID, timeSettingLabel
     if pageID == 2 and selectSettingOptions <= 1:
@@ -268,7 +276,7 @@ def keyExitProcessingFunction():
     if pageID < 0:
         pageID = 0
 
-
+# Used in Main Loop
 def keyProcessing(keyValue):
     global keyMenuValue, keyDownValue, keyUpValue, beepCount, startBeepFlag
     if keyValue == KEY_MENU:
