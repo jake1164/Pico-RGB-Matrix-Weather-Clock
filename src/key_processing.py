@@ -6,13 +6,14 @@ from date_utils import get_max_day
 class KeyProcessing:
     """ Key processing is all handled with the KeyProcessing class
     """
-    def __init__(self, display, light_sensor, time_format) -> None:
+    def __init__(self, display_subsystem, light_sensor, time_format) -> None:
         """ 
             Initiates the keys used by the board. 
             Might move these to variables to 
         """
         _KEYPRESS_PINS = [board.GP15, board.GP19, board.GP21]
-        self._display = display
+        # TODO: Remove display requirement and just return values that get passed to display. 
+        self._display_subsystem = display_subsystem
         self._KEY_MENU = 0
         self._KEY_DOWN = 1
         self._KEY_UP = 2
@@ -52,9 +53,7 @@ class KeyProcessing:
                 return key_value
 
 
-    def key_processing(self, keyValue):
-        #global keyMenuValue, keyDownValue, keyUpValue, beepCount, startBeepFlag
-        
+    def key_processing(self, keyValue):        
         if keyValue == self._KEY_MENU:
             self._key_menu_value += 1
         if keyValue == self._KEY_DOWN:
@@ -62,11 +61,11 @@ class KeyProcessing:
         if keyValue == self._KEY_UP:
             self._key_up_value += 1
 
-        self._buzzer.three_beep()
+        self._buzzer.three_beep() # Short beep that a key press was made
 
         if self._key_menu_value > 0 and self._key_menu_value < 20 and keyValue == None:
             self.key_menu_processing_function()
-            self._buzzer.judgment_buzzer_switch()
+            self._buzzer.judgment_buzzer_switch() # When the menu exits it beeps also
             self._key_menu_value = 0
         elif self._key_menu_value >= 20 and keyValue == None:
             self._key_menu_value = 0
@@ -88,10 +87,8 @@ class KeyProcessing:
             self._key_up_value = 0
 
     def key_exit_processing_function(self):
-        #global pageID, timeSettingLabel
         if self.page_id == 2 and self.select_setting_options <= 1:
-            self._display.setDateTime(self.select_setting_options, self.date_temp, self.time_temp)
-            #showSystem.setDateTime(selectSettingOptions, dateTemp, timeTemp)
+            self._display_subsystem.setDateTime(self.select_setting_options, self.date_temp, self.time_temp)
             self.time_setting_label = 0
         self.page_id -= 1
         if self.page_id < 0:
@@ -99,7 +96,6 @@ class KeyProcessing:
 
 
     def key_menu_processing_function(self):
-        #global pageID, timeSettingLabel
         if self.page_id == 2 and self.select_setting_options <= 1:
             self.time_setting_label += 1
             if self.time_setting_label > 2:
@@ -110,7 +106,6 @@ class KeyProcessing:
 
 
     def key_down_processing_function(self):
-        #global selectSettingOptions, timeTemp, dateTemp, beepFlag, autoLightFlag, timeFormatFlag
         if self.page_id == 1:
             self.select_setting_options -= 1
             if self.select_setting_options == -1:
@@ -142,7 +137,7 @@ class KeyProcessing:
                     self.date_temp[2] -= 1
                     if self.date_temp[2] < 1:
                         self.date_temp[2] = get_max_day(self.date_temp[1], self.date_temp[0])
-            if self.select_setting_options == 2:
+            if self.select_setting_options == 2:                
                 self._buzzer.toggle_enable_buzzer()
                 #if beepFlag:
                 #    beepFlag = 0
@@ -150,21 +145,15 @@ class KeyProcessing:
                 #    beepFlag = 1
             if self.select_setting_options == 3:
                 self._light_sensor.toggle_auto_dimming()
-                #if autoLightFlag:
-                #    autoLightFlag = 0
-                #else:
-                #    autoLightFlag = 1
             if self.select_setting_options == 4:
                 if self.timeFormatFlag:
                     self.timeFormatFlag = 0 # 12 hour
                 else:
                     self.timeFormatFlag = 1 # 24 hour
-                #showSystem.setTimeFormat(timeFormatFlag)
-                self._display.setTimeFormat(self.timeFormatFlag)
+                self._display_subsystem.setTimeFormat(self.timeFormatFlag)
 
 
     def key_up_processing_function(self):
-        #global selectSettingOptions, timeTemp, dateTemp, beepFlag, autoLightFlag, timeFormatFlag
         if self.page_id == 1:
             self.select_setting_options += 1
             if self.select_setting_options == 5:
@@ -204,14 +193,10 @@ class KeyProcessing:
                 #    beepFlag = 1
             if self.select_setting_options == 3:
                 self._light_sensor.toggle_auto_dimming()
-                #if autoLightFlag:
-                #    autoLightFlag = 0
-                #else:
-                #    autoLightFlag = 1
             if self.select_setting_options == 4:
                 if self.timeFormatFlag:
                     self.timeFormatFlag = 0 # 12 hour
                 else:
                     self.timeFormatFlag = 1 # 24 hour
                 #showSystem.setTimeFormat(timeFormatFlag)            
-                self._display.setTimeFormat(self.timeFormatFlag)
+                self._display_subsystem.setTimeFormat(self.timeFormatFlag)
