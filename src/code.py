@@ -20,35 +20,42 @@ import framebufferio
 import terminalio
 import circuitpython_schedule as schedule
 import displaySubsystem
-import keyInput
+#import keyInput
+from key_processing import KeyProcessing
+from driver_lightSensor import LightSensor
 from rgbmatrix import RGBMatrix
-from driver_buzzer import *
-from driver_lightSensor import *
 
-MaxDays = [-1, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+#from driver_buzzer import *
+#from driver_lightSensor import *
 
-KEY_MENU = 0
-KEY_DOWN = 1
-KEY_UP = 2
-
-beepFlag = 1
-startBeepFlag = 0
-beepCount = 0
-
-autoLightFlag = 0
-timeFormatFlag = 0 # 12 or 24 (0 or 1) hour display.
-
-selectSettingOptions = 0
-pageID = 0
-
-timeSettingLabel = 0
-timeTemp = [0, 0, 0]  # hour,min,sec
-dateTemp = [0, 0, 0]  # year,mon,mday
+## Pins defined here will make it more obvious whats going on?
 
 
-keyMenuValue = 0
-keyDownValue = 0
-keyUpValue = 0
+#MaxDays = [-1, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+
+# TODO: moves to key processing
+#KEY_MENU = 0
+#KEY_DOWN = 1
+#KEY_UP = 2
+
+#beepFlag = 1
+#startBeepFlag = 0
+#beepCount = 0
+
+#autoLightFlag = 0
+#timeFormatFlag = 0 # 12 or 24 (0 or 1) hour display.
+
+#selectSettingOptions = 0
+#pageID = 0
+
+#timeSettingLabel = 0
+#timeTemp = [0, 0, 0]  # hour,min,sec
+#dateTemp = [0, 0, 0]  # year,mon,mday
+
+
+#keyMenuValue = 0
+#keyDownValue = 0
+#keyUpValue = 0
 
 
 # Lookup table for names of days (nicer printing).
@@ -93,12 +100,9 @@ display.rotation = 0
 
 
 line1 = adafruit_display_text.label.Label(terminalio.FONT, color=0x00DD00)
-
-
 line2 = adafruit_display_text.label.Label(terminalio.FONT, color=0x00DDDD)
-
-
 line3 = adafruit_display_text.label.Label(terminalio.FONT, color=0x0000DD)
+
 line3.x = 12
 line3.y = 56
 
@@ -108,115 +112,102 @@ g.append(line1)
 g.append(line2)
 g.append(line3)
 display.show(g)
+time_format_flag = 0 # 12 or 24 (0 or 1) hour display.
 
-keyInput.keyInit()
 
-showSystem = displaySubsystem.DISPLAYSUBSYSTEM(timeFormatFlag)
+showSystem = displaySubsystem.DISPLAYSUBSYSTEM(time_format_flag)
+light_sensor = LightSensor(showSystem)
+key_input = KeyProcessing(showSystem, light_sensor, time_format_flag)
+
+
 
 #Update the clock when first starting.
+# TODO: Make async
 showSystem.network_update()
 # Update the RTC every 60 min (settable via settings.toml file
 schedule.every(showSystem.get_interval()).minutes.do(showSystem.network_update)
 
 # Main loop
-def checkLightSensor():
-    if autoLightFlag == 1:
-        lightSensorValue = get_voltage()
-        if lightSensorValue > 2800:
-            display.brightness = 0.0
-        else:
-            display.brightness = 0.1
+#def checkLightSensor():
+#    if autoLightFlag == 1:
+#        lightSensorValue = get_voltage()
+#        if lightSensorValue > 2800:
+#            display.brightness = 0.0
+#        else:
+#            display.brightness = 0.1
 
 # checked at keypress
-def judgmentBuzzerSwitch():
-    global startBeepFlag
-    if beepFlag == 1 and startBeepFlag == 0:
-        BUZZERON()
-        startBeepFlag = 1
+#def judgmentBuzzerSwitch():
+#    global startBeepFlag
+#    if beepFlag == 1 and startBeepFlag == 0:
+#        BUZZERON()
+#        startBeepFlag = 1
 
-# used in getMaxDay
-def isLeapYear(year):
-    if year % 4 == 0 and year % 100 != 0:
-        return True
-    if year % 400 == 0:
-        return True
-    return False
-
-# Used in keydown & keyup processing to set date
-def getMaxDay(month, year):
-    if month < 1 or month > 12:
-        print("error month")
-        return -1
-    maxDay = MaxDays[month]
-    if year != -1 and month == 2:
-        if isLeapYear(year):
-            maxDay += 1
-    return maxDay
 
 # Used in keyprocessing
-def keyMenuProcessingFunction():
-    global pageID, timeSettingLabel
-    if pageID == 2 and selectSettingOptions <= 1:
-        timeSettingLabel += 1
-        if timeSettingLabel > 2:
-            timeSettingLabel = 0
-    pageID += 1
-    if pageID > 2:
-        pageID = 2
+##def keyMenuProcessingFunction():
+#    global pageID, timeSettingLabel
+#    if pageID == 2 and selectSettingOptions <= 1:
+#        timeSettingLabel += 1
+#        if timeSettingLabel > 2:
+#            timeSettingLabel = 0
+#    pageID += 1
+#    if pageID > 2:
+#        pageID = 2
 
 # Used in keyProcessing
-def keyDownProcessingFunction():
-    global selectSettingOptions, timeTemp, dateTemp, beepFlag, autoLightFlag, timeFormatFlag
-    if pageID == 1:
-        selectSettingOptions -= 1
-        if selectSettingOptions == -1:
-            selectSettingOptions = 4
-    if pageID == 2:
-        if selectSettingOptions == 0:
-            if timeSettingLabel == 0:
-                timeTemp[0] -= 1
-                if timeTemp[0] < 0:
-                    timeTemp[0] = 23
-            elif timeSettingLabel == 1:
-                timeTemp[1] -= 1
-                if timeTemp[1] < 0:
-                    timeTemp[1] = 59
-            else:
-                timeTemp[2] -= 1
-                if timeTemp[2] < 0:
-                    timeTemp[2] = 59
-        if selectSettingOptions == 1:
-            if timeSettingLabel == 0:
-                dateTemp[0] -= 1
-                if dateTemp[0] < 2000:
-                    dateTemp[0] = 2099
-            elif timeSettingLabel == 1:
-                dateTemp[1] -= 1
-                if dateTemp[1] < 1:
-                    dateTemp[1] = 12
-            else:
-                dateTemp[2] -= 1
-                if dateTemp[2] < 1:
-                    dateTemp[2] = getMaxDay(dateTemp[1], dateTemp[0])
-        if selectSettingOptions == 2:
-            if beepFlag:
-                beepFlag = 0
-            else:
-                beepFlag = 1
-        if selectSettingOptions == 3:
-            if autoLightFlag:
-                autoLightFlag = 0
-            else:
-                autoLightFlag = 1
-        if selectSettingOptions == 4:
-            if timeFormatFlag:
-                timeFormatFlag = 0 # 12 hour
-            else:
-                timeFormatFlag = 1 # 24 hour
-            showSystem.setTimeFormat(timeFormatFlag)
+#def keyDownProcessingFunction():
+#    global selectSettingOptions, timeTemp, dateTemp, beepFlag, autoLightFlag, timeFormatFlag
+#    if pageID == 1:
+#        selectSettingOptions -= 1
+#        if selectSettingOptions == -1:
+#            selectSettingOptions = 4
+    # if pageID == 2:
+    #     if selectSettingOptions == 0:
+    #         if timeSettingLabel == 0:
+    #             timeTemp[0] -= 1
+    #             if timeTemp[0] < 0:
+    #                 timeTemp[0] = 23
+    #         elif timeSettingLabel == 1:
+    #             timeTemp[1] -= 1
+    #             if timeTemp[1] < 0:
+    #                 timeTemp[1] = 59
+    #         else:
+    #             timeTemp[2] -= 1
+    #             if timeTemp[2] < 0:
+    #                 timeTemp[2] = 59
+    #     if selectSettingOptions == 1:
+    #         if timeSettingLabel == 0:
+    #             dateTemp[0] -= 1
+    #             if dateTemp[0] < 2000:
+    #                 dateTemp[0] = 2099
+    #         elif timeSettingLabel == 1:
+    #             dateTemp[1] -= 1
+    #             if dateTemp[1] < 1:
+    #                 dateTemp[1] = 12
+    #         else:
+    #             dateTemp[2] -= 1
+    #             if dateTemp[2] < 1:
+    #                 dateTemp[2] = getMaxDay(dateTemp[1], dateTemp[0])
+    #     if selectSettingOptions == 2:
+    #         if beepFlag:
+    #             beepFlag = 0
+    #         else:
+    #             beepFlag = 1
+    #     if selectSettingOptions == 3:
+    #         if autoLightFlag:
+    #             autoLightFlag = 0
+    #         else:
+    #             autoLightFlag = 1
+    #     if selectSettingOptions == 4:
+    #         if timeFormatFlag:
+    #             timeFormatFlag = 0 # 12 hour
+    #         else:
+    #             timeFormatFlag = 1 # 24 hour
+    #         showSystem.setTimeFormat(timeFormatFlag)
 
 # Used in KeyProcessing
-def keyUpProcessingFunction():
+""" def keyUpProcessingFunction():
     global selectSettingOptions, timeTemp, dateTemp, beepFlag, autoLightFlag, timeFormatFlag
     if pageID == 1:
         selectSettingOptions += 1
@@ -265,9 +256,9 @@ def keyUpProcessingFunction():
             else:
                 timeFormatFlag = 1 # 24 hour
             showSystem.setTimeFormat(timeFormatFlag)
-
+ """
 # used in KeyProcessing
-def keyExitProcessingFunction():
+""" def keyExitProcessingFunction():
     global pageID, timeSettingLabel
     if pageID == 2 and selectSettingOptions <= 1:
         showSystem.setDateTime(selectSettingOptions, dateTemp, timeTemp)
@@ -275,9 +266,9 @@ def keyExitProcessingFunction():
     pageID -= 1
     if pageID < 0:
         pageID = 0
-
+ """
 # Used in Main Loop
-def keyProcessing(keyValue):
+""" def keyProcessing(keyValue):
     global keyMenuValue, keyDownValue, keyUpValue, beepCount, startBeepFlag
     if keyValue == KEY_MENU:
         keyMenuValue += 1
@@ -314,29 +305,32 @@ def keyProcessing(keyValue):
     elif keyUpValue >= 20 and keyValue == None:
         keyExitProcessingFunction()
         judgmentBuzzerSwitch()
-        keyUpValue = 0
+        keyUpValue = 0 """
 
 
 # matrix.deinit()
 
 while True:
-    schedule.run_pending()
-    checkLightSensor()
-    key_value = keyInput.getKeyValue()
-    keyProcessing(key_value)
-    if pageID == 0:
+    schedule.run_pending()    
+    light_sensor.check_light_sensor()
+    key_value = key_input.get_key_value()
+    #key_value = keyInput.getKeyValue()
+    key_input.key_processing(key_value)
+
+    if key_input.page_id == 0:
         showSystem.showDateTimePage(line1, line2, line3)
-    if pageID == 1:
+    if key_input.page_id == 1:
         line3.text = ""
-        showSystem.showSetListPage(line1, line2, selectSettingOptions)
-    if pageID == 2 and selectSettingOptions == 0:
+        #showSystem.showSetListPage(line1, line2, selectSettingOptions)
+        showSystem.showSetListPage(line1, line2, key_input.select_setting_options)
+    if key_input.page_id == 2 and key_input.select_setting_options == 0:
         line1.text = ""
-        showSystem.timeSettingPage(line2, line3, timeSettingLabel, timeTemp)
-    if pageID == 2 and selectSettingOptions == 1:
+        showSystem.timeSettingPage(line2, line3, key_input.time_setting_label, key_input.time_temp)
+    if key_input.page_id == 2 and key_input.select_setting_options == 1:
         line1.text = ""
-        showSystem.dateSettingPage(line2, line3, timeSettingLabel, dateTemp)
-    if pageID == 2 and selectSettingOptions > 1:
+        showSystem.dateSettingPage(line2, line3, key_input.time_setting_label, key_input.date_temp)
+    if key_input.page_id == 2 and key_input.select_setting_options > 1:
         line1.text = ""
         showSystem.onOffPage(
-            line2, line3, selectSettingOptions, beepFlag, autoLightFlag, timeFormatFlag
+            line2, line3, key_input.select_setting_options, key_input._buzzer.beep_flag, light_sensor.auto_dimming, key_input.timeFormatFlag
         )

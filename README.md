@@ -26,3 +26,7 @@ Not implemented yetS
 ## Images
 ![figure 1](/images/12hr.jpg)
 ![figure 2](/images/24hr.jpg)
+
+# Code Standards
+This project moving forward will be converting changed code to loosely meet the
+google python [coding standard](https://google.github.io/styleguide/pyguide.html#316-naming). 
