@@ -61,11 +61,11 @@ class DISPLAYSUBSYSTEM:
 
     def showDateTimePage(self,line1,line2,line3):
         line1.x = 2
-        line1.y = 4
+        line1.y = 5
         line2.x = 8
-        line2.y = 14
+        line2.y = 15
         line3.x = 10
-        line3.y = 24
+        line3.y = 25
         t = rtc.datetime  
         date =  "%04d" % t.tm_year + '-' + "%02d" % t.tm_mon + '-' + "%02d" % t.tm_mday
         if self.time_format == 0: # 12 hour
