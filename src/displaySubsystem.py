@@ -12,7 +12,6 @@ days = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday","Sund
 i2c = busio.I2C(board.GP7,board.GP6)  # uses board.SCL and board.SDA
 rtc = adafruit_ds3231.DS3231(i2c)
 
-firstEnteringPageFlag = 1
 _DAYS_IN_MONTH = (None, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
 _DAYS_BEFORE_MONTH = (None, 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334)
 
@@ -57,7 +56,7 @@ def _update():
 class DISPLAYSUBSYSTEM:
     def __init__(self, timeFormat):
         self.time_format = timeFormat
-
+        self._first_enter_page = True
 
     def showDateTimePage(self,line1,line2,line3):
         line1.x = 2
@@ -89,7 +88,6 @@ class DISPLAYSUBSYSTEM:
 
 
     def showSetListPage(self,line1,line2,_selectSettingOptions):
-        global firstEnteringPageFlag
         line1.x = 8
         line1.y = 7
         line2.x = 8
@@ -105,20 +103,19 @@ class DISPLAYSUBSYSTEM:
             line2.text = "autolight"
         if _selectSettingOptions == 4:
             line2.text = "12/24 hr"            
-        if firstEnteringPageFlag == 0:
-            firstEnteringPageFlag = 1
+        if self._first_enter_page:
+            self._first_enter_page = True
             
 
     def timeSettingPage(self,line2,line3,_timeSettingLabel,_timeTemp):
-        global firstEnteringPageFlag
-        if firstEnteringPageFlag == 1:
+        if self._first_enter_page:
             line2.x = 8
             line2.y = 13
             currentT = rtc.datetime
             _timeTemp[0] = currentT.tm_hour
             _timeTemp[1] = currentT.tm_min
             _timeTemp[2] = currentT.tm_sec
-            firstEnteringPageFlag = 0
+            self._first_enter_page = False
         currentTime = "%02d" % _timeTemp[0] + ':' + "%02d" % _timeTemp[1] + ':' + "%02d" % _timeTemp[2]
         line2.text = currentTime
         line3.text = "^"
@@ -134,15 +131,14 @@ class DISPLAYSUBSYSTEM:
 
 
     def dateSettingPage(self,line2,line3,_timeSettingLabel,_dateTemp):
-        global firstEnteringPageFlag
-        if firstEnteringPageFlag == 1:
+        if self._first_enter_page == 1:
             line2.x = 3
             line2.y = 13
             currentD = rtc.datetime
             _dateTemp[0] = currentD.tm_year
             _dateTemp[1] = currentD.tm_mon
             _dateTemp[2] = currentD.tm_mday
-            firstEnteringPageFlag = 0
+            self._first_enter_page = False
         currentDate = "%02d" % _dateTemp[0] + '-' + "%02d" % _dateTemp[1] + '-' + "%02d" % _dateTemp[2]
         line2.text = currentDate
         line3.text = "^"
