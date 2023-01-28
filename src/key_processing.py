@@ -139,10 +139,6 @@ class KeyProcessing:
                         self.date_temp[2] = get_max_day(self.date_temp[1], self.date_temp[0])
             if self.select_setting_options == 2:                
                 self._buzzer.toggle_enable_buzzer()
-                #if beepFlag:
-                #    beepFlag = 0
-                #else:
-                #    beepFlag = 1
             if self.select_setting_options == 3:
                 self._light_sensor.toggle_auto_dimming()
             if self.select_setting_options == 4:
@@ -187,10 +183,6 @@ class KeyProcessing:
                         self.date_temp[2] = 1
             if self.select_setting_options == 2:
                 self._buzzer.toggle_enable_buzzer()
-                #if beepFlag:
-                #    beepFlag = 0
-                #else:
-                #    beepFlag = 1
             if self.select_setting_options == 3:
                 self._light_sensor.toggle_auto_dimming()
             if self.select_setting_options == 4:
@@ -198,5 +190,4 @@ class KeyProcessing:
                     self.timeFormatFlag = 0 # 12 hour
                 else:
                     self.timeFormatFlag = 1 # 24 hour
-                #showSystem.setTimeFormat(timeFormatFlag)            
                 self._display_subsystem.setTimeFormat(self.timeFormatFlag)

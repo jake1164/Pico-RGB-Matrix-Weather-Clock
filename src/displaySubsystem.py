@@ -103,7 +103,7 @@ class DISPLAYSUBSYSTEM:
             line2.text = "autolight"
         if _selectSettingOptions == 4:
             line2.text = "12/24 hr"            
-        if self._first_enter_page:
+        if not self._first_enter_page:
             self._first_enter_page = True
             
 
@@ -130,8 +130,8 @@ class DISPLAYSUBSYSTEM:
             line3.y = 24
 
 
-    def dateSettingPage(self,line2,line3,_timeSettingLabel,_dateTemp):
-        if self._first_enter_page == 1:
+    def dateSettingPage(self, line2, line3, _timeSettingLabel, _dateTemp):
+        if self._first_enter_page:
             line2.x = 3
             line2.y = 13
             currentD = rtc.datetime
