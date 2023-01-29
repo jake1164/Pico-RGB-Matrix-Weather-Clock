@@ -1,6 +1,6 @@
 import board
 import digitalio
-from driver_buzzer import Buzzer
+from buzzer import Buzzer
 from date_utils import get_max_day
 
 class KeyProcessing:

@@ -21,7 +21,7 @@ import terminalio
 import circuitpython_schedule as schedule
 import displaySubsystem
 from key_processing import KeyProcessing
-from driver_lightSensor import LightSensor
+from light_sensor import LightSensor
 from rgbmatrix import RGBMatrix
 
 ## Pins defined here will make it more obvious whats going on?

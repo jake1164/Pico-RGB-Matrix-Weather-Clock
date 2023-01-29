@@ -6,44 +6,11 @@ import board
 import adafruit_ds3231
 import adafruit_display_text.label
 import ntp_client
-
-days = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday","Sunday" )
+from date_utils import *
 
 i2c = busio.I2C(board.GP7,board.GP6)  # uses board.SCL and board.SDA
 rtc = adafruit_ds3231.DS3231(i2c)
 
-_DAYS_IN_MONTH = (None, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
-_DAYS_BEFORE_MONTH = (None, 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334)
-
-def _is_leap(year):
-    "year -> 1 if leap year, else 0."
-    return year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
-
-def _days_in_month(year, month):
-    "year, month -> number of days in that month in that year."
-    assert 1 <= month <= 12, month
-    if month == 2 and _is_leap(year):
-        return 29
-    return _DAYS_IN_MONTH[month]
-
-def _days_before_month(year, month):
-    "year, month -> number of days in year preceding first day of month."
-    assert 1 <= month <= 12, "month must be in 1..12"
-    return _DAYS_BEFORE_MONTH[month] + (month > 2 and _is_leap(year))
-
-
-def _days_before_year(year):
-    "year -> number of days before January 1st of year."
-    year = year - 1
-    return year * 365 + year // 4 - year // 100 + year // 400
-
-
-def _ymd2ord(year, month, day):
-    "year, month, day -> ordinal, considering 01-Jan-0001 as day 1."
-    assert 1 <= month <= 12, "month must be in 1..12"
-    dim = _days_in_month(year, month)
-    assert 1 <= day <= dim, "day must be in 1..%d" % dim
-    return _days_before_year(year) + _days_before_month(year, month) + day
 
 def _update():
     try:
@@ -52,7 +19,8 @@ def _update():
         print('updated RTC datetime')
     except Exception as e:
         print(e)
-    
+
+
 class DISPLAYSUBSYSTEM:
     def __init__(self, timeFormat):
         self.time_format = timeFormat
@@ -84,7 +52,7 @@ class DISPLAYSUBSYSTEM:
             
         line1.text = date
         line2.text = dayOfTime
-        line3.text=days[int(t.tm_wday)]
+        line3.text= DAYS_OF_WEEK[int(t.tm_wday)]
 
 
     def showSetListPage(self,line1,line2,_selectSettingOptions):
@@ -100,9 +68,9 @@ class DISPLAYSUBSYSTEM:
         if _selectSettingOptions == 2:
             line2.text = "BEEP SET"
         if _selectSettingOptions == 3:
-            line2.text = "autolight"
+            line2.text = "AUTODIM"
         if _selectSettingOptions == 4:
-            line2.text = "12/24 hr"            
+            line2.text = "12/24 HR"            
         if not self._first_enter_page:
             self._first_enter_page = True
             
@@ -204,7 +172,7 @@ class DISPLAYSUBSYSTEM:
             t = time.struct_time((getTime.tm_year, getTime.tm_mon, getTime.tm_mday, _timeTemp[0], _timeTemp[1], _timeTemp[2], getTime.tm_wday, -1, -1))
             rtc.datetime = t
         if _selectSettingOptions == 1:
-            w = (_ymd2ord(_dateTemp[0],_dateTemp[1], _dateTemp[2]) + 6) % 7
+            w = (ymd2ord(_dateTemp[0],_dateTemp[1], _dateTemp[2]) + 6) % 7
             t = time.struct_time((_dateTemp[0], _dateTemp[1], _dateTemp[2], getTime.tm_hour, getTime.tm_min, getTime.tm_sec, w, -1, -1))
             rtc.datetime = t
 

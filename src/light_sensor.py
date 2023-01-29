@@ -4,7 +4,6 @@ from analogio import AnalogIn
 class LightSensor:
     def __init__(self, display) -> None:
         self.LIGHT_THRESHOLD = 2800 # Lower the value the brighter the light.
-        #TODO: Remove display and just check if the light sensor is tripped or not.
         self._display = display
         self.auto_dimming = True
         self._analog_in = AnalogIn(board.GP26)
