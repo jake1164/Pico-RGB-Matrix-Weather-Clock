@@ -1,19 +1,16 @@
 import board
 import digitalio
 from buzzer import Buzzer
-from date_utils import get_max_day
 
 class KeyProcessing:
     """ Key processing is all handled with the KeyProcessing class
     """
-    def __init__(self, display_subsystem, light_sensor, time_format) -> None:
+    def __init__(self, light_sensor, date_processing) -> None:
         """ 
             Initiates the keys used by the board. 
             Might move these to variables to 
         """
         _KEYPRESS_PINS = [board.GP15, board.GP19, board.GP21]
-        # TODO: Remove display requirement and just return values that get passed to display. 
-        self._display_subsystem = display_subsystem
         self._KEY_MENU = 0
         self._KEY_DOWN = 1
         self._KEY_UP = 2
@@ -21,16 +18,12 @@ class KeyProcessing:
         self._key_down_value = 0
         self._key_up_value = 0
         self._key_pin_array = []
+        self._datetime = date_processing
 
-        # used outside of this class??
+        # used outside of this class
         self.page_id = 0
         self.time_setting_label = 0
-        self.time_temp = [0, 0, 0]  # hour,min,sec
-        self.date_temp = [0, 0, 0]  # year,mon,mday
         self.select_setting_options = 0
-
-        ### These need to be moved to a settings class instead of mixed in here.
-        self.timeFormatFlag = time_format # 12 or 24 (0 or 1) hour display.
 
         # Initialize other methods
         self._buzzer = Buzzer()
@@ -88,7 +81,7 @@ class KeyProcessing:
 
     def key_exit_processing_function(self):
         if self.page_id == 2 and self.select_setting_options <= 1:
-            self._display_subsystem.setDateTime(self.select_setting_options, self.date_temp, self.time_temp)
+            self._datetime.set_datetime(self.select_setting_options)
             self.time_setting_label = 0
         self.page_id -= 1
         if self.page_id < 0:
@@ -113,40 +106,24 @@ class KeyProcessing:
         if self.page_id == 2:
             if self.select_setting_options == 0:
                 if self.time_setting_label == 0:
-                    self.time_temp[0] -= 1
-                    if self.time_temp[0] < 0:
-                        self.time_temp[0] = 23
+                    self._datetime.set_hour(False) # decrement
                 elif self.time_setting_label == 1:
-                    self.time_temp[1] -= 1
-                    if self.time_temp[1] < 0:
-                        self.time_temp[1] = 59
+                    self._datetime.set_min(False)
                 else:
-                    self.time_temp[2] -= 1
-                    if self.time_temp[2] < 0:
-                        self.time_temp[2] = 59
+                    self._datetime.set_sec(False)
             if self.select_setting_options == 1:
                 if self.time_setting_label == 0:
-                    self.date_temp[0] -= 1
-                    if self.date_temp[0] < 2000:
-                        self.date_temp[0] = 2099
+                    self._datetime.set_year(False)
                 elif self.time_setting_label == 1:
-                    self.date_temp[1] -= 1
-                    if self.date_temp[1] < 1:
-                        self.date_temp[1] = 12
+                    self._datetime.set_month(False)
                 else:
-                    self.date_temp[2] -= 1
-                    if self.date_temp[2] < 1:
-                        self.date_temp[2] = get_max_day(self.date_temp[1], self.date_temp[0])
+                    self._datetime.set_day(False)
             if self.select_setting_options == 2:                
                 self._buzzer.toggle_enable_buzzer()
             if self.select_setting_options == 3:
                 self._light_sensor.toggle_auto_dimming()
             if self.select_setting_options == 4:
-                if self.timeFormatFlag:
-                    self.timeFormatFlag = 0 # 12 hour
-                else:
-                    self.timeFormatFlag = 1 # 24 hour
-                self._display_subsystem.setTimeFormat(self.timeFormatFlag)
+                self._datetime.toggle_time_format()
 
 
     def key_up_processing_function(self):
@@ -157,37 +134,21 @@ class KeyProcessing:
         if self.page_id == 2:
             if self.select_setting_options == 0:
                 if self.time_setting_label == 0:
-                    self.time_temp[0] += 1
-                    if self.time_temp[0] == 24:
-                        self.time_temp[0] = 0
+                    self._datetime.set_hour(True) # increment                    
                 elif self.time_setting_label == 1:
-                    self.time_temp[1] += 1
-                    if self.time_temp[1] == 60:
-                        self.time_temp[1] = 0
+                    self._datetime.set_min(True)
                 else:
-                    self.time_temp[2] += 1
-                    if self.time_temp[2] == 60:
-                        self.time_temp[2] = 0
+                    self._datetime.set_sec(True)
             if self.select_setting_options == 1:
                 if self.time_setting_label == 0:
-                    self.date_temp[0] += 1
-                    if self.date_temp[0] > 2099:
-                        self.date_temp[0] = 2000
+                    self._datetime.set_year(True)
                 elif self.time_setting_label == 1:
-                    self.date_temp[1] += 1
-                    if self.date_temp[1] > 12:
-                        self.date_temp[1] = 1
+                    self._datetime.set_month(True)
                 else:
-                    self.date_temp[2] += 1
-                    if self.date_temp[2] > get_max_day(self.date_temp[1], self.date_temp[0]):
-                        self.date_temp[2] = 1
+                    self._datetime.set_day(True)
             if self.select_setting_options == 2:
                 self._buzzer.toggle_enable_buzzer()
             if self.select_setting_options == 3:
                 self._light_sensor.toggle_auto_dimming()
             if self.select_setting_options == 4:
-                if self.timeFormatFlag:
-                    self.timeFormatFlag = 0 # 12 hour
-                else:
-                    self.timeFormatFlag = 1 # 24 hour
-                self._display_subsystem.setTimeFormat(self.timeFormatFlag)
+                self._datetime.toggle_time_format()

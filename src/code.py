@@ -20,6 +20,8 @@ import framebufferio
 import terminalio
 import circuitpython_schedule as schedule
 import displaySubsystem
+
+from date_utils import DateTimeProcessing
 from key_processing import KeyProcessing
 from light_sensor import LightSensor
 from rgbmatrix import RGBMatrix
@@ -78,17 +80,18 @@ g.append(line1)
 g.append(line2)
 g.append(line3)
 display.show(g)
-time_format_flag = 0 # 12 or 24 (0 or 1) hour display.
 
-showSystem = displaySubsystem.DISPLAYSUBSYSTEM(time_format_flag)
+time_format_flag = 0 # 12 or 24 (0 or 1) hour display.
+datetime = DateTimeProcessing(time_format_flag)
+showSystem = displaySubsystem.DISPLAYSUBSYSTEM(datetime)
 light_sensor = LightSensor(display)
-key_input = KeyProcessing(showSystem, light_sensor, time_format_flag)
+key_input = KeyProcessing(light_sensor, datetime)
 
 #Update the clock when first starting.
 # TODO: Make async
-showSystem.network_update()
+datetime.update_from_ntp()
 # Update the RTC every 60 min (settable via settings.toml file
-schedule.every(showSystem.get_interval()).minutes.do(showSystem.network_update)
+schedule.every(datetime.get_interval()).minutes.do(datetime.update_from_ntp)
 
 while True:
     schedule.run_pending()    
@@ -104,12 +107,12 @@ while True:
         showSystem.showSetListPage(line1, line2, key_input.select_setting_options)
     if key_input.page_id == 2 and key_input.select_setting_options == 0:
         line1.text = ""
-        showSystem.timeSettingPage(line2, line3, key_input.time_setting_label, key_input.time_temp)
+        showSystem.timeSettingPage(line2, line3, key_input.time_setting_label)
     if key_input.page_id == 2 and key_input.select_setting_options == 1:
         line1.text = ""
-        showSystem.dateSettingPage(line2, line3, key_input.time_setting_label, key_input.date_temp)
+        showSystem.dateSettingPage(line2, line3, key_input.time_setting_label)
     if key_input.page_id == 2 and key_input.select_setting_options > 1:
         line1.text = ""
         showSystem.onOffPage(
-            line2, line3, key_input.select_setting_options, key_input._buzzer.enabled, light_sensor.auto_dimming, key_input.timeFormatFlag
+            line2, line3, key_input.select_setting_options, key_input._buzzer.enabled, light_sensor.auto_dimming
         )
