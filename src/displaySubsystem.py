@@ -1,120 +1,148 @@
+import terminalio
+import displayio
 import adafruit_display_text.label
 from date_utils import *
 
 
-class DISPLAYSUBSYSTEM:
-    def __init__(self, datetime_processing):
+class DisplaySubsystem(displayio.Group):
+    def __init__(self, display, datetime_processing):
+        super().__init__()
+        display.rotation = 0
+        self.display = display
         self._first_enter_page = True
         self._datetime = datetime_processing
 
+        line1 = adafruit_display_text.label.Label(terminalio.FONT, color=0x00DD00)
+        line2 = adafruit_display_text.label.Label(terminalio.FONT, color=0x00DDDD)
+        line3 = adafruit_display_text.label.Label(terminalio.FONT, color=0x0000DD)
+        line3.x = 12
+        line3.y = 56
 
-    def showDateTimePage(self,line1,line2,line3):
-        line1.x = 2
-        line1.y = 5
-        line2.x = 8
-        line2.y = 15
-        line3.x = 10
-        line3.y = 25
+        self._line1 = line1
+        self._line2 = line2
+        self._line3 = line3
+
+        self._line_group = displayio.Group()
+        self._line_group.append(self)
+        self.append(self._line1)
+        self.append(self._line2)
+        self.append(self._line3)    
+        #self.append(self._line_group)        
+        display.show(self._line_group)
+
+    #def showDateTimePage(self,line1,line2,line3):
+    def showDateTimePage(self):
+        self._line1.x = 2
+        self._line1.y = 5
+        self._line2.x = 8
+        self._line2.y = 15
+        self._line3.x = 10
+        self._line3.y = 25
         date_string = self._datetime.get_date()
         time_string = self._datetime.get_time()
         dow = self._datetime.get_dow()
-        line1.text = date_string
-        line2.text = time_string
-        line3.text= dow
+        self._line1.text = date_string
+        self._line2.text = time_string
+        self._line3.text= dow
 
 
-    def showSetListPage(self,line1,line2,_selectSettingOptions):
-        line1.x = 8
-        line1.y = 7
-        line2.x = 8
-        line2.y = 23
-        line1.text = "SET LIST"
-        if _selectSettingOptions == 0:
-            line2.text = "TIME SET"
-        if _selectSettingOptions == 1:
-            line2.text = "DATE SET"
-        if _selectSettingOptions == 2:
-            line2.text = "BEEP SET"
-        if _selectSettingOptions == 3:
-            line2.text = "AUTODIM"
-        if _selectSettingOptions == 4:
-            line2.text = "12/24 HR"            
+    #def showSetListPage(self,line1,line2,_selectSettingOptions):
+    def showSetListPage(self, selectSettingOptions):
+        self._line3.text = ""
+        self._line1.x = 8
+        self._line1.y = 7
+        self._line2.x = 8
+        self._line2.y = 23
+        self._line1.text = "SET LIST"
+        if selectSettingOptions == 0:
+            self._line2.text = "TIME SET"
+        if selectSettingOptions == 1:
+            self._line2.text = "DATE SET"
+        if selectSettingOptions == 2:
+            self._line2.text = "BEEP SET"
+        if selectSettingOptions == 3:
+            self._line2.text = "AUTODIM"
+        if selectSettingOptions == 4:
+            self._line2.text = "12/24 HR"            
         if not self._first_enter_page:
             self._first_enter_page = True
             
 
-    def timeSettingPage(self,line2,line3,_timeSettingLabel):
+    def timeSettingPage(self, timeSettingLabel):
+        self._line1.text = ""
         update = False
         if self._first_enter_page:
-            line2.x = 8
-            line2.y = 13
+            self._line2.x = 8
+            self._line2.y = 13
             update = True
             self._first_enter_page = False
-        line2.text = self._datetime.get_setting_time(update)
-        line3.text = "^"
-        if _timeSettingLabel == 0:
-            line3.x = 12
-            line3.y = 24
-        elif _timeSettingLabel == 1:
-            line3.x = 29
-            line3.y = 24
+        self._line2.text = self._datetime.get_setting_time(update)
+        self._line3.text = "^"
+        if timeSettingLabel == 0:
+            self._line3.x = 12
+            self._line3.y = 24
+        elif timeSettingLabel == 1:
+            self._line3.x = 29
+            self._line3.y = 24
         else:
-            line3.x = 47
-            line3.y = 24
+            self._line3.x = 47
+            self._line3.y = 24
 
 
-    def dateSettingPage(self, line2, line3, _timeSettingLabel):
+    def dateSettingPage(self, timeSettingLabel):
+        self._line1.text = ""
         update = False
         if self._first_enter_page:
             update = True
-            line2.x = 3
-            line2.y = 13
+            self._line2.x = 3
+            self._line2.y = 13
             self._first_enter_page = False
-        line2.text = self._datetime.get_setting_date(update)
-        line3.text = "^"
-        if _timeSettingLabel == 0:
-            line3.x = 12
-            line3.y = 24
-        elif _timeSettingLabel == 1:
-            line3.x = 36
-            line3.y = 24
+        self._line2.text = self._datetime.get_setting_date(update)
+        self._line3.text = "^"
+        if timeSettingLabel == 0:
+            self._line3.x = 12
+            self._line3.y = 24
+        elif timeSettingLabel == 1:
+            self._line3.x = 36
+            self._line3.y = 24
         else:
-            line3.x = 54
-            line3.y = 24
+            self._line3.x = 54
+            self._line3.y = 24
             
 
-    def onOffPage(self,line2,line3,_selectSettingOptions,_beepFlag,_autoLightFlag):
-        if _selectSettingOptions == 2:
-            line2.x = 20
-            line2.y = 7
-            line3.x = 20
-            line3.y = 23
-            if _beepFlag:
-                line2.text = "> on"
-                line3.text = "  off"
+    def onOffPage(self, selectSettingOptions, beepFlag, autoLightFlag):
+        self._line1.text = ""
+        if selectSettingOptions == 2:
+            self._line2.x = 20
+            self._line2.y = 7
+            self._line3.x = 20
+            self._line3.y = 23
+            if beepFlag:
+                self._line2.text = "> on"
+                self._line3.text = "  off"
             else:
-                line2.text = "  on"
-                line3.text = "> off"
-        if _selectSettingOptions == 3:
-            line2.x = 20
-            line2.y = 7
-            line3.x = 20
-            line3.y = 23
+                self._line2.text = "  on"
+                self._line3.text = "> off"
+        if selectSettingOptions == 3:
+            self._line2.x = 20
+            self._line2.y = 7
+            self._line3.x = 20
+            self._line3.y = 23
             
-            if _autoLightFlag:
-                line2.text = "> on"
-                line3.text = "  off"
+            if autoLightFlag:
+                self._line2.text = "> on"
+                self._line3.text = "  off"
             else:
-                line2.text = "  on"
-                line3.text = "> off"
-        if _selectSettingOptions == 4:
-            line2.x = 10
-            line2.y = 7
-            line3.x = 10
-            line3.y = 23            
+                self._line2.text = "  on"
+                self._line3.text = "> off"
+        if selectSettingOptions == 4:
+            self._line2.x = 10
+            self._line2.y = 7
+            self._line3.x = 10
+            self._line3.y = 23            
             if self._datetime.is_12hr():
-                line2.text = "> 12 Hr"
-                line3.text = "  24 Hr"
+                self._line2.text = "> 12 Hr"
+                self._line3.text = "  24 Hr"
             else:
-                line2.text = "  12 Hr"
-                line3.text = "> 24 Hr"                          
+                self._line2.text = "  12 Hr"
+                self._line3.text = "> 24 Hr"                          

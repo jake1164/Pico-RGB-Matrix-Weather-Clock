@@ -17,14 +17,14 @@ import board
 import displayio
 import framebufferio
 
-import terminalio
+#import terminalio
 import circuitpython_schedule as schedule
-import displaySubsystem
+from displaySubsystem import DisplaySubsystem
 
 from date_utils import DateTimeProcessing
 from key_processing import KeyProcessing
 from light_sensor import LightSensor
-from rgbmatrix import RGBMatrix
+from rgbmatrix import RGBMatrix # rgbmatrix is included in circuitpython 8.x
 
 ## Pins defined here will make it more obvious whats going on?
 
@@ -64,26 +64,26 @@ matrix = RGBMatrix(
 
 # Associate the RGB matrix with a Display so that we can use displayio features
 display = framebufferio.FramebufferDisplay(matrix, auto_refresh=True)
-display.rotation = 0
+#display.rotation = 0
 
 
-line1 = adafruit_display_text.label.Label(terminalio.FONT, color=0x00DD00)
-line2 = adafruit_display_text.label.Label(terminalio.FONT, color=0x00DDDD)
-line3 = adafruit_display_text.label.Label(terminalio.FONT, color=0x0000DD)
+#line1 = adafruit_display_text.label.Label(terminalio.FONT, color=0x00DD00)
+#line2 = adafruit_display_text.label.Label(terminalio.FONT, color=0x00DDDD)
+#line3 = adafruit_display_text.label.Label(terminalio.FONT, color=0x0000DD)
 
-line3.x = 12
-line3.y = 56
+#line3.x = 12
+#line3.y = 56
 
 # Put each line of text into a Group, then show that group.
-g = displayio.Group()
-g.append(line1)
-g.append(line2)
-g.append(line3)
-display.show(g)
+#g = displayio.Group()
+#g.append(line1)
+#g.append(line2)
+#g.append(line3)
+#display.show(g)
 
 time_format_flag = 0 # 12 or 24 (0 or 1) hour display.
 datetime = DateTimeProcessing(time_format_flag)
-showSystem = displaySubsystem.DISPLAYSUBSYSTEM(datetime)
+showSystem = DisplaySubsystem(display, datetime)
 light_sensor = LightSensor(display)
 key_input = KeyProcessing(light_sensor, datetime)
 
@@ -101,18 +101,19 @@ while True:
     key_input.key_processing(key_value)
 
     if key_input.page_id == 0:
-        showSystem.showDateTimePage(line1, line2, line3)
+        #showSystem.showDateTimePage(line1, line2, line3)
+        showSystem.showDateTimePage()
     if key_input.page_id == 1:
-        line3.text = ""
-        showSystem.showSetListPage(line1, line2, key_input.select_setting_options)
+        #line3.text = ""
+        #showSystem.showSetListPage(line1, line2, key_input.select_setting_options)
+        showSystem.showSetListPage(key_input.select_setting_options)        
     if key_input.page_id == 2 and key_input.select_setting_options == 0:
-        line1.text = ""
-        showSystem.timeSettingPage(line2, line3, key_input.time_setting_label)
+        showSystem.timeSettingPage(key_input.time_setting_label)
     if key_input.page_id == 2 and key_input.select_setting_options == 1:
-        line1.text = ""
-        showSystem.dateSettingPage(line2, line3, key_input.time_setting_label)
+        showSystem.dateSettingPage(key_input.time_setting_label)
     if key_input.page_id == 2 and key_input.select_setting_options > 1:
-        line1.text = ""
         showSystem.onOffPage(
-            line2, line3, key_input.select_setting_options, key_input._buzzer.enabled, light_sensor.auto_dimming
+            key_input.select_setting_options, 
+            key_input._buzzer.enabled, 
+            light_sensor.auto_dimming
         )
