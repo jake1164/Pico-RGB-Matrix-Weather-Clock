@@ -1,33 +1,29 @@
-# This example implements a simple two line scroller using
-# Adafruit_CircuitPython_Display_Text. Each line has its own color
-# and it is possible to modify the example to use other fonts and non-standard
-# characters.
+# Requires a settings.toml file with the following
+# settings in settings file:
+# TZ_OFFSET=<timezone offset> ie TZ_OFFSET=-5
+# WIFI_SSID="your ssid"
+# WIFI_PASSWORD="yoursupersecretpassword"
+# NTP_HOST="0.adafruit.pool.ntp.org"
+# NTP_INTERVAL=6  
 
-## To ignore the code.py overriding the std lib error add the following
-## to your .vscode.json config file.
-##  "python.languageServer": "Pylance",
-##  [...]
-##  "python.analysis.diagnosticSeverityOverrides": {
-##      "reportShadowedImports": "none"
-##  },
-
-import time
-import adafruit_display_text.label
+# Following are imported from circuitpython 8.x
 import board
 import displayio
 import framebufferio
+from rgbmatrix import RGBMatrix 
 
-#import terminalio
+# Imported from lib
 import circuitpython_schedule as schedule
-from displaySubsystem import DisplaySubsystem
 
+# project classes 
+from displaySubsystem import DisplaySubsystem
 from date_utils import DateTimeProcessing
 from key_processing import KeyProcessing
 from light_sensor import LightSensor
-from rgbmatrix import RGBMatrix # rgbmatrix is included in circuitpython 8.x
+from network import BaseNetwork
+from ntp_client import NtpClient
 
-## Pins defined here will make it more obvious whats going on?
-
+time_format_flag = 0 # 12 or 24 (0 or 1) hour display.
 bit_depth_value = 1
 base_width = 64
 base_height = 32
@@ -38,8 +34,7 @@ serpentine_value = True
 width_value = base_width * chain_across
 height_value = base_height * tile_down
 
-# If there was a display before (protomatter, LCD, or E-paper), release it so
-# we can create ours
+# release displays  before creating a new one.
 displayio.release_displays()
 
 # This next call creates the RGB Matrix object itself. It has the given width
@@ -47,11 +42,6 @@ displayio.release_displays()
 # shades to be displayed, but increase memory usage and slow down your Python
 # code. If you just want to show primary colors plus black and white, use 1.
 # Otherwise, try 3, 4 and 5 to see which effect you like best.
-#
-# These lines are for the Feather M4 Express. If you're using a different board,
-# check the guide to find the pins and wiring diagrams for your board.
-# If you have a matrix with a different width or height, change that too.
-# If you have a 16x32 display, try with just a single line of text.
 
 matrix = RGBMatrix(
     width=width_value,height=height_value,bit_depth=bit_depth_value,
@@ -64,25 +54,11 @@ matrix = RGBMatrix(
 
 # Associate the RGB matrix with a Display so that we can use displayio features
 display = framebufferio.FramebufferDisplay(matrix, auto_refresh=True)
-#display.rotation = 0
 
+network = BaseNetwork()
+ntp = NtpClient(network)
 
-#line1 = adafruit_display_text.label.Label(terminalio.FONT, color=0x00DD00)
-#line2 = adafruit_display_text.label.Label(terminalio.FONT, color=0x00DDDD)
-#line3 = adafruit_display_text.label.Label(terminalio.FONT, color=0x0000DD)
-
-#line3.x = 12
-#line3.y = 56
-
-# Put each line of text into a Group, then show that group.
-#g = displayio.Group()
-#g.append(line1)
-#g.append(line2)
-#g.append(line3)
-#display.show(g)
-
-time_format_flag = 0 # 12 or 24 (0 or 1) hour display.
-datetime = DateTimeProcessing(time_format_flag)
+datetime = DateTimeProcessing(time_format_flag, ntp)
 showSystem = DisplaySubsystem(display, datetime)
 light_sensor = LightSensor(display)
 key_input = KeyProcessing(light_sensor, datetime)
@@ -90,6 +66,7 @@ key_input = KeyProcessing(light_sensor, datetime)
 #Update the clock when first starting.
 # TODO: Make async
 datetime.update_from_ntp()
+
 # Update the RTC every 60 min (settable via settings.toml file
 schedule.every(datetime.get_interval()).minutes.do(datetime.update_from_ntp)
 
@@ -101,11 +78,8 @@ while True:
     key_input.key_processing(key_value)
 
     if key_input.page_id == 0:
-        #showSystem.showDateTimePage(line1, line2, line3)
         showSystem.showDateTimePage()
     if key_input.page_id == 1:
-        #line3.text = ""
-        #showSystem.showSetListPage(line1, line2, key_input.select_setting_options)
         showSystem.showSetListPage(key_input.select_setting_options)        
     if key_input.page_id == 2 and key_input.select_setting_options == 0:
         showSystem.timeSettingPage(key_input.time_setting_label)
