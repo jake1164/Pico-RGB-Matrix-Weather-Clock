@@ -1,5 +1,5 @@
 import time
-import busios
+import busio
 import board
 import adafruit_ds3231
 
@@ -7,11 +7,11 @@ import adafruit_ds3231
 class DateTimeProcessing:
 
 
-    def __init__(self, format, ntp) -> None:
+    def __init__(self, format, network) -> None:
         self.DAYS_OF_WEEK = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday","Sunday" )
         self._MAX_DAYS = [None, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
         self._DAYS_BEFORE_MONTH = (None, 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334)
-        self.ntp = ntp
+        self.network = network
         self.time_format = format
         self.time = [0, 0, 0]
         self.date = [0, 0, 0]
@@ -21,15 +21,16 @@ class DateTimeProcessing:
 
     def update_from_ntp(self):
         try:
-            new_time = self.ntp.get_time()            
+            new_time = self.network.get_time()
+            print(new_time)
             self.rtc.datetime = new_time
             print('updated RTC datetime')
         except Exception as e:
-            print(e)
+            print('update exception', e)
 
 
     def get_interval(self):
-        return self.ntp.get_interval()
+        return self.network.get_interval()
 
 
     def is_12hr(self):

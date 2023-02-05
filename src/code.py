@@ -21,7 +21,6 @@ from date_utils import DateTimeProcessing
 from key_processing import KeyProcessing
 from light_sensor import LightSensor
 from network import BaseNetwork
-from ntp_client import NtpClient
 
 time_format_flag = 0 # 12 or 24 (0 or 1) hour display.
 bit_depth_value = 1
@@ -56,9 +55,8 @@ matrix = RGBMatrix(
 display = framebufferio.FramebufferDisplay(matrix, auto_refresh=True)
 
 network = BaseNetwork()
-ntp = NtpClient(network)
 
-datetime = DateTimeProcessing(time_format_flag, ntp)
+datetime = DateTimeProcessing(time_format_flag, network)
 showSystem = DisplaySubsystem(display, datetime)
 light_sensor = LightSensor(display)
 key_input = KeyProcessing(light_sensor, datetime)
