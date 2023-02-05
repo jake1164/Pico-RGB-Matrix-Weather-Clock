@@ -54,7 +54,7 @@ matrix = RGBMatrix(
 # Associate the RGB matrix with a Display so that we can use displayio features
 display = framebufferio.FramebufferDisplay(matrix, auto_refresh=True)
 
-network = BaseNetwork()
+network = BaseNetwork() # TODO: catch exception and do something meaninful with it.
 
 datetime = DateTimeProcessing(time_format_flag, network)
 showSystem = DisplaySubsystem(display, datetime)
