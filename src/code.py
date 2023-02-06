@@ -7,6 +7,8 @@
 # NTP_INTERVAL=6  
 
 # Following are imported from circuitpython 8.x
+import os
+import gc
 import board
 import displayio
 import framebufferio
@@ -20,7 +22,9 @@ from displaySubsystem import DisplaySubsystem
 from date_utils import DateTimeProcessing
 from key_processing import KeyProcessing
 from light_sensor import LightSensor
-from network import BaseNetwork
+from network import WifiNetwork
+from weather import open_weather
+from weather import tempest_weather
 
 time_format_flag = 0 # 12 or 24 (0 or 1) hour display.
 bit_depth_value = 1
@@ -54,7 +58,14 @@ matrix = RGBMatrix(
 # Associate the RGB matrix with a Display so that we can use displayio features
 display = framebufferio.FramebufferDisplay(matrix, auto_refresh=True)
 
-network = BaseNetwork() # TODO: catch exception and do something meaninful with it.
+network = WifiNetwork() # TODO: catch exception and do something meaninful with it.
+
+weather = None
+if os.getenv('TEMPEST_ENABLE'):
+    weather = tempest_weather.TempestWeather(network)
+elif weather is None and os.getenv('OWM_ENABLE'):
+    weather = open_weather.OpenWeather(network)
+
 
 datetime = DateTimeProcessing(time_format_flag, network)
 showSystem = DisplaySubsystem(display, datetime)
@@ -68,6 +79,11 @@ datetime.update_from_ntp()
 # Update the RTC every 60 min (settable via settings.toml file
 schedule.every(datetime.get_interval()).minutes.do(datetime.update_from_ntp)
 
+#update weather every min
+if weather is not None:
+    schedule.every(weather.get_update_interval()).seconds.do(weather.get_weather)
+
+print('free memory', gc.mem_free())
 while True:
     schedule.run_pending()    
     light_sensor.check_light_sensor()

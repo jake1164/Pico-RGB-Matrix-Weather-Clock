@@ -1,11 +1,13 @@
 ## Class for handling networking. 
 import os
+import gc
+import ssl
 import wifi
 import socketpool
 import adafruit_ntp
+import adafruit_requests
 
-
-class BaseNetwork:
+class WifiNetwork:
     def __init__(self) -> None:
         self.RETRY_WIFI = 5 # Number of times to attempt to connect to wifi
         self.SSID = os.getenv('WIFI_SSID')
@@ -52,6 +54,22 @@ class BaseNetwork:
         ntp = adafruit_ntp.NTP(pool, tz_offset=self.TZ, server=self.NTP_HOST)
         return ntp.datetime
                     
+
+    def getJson(self, url):
+        try:
+            pool = socketpool.SocketPool(wifi.radio)
+            requests = adafruit_requests.Session(pool, ssl.create_default_context())
+            print('getting url:', url)            
+            print('free memory', gc.mem_free())
+            response = requests.get(url) 
+            print(response.json())           
+            return response.json()
+        except Exception as e:
+            gc.collect()            
+            print(e)
+        return {}
+        
+
 
     def get_interval(self):
         return int(self.INTERVAL)

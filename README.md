@@ -9,6 +9,9 @@ This project requires the use of a [Raspberry Pico W](https://www.raspberrypi.co
 ## Circuitpython 8.0.0
 This project requires that you use [circuitpython 8.0.0](https://circuitpython.org/board/raspberry_pi_pico_w/). Circuitpython is now on 8.0.0-rc.2, and it is recommended you update your pico to the latest version.
 
+## Libraries
+Circuit libraries are included in the lib folder, just copy them to the Pico. To update them you need to download the Adafruit 8.x-mpy Bundle from [here](https://circuitpython.org/libraries) and update the specific libraries required by the sample code. 
+
 ## Settings
 Requires a settings.toml file with the following settings in settings file:
 * TZ_OFFSET=<timezone offset> ie TZ_OFFSET=-5
