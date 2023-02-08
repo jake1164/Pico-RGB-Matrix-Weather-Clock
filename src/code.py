@@ -60,12 +60,14 @@ display = framebufferio.FramebufferDisplay(matrix, auto_refresh=True)
 
 network = WifiNetwork() # TODO: catch exception and do something meaninful with it.
 
+print('loading weather')
 weather = None
 if os.getenv('TEMPEST_ENABLE'):
-    weather = tempest_weather.TempestWeather(network)
+    weather = tempest_weather.TempestWeather(display, network)
 elif weather is None and os.getenv('OWM_ENABLE'):
-    weather = open_weather.OpenWeather(network)
+    weather = open_weather.OpenWeather(display, network)
 
+print('weather loaded')
 
 datetime = DateTimeProcessing(time_format_flag, network)
 showSystem = DisplaySubsystem(display, datetime)
@@ -81,7 +83,10 @@ schedule.every(datetime.get_interval()).minutes.do(datetime.update_from_ntp)
 
 #update weather every min
 if weather is not None:
-    schedule.every(weather.get_update_interval()).seconds.do(weather.get_weather)
+    schedule.every(weather.get_update_interval()).seconds.do(weather.show_weather)
+
+print('getting weather?')
+weather.show_weather()
 
 print('free memory', gc.mem_free())
 while True:
@@ -90,9 +95,10 @@ while True:
     key_value = key_input.get_key_value()
     # TODO: key processing should return the page being displayed
     key_input.key_processing(key_value)
-
+    
     if key_input.page_id == 0:
-        showSystem.showDateTimePage()
+        #showSystem.showDateTimePage()
+        pass
     if key_input.page_id == 1:
         showSystem.showSetListPage(key_input.select_setting_options)        
     if key_input.page_id == 2 and key_input.select_setting_options == 0:
