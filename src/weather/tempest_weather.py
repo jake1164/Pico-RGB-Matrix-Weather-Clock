@@ -8,7 +8,7 @@ from . import base_weather
 
 STATIONS_URL = 'https://swd.weatherflow.com/swd/rest/stations?token={}'
 URL = 'http://swd.weatherflow.com/swd/rest/observations/station/{}?token={}'
-BETTER_URL = 'https://swd.weatherflow.com/swd/rest/better_forecast?station_id={}&units_temp=f&units_wind=mph&units_pressure=mmhg&units_precip=in&units_distance=mi&token={}'
+#BETTER_URL = 'https://swd.weatherflow.com/swd/rest/better_forecast?station_id={}&units_temp=f&units_wind=mph&units_pressure=mmhg&units_precip=in&units_distance=mi&token={}'
 
 class TempestWeather(base_weather.BaseDisplay):
     def __init__(self, display, network) -> None:
@@ -18,22 +18,7 @@ class TempestWeather(base_weather.BaseDisplay):
         token = os.getenv('TEMPEST_API_TOKEN')
         station = os.getenv('TEMPEST_STATION')
         self._url = URL.format(station, token)
-
-        #self.root_group = displayio.Group()
-        #self.root_group.append(self)
-        #self._text_group = displayio.Group()
-        #self._icon_group = displayio.Group()
-        #self._scrolling_group = displayio.Group()
-
-        ##self.append(self._text_group) 
-        #self.temperature = Label(FONT, color=0x00DD00)
-        #self.temperature.x = 20
-        #self.temperature.y = 7
-        #self._text_group.append(self.temperature)
-        #self.append(self._scrolling_group)
-        #self.append(self._icon_group)
-
-
+        #self._url = BETTER_URL.format(station, token)
 
     def get_weather(self):
         weather = self._network.getJson(self._url)
@@ -50,10 +35,15 @@ class TempestWeather(base_weather.BaseDisplay):
     def show_weather(self):
         weather = self.get_weather()
         print(weather)
-        self.temperature.text = self._convert_to_fahrenheit(weather["obs"][0]["air_temperature"])
+        if weather == {}:
+            return
+        self.set_temperature(self._convert_to_fahrenheit(weather["obs"][0]["air_temperature"]))
+        #self.set_temperature(self._convert_to_fahrenheit(weather["current_conditions"]["air_temperature"]))
+        
+
         print('updating weather')
         self._display.show(self.root_group)
 
 
-    def _convert_to_fahrenheit(self, celsius) -> str:
-        return str((celsius * 1.8) + 32)
+    def _convert_to_fahrenheit(self, celsius):
+        return (celsius * 1.8) + 32

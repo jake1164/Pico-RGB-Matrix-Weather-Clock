@@ -19,26 +19,9 @@ class OpenWeather(base_weather.BaseDisplay):
         self._network = network
         token = os.getenv('OWM_API_TOKEN')
         zip = os.getenv('OWM_ZIP')
-        country = os.getenv('OWM_COUNTRY')
-        units = os.getenv('UNITS')
-
+        country = os.getenv('OWM_COUNTRY')    
         lat, lon = self._get_geo(zip, country, token)        
-        self._url = URL.format(lat, lon, units, token)
-        
-        #self.root_group = displayio.Group()
-        #self.root_group.append(self)
-        #self._text_group = displayio.Group()
-        #self._icon_group = displayio.Group()
-        #self._scrolling_group = displayio.Group()
-        
-        #self.append(self._text_group) 
-        #self.temperature = Label(FONT, color=0x00DD00)
-        #self.temperature.x = 20
-        #self.temperature.y = 7
-        #self._text_group.append(self.temperature)
-        #self.append(self._scrolling_group)
-        #self.append(self._icon_group)
-        
+        self._url = URL.format(lat, lon, self._units, token)      
 
 
     def _get_geo(self, zip, country, token):
@@ -64,7 +47,8 @@ class OpenWeather(base_weather.BaseDisplay):
 
     def show_weather(self):
         weather = self.get_weather()
-        self.temperature.text = str(weather["main"]["temp"])
+        self.set_temperature(weather["main"]["temp"])        
+        self.set_icon(weather["weather"][0]["icon"])
         print('updating weather')
         self._display.show(self.root_group)
         
