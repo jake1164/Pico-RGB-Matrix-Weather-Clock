@@ -13,10 +13,11 @@ URL = 'http://api.openweathermap.org/data/2.5/weather?lat={}&lon={}&units={}&app
 
 
 class OpenWeather(base_weather.BaseDisplay):
-    def __init__(self, display, network) -> None:
-        super().__init__()
-        self._display = display
+    def __init__(self, display, network, datetime) -> None:
+        super().__init__(display)
+        #self._display = display
         self._network = network
+        self._datetime = datetime
         token = os.getenv('OWM_API_TOKEN')
         zip = os.getenv('OWM_ZIP')
         country = os.getenv('OWM_COUNTRY')    
@@ -47,8 +48,16 @@ class OpenWeather(base_weather.BaseDisplay):
 
     def show_weather(self):
         weather = self.get_weather()
+        self.set_time(self._datetime.get_time())
         self.set_temperature(weather["main"]["temp"])        
         self.set_icon(weather["weather"][0]["icon"])
+        self.set_humidity(weather["main"]["humidity"])
+        self.set_description(weather["weather"][0]["description"])
+        self.set_feels_like(weather["main"]["feels_like"])
+        self.set_date(
+            self._datetime.get_date()    
+        )
+        
         print('updating weather')
         self._display.show(self.root_group)
         

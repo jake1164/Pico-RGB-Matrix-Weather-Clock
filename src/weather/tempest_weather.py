@@ -12,8 +12,8 @@ URL = 'http://swd.weatherflow.com/swd/rest/observations/station/{}?token={}'
 
 class TempestWeather(base_weather.BaseDisplay):
     def __init__(self, display, network) -> None:
-        super().__init__()
-        self._display = display
+        super().__init__(display)
+        #self._display = display
         self._network = network
         token = os.getenv('TEMPEST_API_TOKEN')
         station = os.getenv('TEMPEST_STATION')

@@ -7,6 +7,7 @@
 # NTP_INTERVAL=6  
 
 # Following are imported from circuitpython 8.x
+import time
 import os
 import gc
 import board
@@ -60,19 +61,17 @@ display = framebufferio.FramebufferDisplay(matrix, auto_refresh=True)
 
 network = WifiNetwork() # TODO: catch exception and do something meaninful with it.
 
-print('loading weather')
-weather = None
-if os.getenv('TEMPEST_ENABLE'):
-    weather = tempest_weather.TempestWeather(display, network)
-elif weather is None and os.getenv('OWM_ENABLE'):
-    weather = open_weather.OpenWeather(display, network)
-
-print('weather loaded')
-
 datetime = DateTimeProcessing(time_format_flag, network)
 showSystem = DisplaySubsystem(display, datetime)
 light_sensor = LightSensor(display)
 key_input = KeyProcessing(light_sensor, datetime)
+
+weather = None
+if os.getenv('TEMPEST_ENABLE'):
+    weather = tempest_weather.TempestWeather(display, network)
+elif weather is None and os.getenv('OWM_ENABLE'):
+    weather = open_weather.OpenWeather(display, network, datetime)
+
 
 #Update the clock when first starting.
 # TODO: Make async
@@ -91,6 +90,8 @@ weather.show_weather()
 print('free memory', gc.mem_free())
 while True:
     schedule.run_pending()    
+    weather.scroll_label()
+    time.sleep(0)
     light_sensor.check_light_sensor()
     key_value = key_input.get_key_value()
     # TODO: key processing should return the page being displayed
