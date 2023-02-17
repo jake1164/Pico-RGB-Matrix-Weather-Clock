@@ -3,6 +3,7 @@ import os
 import displayio
 from adafruit_display_text.label import Label
 from adafruit_bitmap_font import bitmap_font
+from adafruit_display_shapes.circle import Circle
 
 cwd = ("/" + __file__).rsplit("/", 1)[
     0
@@ -27,7 +28,7 @@ class BaseDisplay(displayio.Group):
         icons = displayio.OnDiskBitmap(open(icon_spritesheet, "rb"))
         icon_width = 16
         icon_height = 16
-        scrolling_text_height = 24
+        
         self.scroll_delay = 0.03
         self._current_icon = None
         self._scroll_array = []
@@ -43,26 +44,30 @@ class BaseDisplay(displayio.Group):
         self.root_group = displayio.Group()      
         self._text_group = displayio.Group()
         self._icon_group = displayio.Group()
+        self._scrolling_group = displayio.Group()    
+        self._wind_icon_group = displayio.Group()
+
         self._icon_group.x = 48
         self._icon_group.y = 0
-        self._scrolling_group = displayio.Group()
-        self.root_group.append(self)
 
-        self.append(self._text_group) 
         self.temperature = Label(self._small_font, color=0x00DD00)
         self.temperature.x = 1
         self.temperature.y = 5
 
         self.time = Label(self._small_font, color=0x00DDDD)
         self.time.anchor_point = (0, 0)
-        self.time.x = -3
+        self.time.x = 0
         self.time.y = 15
-        
+        #self.circle = Circle(40, 6, 5, outline=0xFF00FF)
+        #self._wind_icon_group.append(self.circle)
+
+        self.root_group.append(self)
         self._text_group.append(self.time)
         self._text_group.append(self.temperature)
-        
+        self.append(self._text_group) 
         self.append(self._scrolling_group)
         self.append(self._icon_group)
+        #self.append(self._wind_icon_group)
 
         self._icon_sprite = displayio.TileGrid(
             icons,
@@ -128,7 +133,6 @@ class BaseDisplay(displayio.Group):
 
 
     def scroll_label(self):
-        print('displaying label' + str(self._current_label))
         if self._current_label is not None and self._scrolling_group:
             current_text = self._scroll_array[self._current_label]
             text_width = current_text.bounding_box[2]

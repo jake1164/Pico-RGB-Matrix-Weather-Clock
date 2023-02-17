@@ -84,22 +84,23 @@ schedule.every(datetime.get_interval()).minutes.do(datetime.update_from_ntp)
 if weather is not None:
     schedule.every(weather.get_update_interval()).seconds.do(weather.show_weather)
 
-print('getting weather?')
 weather.show_weather()
 
 print('free memory', gc.mem_free())
 while True:
-    schedule.run_pending()    
-    weather.scroll_label()
-    time.sleep(0)
     light_sensor.check_light_sensor()
+    if light_sensor.is_dimming():
+        continue
+
     key_value = key_input.get_key_value()
     # TODO: key processing should return the page being displayed
     key_input.key_processing(key_value)
     
     if key_input.page_id == 0:
         #showSystem.showDateTimePage()
-        pass
+        schedule.run_pending()
+        weather.scroll_label()
+        #time.sleep(0)        
     if key_input.page_id == 1:
         showSystem.showSetListPage(key_input.select_setting_options)        
     if key_input.page_id == 2 and key_input.select_setting_options == 0:

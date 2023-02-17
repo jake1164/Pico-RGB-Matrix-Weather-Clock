@@ -64,10 +64,10 @@ class DateTimeProcessing:
             else:
                 hour = dt.tm_hour - 12
                 
-            time = "{:2d}:{:02d} {}".format(
+            time = "{:2d}:{:02d}{}".format(
                 hour,
                 dt.tm_min,
-                "PM" if dt.tm_hour > 11 else "AM")
+                "pm" if dt.tm_hour > 11 else "am")
         else: # 24 hour
             time = "%02d" % dt.tm_hour + ':' + "%02d" % dt.tm_min + ':' + "%02d" % dt.tm_sec
 
