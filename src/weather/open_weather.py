@@ -5,19 +5,17 @@ import os
 import displayio
 from terminalio import FONT
 from adafruit_display_text.label import Label
-from . import base_weather
 
 # NOTE: https seems to cause an issue but http works fine for this api
 GEO_URL = 'http://api.openweathermap.org/geo/1.0/zip?zip={},{}&appid={}'
 URL = 'http://api.openweathermap.org/data/2.5/weather?lat={}&lon={}&units={}&appid={}'
 
 
-class OpenWeather(base_weather.BaseDisplay):
-    def __init__(self, display, network, datetime) -> None:
-        super().__init__(display)
-        #self._display = display
+#class OpenWeather(base_weather.BaseDisplay):
+class OpenWeather():
+    def __init__(self, network, units) -> None:
+        self._units = units
         self._network = network
-        self._datetime = datetime
         token = os.getenv('OWM_API_TOKEN')
         zip = os.getenv('OWM_ZIP')
         country = os.getenv('OWM_COUNTRY')    
@@ -32,7 +30,6 @@ class OpenWeather(base_weather.BaseDisplay):
         return geo['lat'], geo['lon']
 
 
-
     def get_update_interval(self):
         """ Returns the weather update interval in seconds """
         return 20
@@ -42,22 +39,28 @@ class OpenWeather(base_weather.BaseDisplay):
         weather = self._network.getJson(self._url)
         print(weather)
         # TODO: reduce size of json data and purge gc
-
         return weather
 
 
-    def show_weather(self):
+    def show_forcast(self):
+        pass
+
+    ''' Show just the current condtions and maps '''
+    def show_secondary(self, display, weather=None):
+        if not weather:
+            weather = self.get_weather()
+        display.set_icon(weather["weather"][0]["icon"])
+        display.set_description(weather["weather"][0]["description"])
+    
+    ''' Show the weather and conditions from OWM '''
+    def show_weather(self, display):
         weather = self.get_weather()
-        self.set_time(self._datetime.get_time())
-        self.set_temperature(weather["main"]["temp"])        
-        self.set_icon(weather["weather"][0]["icon"])
-        self.set_humidity(weather["main"]["humidity"])
-        self.set_description(weather["weather"][0]["description"])
-        self.set_feels_like(weather["main"]["feels_like"])
-        self.set_date(
-            self._datetime.get_date()    
-        )
-        
+
+        #weather_display.set_time(self._datetime.get_time())
+        display.set_temperature(weather["main"]["temp"])        
+        display.set_humidity(weather["main"]["humidity"])
+        display.set_feels_like(weather["main"]["feels_like"])
+
+        self.show_secondary(display, weather)
+        display.show()
         print('updating weather')
-        self._display.show(self.root_group)
-        

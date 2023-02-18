@@ -24,8 +24,8 @@ from date_utils import DateTimeProcessing
 from key_processing import KeyProcessing
 from light_sensor import LightSensor
 from network import WifiNetwork
-from weather import open_weather
-from weather import tempest_weather
+from weather.weather_factory import Factory
+from weather.weather_display import WeatherDisplay
 
 time_format_flag = 0 # 12 or 24 (0 or 1) hour display.
 bit_depth_value = 1
@@ -66,11 +66,14 @@ showSystem = DisplaySubsystem(display, datetime)
 light_sensor = LightSensor(display)
 key_input = KeyProcessing(light_sensor, datetime)
 
-weather = None
+weather_display = WeatherDisplay(display)
 if os.getenv('TEMPEST_ENABLE'):
-    weather = tempest_weather.TempestWeather(display, network)
-elif weather is None and os.getenv('OWM_ENABLE'):
-    weather = open_weather.OpenWeather(display, network, datetime)
+    weather = Factory('TEMPEST', weather_display, datetime, network)
+elif os.getenv('OWM_ENABLE'):
+    weather = Factory('OWM', weather_display, datetime, network)
+else:
+    print('Better handling required.')
+
 
 
 #Update the clock when first starting.
@@ -98,9 +101,9 @@ while True:
     
     if key_input.page_id == 0:
         #showSystem.showDateTimePage()
+        weather.show_datetime()
         schedule.run_pending()
-        weather.scroll_label()
-        #time.sleep(0)        
+        weather.scroll_label() # Scroll pending uses sleeps to scroll and makes button presses impossible currently
     if key_input.page_id == 1:
         showSystem.showSetListPage(key_input.select_setting_options)        
     if key_input.page_id == 2 and key_input.select_setting_options == 0:

@@ -4,16 +4,14 @@ import os
 import displayio
 from terminalio import FONT
 from adafruit_display_text.label import Label
-from . import base_weather
 
 STATIONS_URL = 'https://swd.weatherflow.com/swd/rest/stations?token={}'
 URL = 'http://swd.weatherflow.com/swd/rest/observations/station/{}?token={}'
 #BETTER_URL = 'https://swd.weatherflow.com/swd/rest/better_forecast?station_id={}&units_temp=f&units_wind=mph&units_pressure=mmhg&units_precip=in&units_distance=mi&token={}'
 
-class TempestWeather(base_weather.BaseDisplay):
-    def __init__(self, display, network) -> None:
-        super().__init__(display)
-        #self._display = display
+class TempestWeather():
+    def __init__(self, network, units) -> None:
+        self._units = units
         self._network = network
         token = os.getenv('TEMPEST_API_TOKEN')
         station = os.getenv('TEMPEST_STATION')
@@ -32,17 +30,13 @@ class TempestWeather(base_weather.BaseDisplay):
         """ Returns the weather update interval in seconds """
         return 20
 
-    def show_weather(self):
+    def show_weather(self, weather_display):
         weather = self.get_weather()
         print(weather)
         if weather == {}:
             return
-        self.set_temperature(self._convert_to_fahrenheit(weather["obs"][0]["air_temperature"]))
-        #self.set_temperature(self._convert_to_fahrenheit(weather["current_conditions"]["air_temperature"]))
-        
-
-        print('updating weather')
-        self._display.show(self.root_group)
+        weather_display.set_temperature(self._convert_to_fahrenheit(weather["obs"][0]["air_temperature"]))
+        weather_display.show()
 
 
     def _convert_to_fahrenheit(self, celsius):

@@ -5,11 +5,7 @@ from adafruit_display_text.label import Label
 from adafruit_bitmap_font import bitmap_font
 from adafruit_display_shapes.circle import Circle
 
-cwd = ("/" + __file__).rsplit("/", 1)[
-    0
-]
-
-class BaseDisplay(displayio.Group):
+class WeatherDisplay(displayio.Group):
     def __init__(self, display) -> None:
         super().__init__()
         self._display = display
@@ -19,7 +15,7 @@ class BaseDisplay(displayio.Group):
         glyphs = b"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-,.: "
         self._current_label = None #index of current label
 
-        self._units = os.getenv('UNITS')
+        self.units = os.getenv('UNITS')
         
         self._small_font = bitmap_font.load_font(small_font)
         self._small_font.load_glyphs(glyphs)
@@ -84,7 +80,7 @@ class BaseDisplay(displayio.Group):
 
 
     def get_temperature(self, temp):        
-        if self._units:
+        if self.units:
             unit = "%d°F"
         else:
             unit = "%d°C"
@@ -158,3 +154,6 @@ class BaseDisplay(displayio.Group):
         for _ in range(self._display.width):
             self._scrolling_group.x = self._scrolling_group.x - 1
             time.sleep(self.scroll_delay)
+
+    def show(self):
+        self._display.show(self.root_group)
