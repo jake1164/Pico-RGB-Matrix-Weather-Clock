@@ -67,13 +67,17 @@ light_sensor = LightSensor(display)
 key_input = KeyProcessing(light_sensor, datetime)
 
 weather_display = WeatherDisplay(display)
-if os.getenv('TEMPEST_ENABLE'):
-    weather = Factory('TEMPEST', weather_display, datetime, network)
-elif os.getenv('OWM_ENABLE'):
-    weather = Factory('OWM', weather_display, datetime, network)
-else:
-    print('Better handling required.')
-
+try:
+    if os.getenv('TEMPEST_ENABLE'):
+        weather = Factory('TEMPEST', weather_display, datetime, network)
+    elif os.getenv('OWM_ENABLE'):
+        weather = Factory('OWM', weather_display, datetime, network)
+    else:
+        print('Better handling required.')
+        raise Exception("No weather api's enabled")
+except Exception as e:
+    print("Unable to configure weather, exiting")
+    exit()
 
 
 #Update the clock when first starting.
