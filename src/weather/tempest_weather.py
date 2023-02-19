@@ -1,9 +1,6 @@
 # Pulls weather from a the weatherflow api (from a tempest weather station) 
 # https://weatherflow.github.io/Tempest/api/ 
 import os
-import displayio
-from terminalio import FONT
-from adafruit_display_text.label import Label
 
 STATIONS_URL = 'https://swd.weatherflow.com/swd/rest/stations?token={}'
 URL = 'http://swd.weatherflow.com/swd/rest/observations/station/{}?token={}'
@@ -32,12 +29,24 @@ class TempestWeather():
 
     def show_weather(self, weather_display):
         weather = self.get_weather()
-        print(weather)
+        #print(weather)
         if weather == {}:
             return
-        weather_display.set_temperature(self._convert_to_fahrenheit(weather["obs"][0]["air_temperature"]))
+        weather_display.set_temperature(self._convert_temperature(weather["obs"][0]["air_temperature"]))
+        weather_display.set_humidity(weather["obs"][0]["relative_humidity"])
+        weather_display.set_feels_like(self._convert_temperature(weather["obs"][0]["feels_like"]))
+        weather_display.set_wind(self._convert_windspeed(weather["obs"][0]["wind_avg"]))
+        
         weather_display.show()
 
 
-    def _convert_to_fahrenheit(self, celsius):
-        return (celsius * 1.8) + 32
+    def _convert_temperature(self, celsius):
+        if self._units == "imperial":
+            return (celsius * 1.8) + 32
+        return celsius
+
+
+    def _convert_windspeed(self, speed):
+        if self._units == "imperal":
+            return speed * 2.23693629
+        return speed

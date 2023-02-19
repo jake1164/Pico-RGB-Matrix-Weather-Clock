@@ -32,16 +32,18 @@ class WeatherDisplay(displayio.Group):
         self.scroll_humidity = Label(self._small_font, color=0x0000DD)
         self.scroll_date = Label(self._small_font, color=0x0000DD)
         self.scroll_feels = Label(self._small_font, color=0x0000DD)
+        self.scroll_wind = Label(self._small_font, color=0x0000DD)
         self._scroll_array.append(self.scroll_description)
         self._scroll_array.append(self.scroll_date)
         self._scroll_array.append(self.scroll_humidity)
         self._scroll_array.append(self.scroll_feels)
+        self._scroll_array.append(self.scroll_wind)
 
         self.root_group = displayio.Group()      
         self._text_group = displayio.Group()
         self._icon_group = displayio.Group()
-        self._scrolling_group = displayio.Group()    
-        self._wind_icon_group = displayio.Group()
+        self._scrolling_group = displayio.Group()        
+        #self._wind_icon_group = displayio.Group() # TODO: create a wind gauge
 
         self._icon_group.x = 48
         self._icon_group.y = 0
@@ -54,12 +56,14 @@ class WeatherDisplay(displayio.Group):
         self.time.anchor_point = (0, 0)
         self.time.x = 0
         self.time.y = 15
+        self.wind = Label(self._small_font, color=0xCCCCCC)
         #self.circle = Circle(40, 6, 5, outline=0xFF00FF)
         #self._wind_icon_group.append(self.circle)
 
         self.root_group.append(self)
         self._text_group.append(self.time)
         self._text_group.append(self.temperature)
+
         self.append(self._text_group) 
         self.append(self._scrolling_group)
         self.append(self._icon_group)
@@ -86,7 +90,6 @@ class WeatherDisplay(displayio.Group):
             unit = "%d°C"
         
         return unit % temp
-
 
 
     def set_icon(self, name):
@@ -116,16 +119,27 @@ class WeatherDisplay(displayio.Group):
 
     
     def set_humidity(self, humidity):
-        pass
+        print('humidity?', humidity)
+        self.scroll_humidity.text = "%d%% humidity" % humidity
+
 
     def set_description(self, description_text):
         self.scroll_description.text = description_text
 
+
     def set_feels_like(self, feels_like):
         self.scroll_feels.text = "Feels Like " + self.get_temperature(feels_like)
 
+
     def set_date(self, date_text):
         self.scroll_date.text = date_text
+
+
+    def set_wind(self, wind):
+        if self.units == "imperial":
+            self.scroll_wind.text = "wind %d mph" % wind
+        else:
+            self.scroll_wind.text = "wind %d m/s" % wind
 
 
     def scroll_label(self):

@@ -1,10 +1,4 @@
-# Requires a settings.toml file with the following
-# settings in settings file:
-# TZ_OFFSET=<timezone offset> ie TZ_OFFSET=-5
-# WIFI_SSID="your ssid"
-# WIFI_PASSWORD="yoursupersecretpassword"
-# NTP_HOST="0.adafruit.pool.ntp.org"
-# NTP_INTERVAL=6  
+# UPDATE the settings.toml file before starting!
 
 # Following are imported from circuitpython 8.x
 import time
