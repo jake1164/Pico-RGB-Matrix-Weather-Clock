@@ -27,10 +27,7 @@ class DisplaySubsystem(displayio.Group):
         self.append(self._line1)
         self.append(self._line2)
         self.append(self._line3)    
-        #self.append(self._line_group)        
-        display.show(self._line_group)
 
-    #def showDateTimePage(self,line1,line2,line3):
     def showDateTimePage(self):
         self._line1.x = 2
         self._line1.y = 5
@@ -46,7 +43,6 @@ class DisplaySubsystem(displayio.Group):
         self._line3.text= dow
 
 
-    #def showSetListPage(self,line1,line2,_selectSettingOptions):
     def showSetListPage(self, selectSettingOptions):
         self._line3.text = ""
         self._line1.x = 8
@@ -66,7 +62,7 @@ class DisplaySubsystem(displayio.Group):
             self._line2.text = "12/24 HR"            
         if not self._first_enter_page:
             self._first_enter_page = True
-            
+        self.display.show(self._line_group)
 
     def timeSettingPage(self, timeSettingLabel):
         self._line1.text = ""
@@ -87,6 +83,7 @@ class DisplaySubsystem(displayio.Group):
         else:
             self._line3.x = 47
             self._line3.y = 24
+        self.display.show(self._line_group)
 
 
     def dateSettingPage(self, timeSettingLabel):
@@ -108,6 +105,7 @@ class DisplaySubsystem(displayio.Group):
         else:
             self._line3.x = 54
             self._line3.y = 24
+        self.display.show(self._line_group)
             
 
     def onOffPage(self, selectSettingOptions, beepFlag, autoLightFlag):
@@ -145,4 +143,5 @@ class DisplaySubsystem(displayio.Group):
                 self._line3.text = "  24 Hr"
             else:
                 self._line2.text = "  12 Hr"
-                self._line3.text = "> 24 Hr"                          
+                self._line3.text = "> 24 Hr"
+        self.display.show(self._line_group)

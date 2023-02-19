@@ -6,8 +6,7 @@
   * Better wifi support
     * When not connected open webserver with settings to connect via browser (app?)
     * Show icon in settings if connected / not connected?
-  * Change layout (Add layout) of screen to support more information than just clock
-    * Compile releases to mpy files
+  * Compile releases to mpy files
   * Add inline documention
 
 ## Layout Ideas

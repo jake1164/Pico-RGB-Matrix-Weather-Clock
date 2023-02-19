@@ -1,0 +1,64 @@
+OpenWeatherMap API Return examples.
+
+https://openweathermap.org/api/geocoding-api
+
+http://api.openweathermap.org/geo/1.0/direct?q={city name},{state code},{country code}&limit={limit}&appid={API key}
+
+#  Use by zip location.
+http://api.openweathermap.org/geo/1.0/zip?zip={zip code},{country code}&appid={API key}
+http://api.openweathermap.org/geo/1.0/zip?zip=08807,US&appid=xxx
+
+{
+    "zip":"08807",
+    "name":"Somerset County",
+    "lat":40.5904,
+    "lon":-74.6267,
+    "country":"US"
+}
+
+https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API key}
+https://api.openweathermap.org/data/2.5/weather?lat=40.5904&lon=-74.6267&units=imperial&appid=xxx
+
+{
+    "coord": {
+        "lon": -74.6258,
+        "lat": 40.5864
+    },
+    "weather": [
+        {
+            "id": 800,
+            "main": "Clear",
+            "description": "clear sky",
+            "icon": "01d"
+        }
+    ],
+    "base": "stations",
+    "main": {
+        "temp": 22.26,
+        "feels_like": 16.07,
+        "temp_min": 18.66,
+        "temp_max": 25.99,
+        "pressure": 1032,
+        "humidity": 40
+    },
+    "visibility": 10000,
+    "wind": {
+        "speed": 4.61,
+        "deg": 0
+    },
+    "clouds": {
+        "all": 0
+    },
+    "dt": 1675538167,
+    "sys": {
+        "type": 2,
+        "id": 2030554,
+        "country": "US",
+        "sunrise": 1675512333,
+        "sunset": 1675549154
+    },
+    "timezone": -18000,
+    "id": 5098617,
+    "name": "Green Knoll",
+    "cod": 200
+}

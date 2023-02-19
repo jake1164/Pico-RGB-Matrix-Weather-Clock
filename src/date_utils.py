@@ -1,19 +1,17 @@
-#import math
 import time
 import busio
 import board
-
 import adafruit_ds3231
-import ntp_client
+
 
 class DateTimeProcessing:
 
 
-    def __init__(self, format) -> None:
+    def __init__(self, format, network) -> None:
         self.DAYS_OF_WEEK = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday","Sunday" )
         self._MAX_DAYS = [None, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
         self._DAYS_BEFORE_MONTH = (None, 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334)
-
+        self.network = network
         self.time_format = format
         self.time = [0, 0, 0]
         self.date = [0, 0, 0]
@@ -23,15 +21,16 @@ class DateTimeProcessing:
 
     def update_from_ntp(self):
         try:
-            new_time = ntp_client.get_time()
+            new_time = self.network.get_time()
+            print(new_time)
             self.rtc.datetime = new_time
             print('updated RTC datetime')
         except Exception as e:
-            print(e)
+            print('update exception', e)
 
 
     def get_interval(self):
-        return ntp_client.get_interval()
+        return self.network.get_interval()
 
 
     def is_12hr(self):
@@ -65,10 +64,10 @@ class DateTimeProcessing:
             else:
                 hour = dt.tm_hour - 12
                 
-            time = "{:2d}:{:02d} {}".format(
+            time = "{:2d}:{:02d}{}".format(
                 hour,
                 dt.tm_min,
-                "PM" if dt.tm_hour > 11 else "AM")
+                "pm" if dt.tm_hour > 11 else "am")
         else: # 24 hour
             time = "%02d" % dt.tm_hour + ':' + "%02d" % dt.tm_min + ':' + "%02d" % dt.tm_sec
 
