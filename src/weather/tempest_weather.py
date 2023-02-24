@@ -32,13 +32,25 @@ class TempestWeather():
         #print(weather)
         if weather == {}:
             return
-        weather_display.set_temperature(self._convert_temperature(weather["obs"][0]["air_temperature"]))
-        weather_display.set_humidity(weather["obs"][0]["relative_humidity"])
-        weather_display.set_feels_like(self._convert_temperature(weather["obs"][0]["feels_like"]))
-        weather_display.set_wind(self._convert_windspeed(weather["obs"][0]["wind_avg"]))
+        
+        
+        if 'air_temperature' in weather['obs'][0].keys():
+            weather_display.set_temperature(self._convert_temperature(weather["obs"][0]["air_temperature"]))
+
+        if 'relative_humidity' in weather['obs'][0].keys():
+            weather_display.set_humidity(weather["obs"][0]["relative_humidity"])
+        if "feels_like" in weather["obs"][0].keys():
+            weather_display.set_feels_like(self._convert_temperature(weather["obs"][0]["feels_like"]))
+        if 'wind_avg' in weather['obs'][0].keys():
+            weather_display.set_wind(self._convert_windspeed(weather["obs"][0]["wind_avg"]))
         
         weather_display.show()
 
+
+    def _get_reading(self, field, weather):
+        if(field in weather['obs'][0].keys()):
+            return weather['obs'][0][field]
+        return None
 
     def _convert_temperature(self, celsius):
         if self._units == "imperial":
