@@ -1,7 +1,6 @@
 import terminalio
 import displayio
-import adafruit_display_text.label
-from date_utils import *
+from adafruit_display_text.label import Label
 
 
 class DisplaySubsystem(displayio.Group):
@@ -12,9 +11,9 @@ class DisplaySubsystem(displayio.Group):
         self._first_enter_page = True
         self._datetime = datetime_processing
 
-        line1 = adafruit_display_text.label.Label(terminalio.FONT, color=0x00DD00)
-        line2 = adafruit_display_text.label.Label(terminalio.FONT, color=0x00DDDD)
-        line3 = adafruit_display_text.label.Label(terminalio.FONT, color=0x0000DD)
+        line1 = Label(terminalio.FONT, color=0x00DD00)
+        line2 = Label(terminalio.FONT, color=0x00DDDD)
+        line3 = Label(terminalio.FONT, color=0x0000DD)
         line3.x = 12
         line3.y = 56
 

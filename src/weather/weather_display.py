@@ -1,9 +1,10 @@
 import time
+import gc
 import os
 import displayio
 from adafruit_display_text.label import Label
 from adafruit_bitmap_font import bitmap_font
-from adafruit_display_shapes.circle import Circle
+#from adafruit_display_shapes.circle import Circle
 
 class WeatherDisplay(displayio.Group):
     def __init__(self, display) -> None:
@@ -11,7 +12,6 @@ class WeatherDisplay(displayio.Group):
         self._display = display
         icon_spritesheet = "/images/weather-icons.bmp"
         small_font = "/fonts/helvB12.bdf"
-        #small_font = "/fonts/SteelfishRg-Regular-9.bdf"
         glyphs = b"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-,.: "
         self._current_label = None #index of current label
 
@@ -77,7 +77,7 @@ class WeatherDisplay(displayio.Group):
         )
 
         self.set_icon(None)
-
+        gc.collect()
 
     def set_temperature(self, temp):        
         self.temperature.text = self.get_temperature(temp)
@@ -112,6 +112,7 @@ class WeatherDisplay(displayio.Group):
             if row is not None:
                 self._icon_sprite[0] = (row * 2) + column
                 self._icon_group.append(self._icon_sprite)
+        gc.collect()
 
 
     def set_time(self, time_string):
