@@ -41,8 +41,11 @@ This project requires the use of a [Raspberry Pico W](https://www.raspberrypi.co
 This project requires that you use [circuitpython 8.x.x](https://circuitpython.org/board/raspberry_pi_pico_w/). 
 
 ## Libraries
-Circuit libraries are included in the lib folder, just copy them to the Pico. To update them you need to download the Adafruit 8.x-mpy Bundle from [here](https://circuitpython.org/libraries) and update the specific libraries required by the sample code. 
-
+Circuit libraries are included in the ./lib/src folder, just copy the ./src folder to the Pico. Most of the libraries are located on the 
+ CircuitPython [libraries](https://circuitpython.org/libraries) page. 
+ Notes: 
+ * The schedule library is located in the version 8.x Community Bundle. 
+ * The IR_RX library is located on [github](https://github.com/peterhinch/micropython_ir).
 
 ## Clock
 Connects to a Network Time Protocol server (0.adafruit.pool.ntp.org) and sets the onboard DS3231 RTC based on the time from the NTP response.
