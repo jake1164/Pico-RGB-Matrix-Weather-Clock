@@ -1,0 +1,17 @@
+on:
+  release:
+    typses: [published]
+    
+jobs:
+  upload-mpy-zips:
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout the current repo
+      uses: actions/checkout@v3
+      with:
+        submodules: true
+    - name: Run MPY Action
+      uses: adafruit/build-mpy@v1
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        circuitpy-tag: "8.0.3"
