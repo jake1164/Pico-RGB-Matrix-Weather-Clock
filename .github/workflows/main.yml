@@ -15,3 +15,4 @@ jobs:
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         circuitpy-tag: "8.0.3"
+        mpy-dirctory: "src"
