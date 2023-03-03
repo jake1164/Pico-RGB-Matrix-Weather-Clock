@@ -20,6 +20,7 @@ from network import WifiNetwork
 from weather.weather_factory import Factory
 from weather.weather_display import WeatherDisplay
 
+icon_spritesheet = "/images/weather-icons.bmp"
 time_format_flag = 0 # 12 or 24 (0 or 1) hour display.
 bit_depth_value = 1
 base_width = 64
@@ -52,14 +53,32 @@ matrix = RGBMatrix(
 # Associate the RGB matrix with a Display so that we can use displayio features
 display = framebufferio.FramebufferDisplay(matrix, auto_refresh=True)
 
-network = WifiNetwork() # TODO: catch exception and do something meaninful with it.
+#display a splash screen to hide the random text that appears.
+icons = displayio.OnDiskBitmap(open(icon_spritesheet, "rb"))
+splash = displayio.Group()
+splash.x = 24
+splash.y = 8
+bg = displayio.TileGrid(
+    icons,
+    pixel_shader=getattr(icons, 'pixel_shader', displayio.ColorConverter()),
+    tile_width=16,
+    tile_height=16
+)
+splash.append(bg)
+display.show(splash)
 
+try:
+    network = WifiNetwork() # TODO: catch exception and do something meaninful with it.
+except Exception as e:
+    print('Network exception?', e)
+    
 datetime = DateTimeProcessing(time_format_flag, network)
 showSystem = DisplaySubsystem(display, datetime)
 light_sensor = LightSensor(display)
 key_input = KeyProcessing(light_sensor, datetime)
 
-weather_display = WeatherDisplay(display)
+weather_display = WeatherDisplay(display, icons)
+
 try:
     if os.getenv('TEMPEST_ENABLE'):
         weather = Factory('TEMPEST', weather_display, datetime, network)

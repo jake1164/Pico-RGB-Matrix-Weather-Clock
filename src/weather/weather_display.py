@@ -7,10 +7,9 @@ from adafruit_bitmap_font import bitmap_font
 #from adafruit_display_shapes.circle import Circle
 
 class WeatherDisplay(displayio.Group):
-    def __init__(self, display) -> None:
+    def __init__(self, display, icons) -> None:
         super().__init__()
         self._display = display
-        icon_spritesheet = "/images/weather-icons.bmp"
         small_font = "/fonts/helvB12.bdf"
         glyphs = b"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-,.: "
         self._current_label = None #index of current label
@@ -21,10 +20,9 @@ class WeatherDisplay(displayio.Group):
         self._small_font.load_glyphs(glyphs)
         self._small_font.load_glyphs(("°",))
 
-        icons = displayio.OnDiskBitmap(open(icon_spritesheet, "rb"))
         icon_width = 16
         icon_height = 16
-        
+
         self.scroll_delay = 0.03
         self._current_icon = None
         self._scroll_array = []
