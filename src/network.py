@@ -57,15 +57,19 @@ class WifiNetwork:
 
     def getJson(self, url):
         try:
+            gc.collect()
+            print(f'get json from {url} \n free memoryt {gc.mem_free()}')
             pool = socketpool.SocketPool(wifi.radio)
             requests = adafruit_requests.Session(pool, ssl.create_default_context())
-            print('getting url:', url)
+            #print('getting url:', url)
             gc.collect()
-            print('free memory', gc.mem_free())
+            print('free memory after requests', gc.mem_free())
 
             response = requests.get(url, stream=True) 
-            print('free memory after', gc.mem_free())
+            print('free memory after get', gc.mem_free())
+            
             return response.json()
+        
         except Exception as e:
             print('Exception', e)
             gc.collect()

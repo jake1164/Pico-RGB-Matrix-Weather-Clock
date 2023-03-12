@@ -91,6 +91,7 @@ except Exception as e:
     print("Unable to configure weather, exiting")
     exit()
 
+print('baseline memory before starting network calls', gc.mem_free())
 
 #Update the clock when first starting.
 # TODO: Make async
@@ -105,7 +106,7 @@ if weather is not None:
 
 weather.show_weather()
 
-print('free memory', gc.mem_free())
+
 while True:
     light_sensor.check_light_sensor()
     if light_sensor.is_dimming():

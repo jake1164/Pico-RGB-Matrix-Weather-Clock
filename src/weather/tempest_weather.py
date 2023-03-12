@@ -1,6 +1,7 @@
 # Pulls weather from a the weatherflow api (from a tempest weather station) 
 # https://weatherflow.github.io/Tempest/api/ 
 import os
+import gc
 
 STATIONS_URL = 'https://swd.weatherflow.com/swd/rest/stations?token={}'
 URL = 'http://swd.weatherflow.com/swd/rest/observations/station/{}?token={}'
@@ -16,10 +17,13 @@ class TempestWeather():
         #self._url = BETTER_URL.format(station, token)
 
     def get_weather(self):
+        gc.collect()
+        print('free memory before calling getJson', gc.mem_free())
         weather = self._network.getJson(self._url)
         #print(weather)
         # TODO: reduce size of json data and purge gc
-
+        gc.collect()
+        print('free memory before returning weather from get_weather()', gc.mem_free())        
         return weather
 
 

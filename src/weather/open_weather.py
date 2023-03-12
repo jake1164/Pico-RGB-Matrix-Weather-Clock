@@ -1,6 +1,6 @@
 ## Pulls the weather from the openweathermap.org api. 
 import os
-
+import gc
 # NOTE: https seems to cause an issue but http works fine for this api
 GEO_URL = 'http://api.openweathermap.org/geo/1.0/zip?zip={},{}&appid={}'
 URL = 'http://api.openweathermap.org/data/2.5/weather?lat={}&lon={}&units={}&appid={}'
@@ -31,8 +31,12 @@ class OpenWeather():
 
 
     def get_weather(self):
+        gc.collect()
+        print('free memory before calling getJson', gc.mem_free())
         weather = self._network.getJson(self._url)
         #print(weather)
+        gc.collect()
+        print('free memory before returning weather from get_weather()', gc.mem_free())                
         # TODO: reduce size of json data and purge gc
         return weather
 
