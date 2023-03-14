@@ -29,11 +29,10 @@ class TempestWeather():
 
     def show_weather(self, weather_display):
         weather = self.get_weather()
-        #print(weather)
-        if weather == {}:
+        print(weather['obs'])
+        if weather == {} or weather['obs'] == None or len(weather['obs']) == 0:
             return
-        
-        
+                
         if 'air_temperature' in weather['obs'][0].keys():
             weather_display.set_temperature(self._convert_temperature(weather["obs"][0]["air_temperature"]))
 
