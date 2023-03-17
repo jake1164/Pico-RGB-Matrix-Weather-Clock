@@ -119,7 +119,6 @@ class WeatherDisplay(displayio.Group):
 
     
     def set_humidity(self, humidity):
-        print('humidity?', humidity)
         self.scroll_humidity.text = "%d%% humidity" % humidity
 
 
