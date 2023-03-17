@@ -82,10 +82,11 @@ class WeatherDisplay(displayio.Group):
 
 
     def get_temperature(self, temp):        
-        if self.units:
-            unit = "%d°F"
-        else:
+        if self.units == 'metric':
             unit = "%d°C"
+        else:
+            unit = "%d°F"
+            
         
         return unit % temp
 
@@ -118,7 +119,6 @@ class WeatherDisplay(displayio.Group):
 
     
     def set_humidity(self, humidity):
-        print('humidity?', humidity)
         self.scroll_humidity.text = "%d%% humidity" % humidity
 
 

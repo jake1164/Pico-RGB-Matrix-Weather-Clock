@@ -22,7 +22,6 @@ class DateTimeProcessing:
     def update_from_ntp(self):
         try:
             new_time = self.network.get_time()
-            print(new_time)
             self.rtc.datetime = new_time
             print('updated RTC datetime')
         except Exception as e:

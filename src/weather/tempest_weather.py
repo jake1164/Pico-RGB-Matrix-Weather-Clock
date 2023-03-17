@@ -29,7 +29,6 @@ class TempestWeather():
 
     def show_weather(self, weather_display):
         weather = self.get_weather()
-        #print(weather['obs'])
 
         if weather == {} or weather['obs'] == None or len(weather['obs']) == 0:
             weather_display.show()
