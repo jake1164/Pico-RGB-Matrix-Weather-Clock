@@ -82,10 +82,11 @@ class WeatherDisplay(displayio.Group):
 
 
     def get_temperature(self, temp):        
-        if self.units:
-            unit = "%d°F"
-        else:
+        if self.units == 'metric':
             unit = "%d°C"
+        else:
+            unit = "%d°F"
+            
         
         return unit % temp
 
