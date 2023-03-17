@@ -22,6 +22,9 @@ class OpenWeather():
         # TODO: Need some better error handling here
         geo_url = GEO_URL.format(zip, country, token)
         geo = self._network.getJson(geo_url)
+        if geo == None or geo == {}:
+            raise Exception('Unable to get geo')
+        
         return geo['lat'], geo['lon']
 
 
@@ -40,7 +43,11 @@ class OpenWeather():
     ''' Show just the current condtions and maps '''
     def show_secondary(self, display, weather=None):
         if not weather:
-            weather = self.get_weather()
+            weather = self.get_weather()        
+
+        if weather == None or weather == {} or len(weather["weather"]) == 0:
+            return
+            
         display.set_icon(weather["weather"][0]["icon"])
         display.set_description(weather["weather"][0]["description"])
         
@@ -48,8 +55,10 @@ class OpenWeather():
 
     ''' Show the weather and conditions from OWM '''
     def show_weather(self, display):
-        print('updating weather')
         weather = self.get_weather()
+
+        if weather == None or weather == {} or weather["main"] == None:
+            return
 
         display.set_temperature(weather["main"]["temp"])        
         display.set_humidity(weather["main"]["humidity"])
