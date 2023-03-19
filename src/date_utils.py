@@ -3,7 +3,6 @@ import busio
 import board
 import adafruit_ds3231
 
-
 class DateTimeProcessing:
 
 
@@ -20,8 +19,15 @@ class DateTimeProcessing:
 
 
     def update_from_ntp(self):
-        try:
-            new_time = self.network.get_time()
+        try:            
+            new_time = self.network.get_time()            
+
+            if self._settings.dst_adjust:
+                # struct_time is read only, convert to list and then back into struct.
+                new_time_writable = list(new_time)
+                new_time_writable[3] = (new_time_writable[3] + 1)%24
+                new_time = time.struct_time(tuple(new_time_writable))
+
             self.rtc.datetime = new_time
             print('updated RTC datetime')
         except Exception as e:

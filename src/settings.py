@@ -5,10 +5,10 @@ DEFAULT_SETTINGS = {
     "12HR": True,
     "BEEP": True,
     "AUTODIM": True,
-    "DARKMODE": True,
-    "DST_ADJUST": True,
-    "NIGHT_LEVEL": 1000,
-    "DIM_LEVEL": 2000 
+    #"DARKMODE": True,    # TODO - Add in when dark mode is implemented.
+    #"NIGHT_LEVEL": 1000,
+    #"DIM_LEVEL": 2000 
+    "DST_ADJUST": False
     }
 
 
@@ -74,11 +74,12 @@ class Settings:
 
     def persist_settings(self):
         if not self._disabled and self._dirty: 
-            with open(self._settings_file, 'w') as file:                
-                try:
+            try:
+                with open(self._settings_file, 'w') as file:                                
                     json.dump(self._settings, file)
-                except Exception as e:
-                    print('Unable to write file', e)
+            except Exception as e:
+                self._disabled = True
+                print('Unable to write file', e)
         
         self._dirty = False
         pass

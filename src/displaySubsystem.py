@@ -58,7 +58,9 @@ class DisplaySubsystem(displayio.Group):
         if selectSettingOptions == 3:
             self._line2.text = "AUTODIM"
         if selectSettingOptions == 4:
-            self._line2.text = "12/24 HR"            
+            self._line2.text = "12/24 HR"
+        if selectSettingOptions == 5:
+            self._line2.text = "APPLY DST"
         if not self._first_enter_page:
             self._first_enter_page = True
         self.display.show(self._line_group)
@@ -143,4 +145,16 @@ class DisplaySubsystem(displayio.Group):
             else:
                 self._line2.text = "  12 Hr"
                 self._line3.text = "> 24 Hr"
+        if selectSettingOptions == 5:
+            self._line2.x = 20
+            self._line2.y = 7
+            self._line3.x = 20
+            self._line3.y = 23
+            
+            if settings.dst_adjust:
+                self._line2.text = "> on"
+                self._line3.text = "  off"
+            else:
+                self._line2.text = "  on"
+                self._line3.text = "> off"                
         self.display.show(self._line_group)

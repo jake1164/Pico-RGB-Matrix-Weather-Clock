@@ -104,7 +104,7 @@ class KeyProcessing:
         if self.page_id == 1:
             self.select_setting_options -= 1
             if self.select_setting_options == -1:
-                self.select_setting_options = 4
+                self.select_setting_options = 5
         if self.page_id == 2:
             if self.select_setting_options == 0:
                 if self.time_setting_label == 0:
@@ -120,18 +120,19 @@ class KeyProcessing:
                     self._datetime.set_month(False)
                 else:
                     self._datetime.set_day(False)
-            if self.select_setting_options == 2:                
+            if self.select_setting_options == 2: # Buzzer Enable / Disable               
                 self._settings.beep = not self._settings.beep
-            if self.select_setting_options == 3:
+            if self.select_setting_options == 3: # Autodim (turn off screen)
                 self._settings.autodim = not self._settings.autodim
-            if self.select_setting_options == 4:
+            if self.select_setting_options == 4: # 12/24hr clock
                 self._settings.twelve_hr = not self._settings.twelve_hr
-
+            if self.select_setting_options == 5: # DST ajust
+                self._settings.dst_adjust = not self._settings.dst_adjust
 
     def key_up_processing_function(self):
         if self.page_id == 1:
             self.select_setting_options += 1
-            if self.select_setting_options == 5:
+            if self.select_setting_options == 6:
                 self.select_setting_options = 0
         if self.page_id == 2:
             if self.select_setting_options == 0:
@@ -154,3 +155,5 @@ class KeyProcessing:
                 self._settings.autodim = not self._settings.autodim
             if self.select_setting_options == 4:
                 self._settings.twelve_hr = not self._settings.twelve_hr
+            if self.select_setting_options == 5: # DST ajust
+                self._settings.dst_adjust = not self._settings.dst_adjust                
