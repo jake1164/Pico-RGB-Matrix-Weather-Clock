@@ -7,12 +7,12 @@ import adafruit_ds3231
 class DateTimeProcessing:
 
 
-    def __init__(self, format, network) -> None:
+    def __init__(self, settings, network) -> None:
         self.DAYS_OF_WEEK = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday","Sunday" )
         self._MAX_DAYS = [None, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
         self._DAYS_BEFORE_MONTH = (None, 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334)
         self.network = network
-        self.time_format = format
+        self._settings = settings
         self.time = [0, 0, 0]
         self.date = [0, 0, 0]
         i2c = busio.I2C(board.GP7,board.GP6)  # uses board.SCL and board.SDA
@@ -33,10 +33,7 @@ class DateTimeProcessing:
 
 
     def is_12hr(self):
-        if self.time_format == 0: # 12 hour            
-            return True
-        else:
-            return False
+        return self._settings.twelve_hr
 
 
     def toggle_time_format(self):

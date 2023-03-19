@@ -107,14 +107,14 @@ class DisplaySubsystem(displayio.Group):
         self.display.show(self._line_group)
             
 
-    def onOffPage(self, selectSettingOptions, beepFlag, autoLightFlag):
+    def onOffPage(self, selectSettingOptions, settings):
         self._line1.text = ""
         if selectSettingOptions == 2:
             self._line2.x = 20
             self._line2.y = 7
             self._line3.x = 20
             self._line3.y = 23
-            if beepFlag:
+            if settings.beep:
                 self._line2.text = "> on"
                 self._line3.text = "  off"
             else:
@@ -126,7 +126,7 @@ class DisplaySubsystem(displayio.Group):
             self._line3.x = 20
             self._line3.y = 23
             
-            if autoLightFlag:
+            if settings.autodim:
                 self._line2.text = "> on"
                 self._line3.text = "  off"
             else:

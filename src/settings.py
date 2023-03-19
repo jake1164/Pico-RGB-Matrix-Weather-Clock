@@ -17,9 +17,11 @@ class Settings:
         self._SETTINGS_FOLDER = '.settings'
         SETTINGS_FILE = 'settings.json'
         self._settings_file = f'{self._SETTINGS_FOLDER}/{SETTINGS_FILE}'
+        self._dirty = False
 
         try:
             self._settings = self._load_settings()
+            self._disabled = False
         except:
             self._settings = DEFAULT_SETTINGS
             self._disabled = True 
@@ -29,10 +31,8 @@ class Settings:
         # If the file does not exists, create it with the defaults
         # Need to handle loading an older file                
         if self._SETTINGS_FOLDER not in os.listdir():
-            print('creating default settings')
             self._create_settings(DEFAULT_SETTINGS)
 
-        print('loading content')
         with open(self._settings_file, 'r') as file:
             stuff = json.load(file)
             # Validate settings.
@@ -47,16 +47,12 @@ class Settings:
         # Same number of settings
         valid = len(settings) == len(content) 
         
-        print('before', settings)
         # Settings that are in are valid
         for k,v in content.items():
-            #print('content', k, v)
             if k in settings and type(v) == type(settings[k]):
                 settings[k] = v
             else:
                 valid = False
-
-        print(f'after valid: {valid}', settings)
 
         if not valid: # Something wonky, replace the file.
             self._create_settings(settings)
@@ -64,22 +60,12 @@ class Settings:
         return settings
 
     def _create_settings(self, content):                
-        # File was found corrupt, remove folder if it exists and start over.
-        #if self._SETTINGS_FOLDER in os.listdir():
-        #    print('removing .settings')
-        #    try:
-        #        os.rmdir(self._SETTINGS_FOLDER)
-        #    except Exception as e:
-        #        print('Error removing directory?', e)
-
-        print('creating .settings')
         # Create a new folder and settings file based on the passed in content.
         if self._SETTINGS_FOLDER not in os.listdir():
             os.mkdir(self._SETTINGS_FOLDER)
 
         # create / replace the file.
         with open(self._settings_file, 'w') as file:
-            print('creating file with content', content)
             try:
                 json.dump(content, file)
             except Exception as e:
@@ -87,26 +73,76 @@ class Settings:
 
 
     def persist_settings(self):
+        if not self._disabled and self._dirty: 
+            with open(self._settings_file, 'w') as file:                
+                try:
+                    json.dump(self._settings, file)
+                except Exception as e:
+                    print('Unable to write file', e)
+        
+        self._dirty = False
         pass
 
-
-    def get_12hr(self):
+    #### Settings are accessed via properties.
+    @property
+    def twelve_hr(self):
         return self._settings['12HR']
     
-    def get_beep(self):
+    @twelve_hr.setter
+    def twelve_hr(self, val):
+        self._dirty = True
+        self._settings['12HR'] = val
+    
+    @property
+    def beep(self):
         return self._settings['BEEP']
 
-    def get_dst_adjust(self):
+    @beep.setter
+    def beep(self, val):
+        self._dirty = True
+        self._settings['BEEP'] = val
+    
+    @property
+    def dst_adjust(self):
         return self._settings['DST_ADJUST']
+    
+    @dst_adjust.setter
+    def dst_adjust(self, val):
+        self._dirty = True
+        self._settings['DST_ADJUST'] = val
         
-    def get_autodim(self):
+    @property    
+    def autodim(self):
         return self._settings['AUTODIM']
     
-    def get_dark_mode(self):
-        return self._settings['DARKMODE']
+    @autodim.setter
+    def autodim(self, val):
+        self._dirty = True
+        self._settings['AUTODIM'] = val
         
-    def get_night_level(self):
+    @property
+    def dark_mode(self):
+        return self._settings['DARKMODE']
+    
+    @dark_mode.setter
+    def dark_mode(self, val):
+        self._dirty = True
+        self._settings['DARKMODE'] = val
+        
+    @property
+    def night_level(self):
         return self._settings['NIGHT_LEVEL']
     
-    def get_dim_level(self):
+    @night_level.setter
+    def night_level(self, val):
+        self._dirty = True
+        self._settings['NIGHT_LEVEL'] = val
+        
+    @property
+    def dim_level(self):
         return self._settings['DIM_LEVEL']
+
+    @dim_level.setter
+    def dim_level(self, val):
+        self._dirty = True
+        self._settings['DIM_LEVEL'] = val

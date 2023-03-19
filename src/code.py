@@ -19,6 +19,7 @@ from light_sensor import LightSensor
 from network import WifiNetwork
 from weather.weather_factory import Factory
 from weather.weather_display import WeatherDisplay
+from settings import Settings
 
 icon_spritesheet = "/images/weather-icons.bmp"
 time_format_flag = 0 # 12 or 24 (0 or 1) hour display.
@@ -71,11 +72,15 @@ try:
     network = WifiNetwork() # TODO: catch exception and do something meaninful with it.
 except Exception as e:
     print('Network exception?', e)
-    
-datetime = DateTimeProcessing(time_format_flag, network)
+
+# TODO: Display wifi config icon 
+
+settings = Settings()
+
+datetime = DateTimeProcessing(settings, network)
 showSystem = DisplaySubsystem(display, datetime)
-light_sensor = LightSensor(display)
-key_input = KeyProcessing(light_sensor, datetime)
+light_sensor = LightSensor(settings, display)
+key_input = KeyProcessing(settings, datetime)
 
 weather_display = WeatherDisplay(display, icons)
 
@@ -129,6 +134,5 @@ while True:
     if key_input.page_id == 2 and key_input.select_setting_options > 1:
         showSystem.onOffPage(
             key_input.select_setting_options, 
-            key_input._buzzer.enabled, 
-            light_sensor.auto_dimming
+            settings
         )
