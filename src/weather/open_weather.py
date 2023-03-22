@@ -42,27 +42,36 @@ class OpenWeather():
 
     ''' Show just the current condtions and maps '''
     def show_secondary(self, display, weather=None):
-        if not weather:
-            weather = self.get_weather()        
+        try:
+            if not weather:
+                weather = self.get_weather()        
 
-        if weather == None or weather == {} or len(weather["weather"]) == 0:
-            return
+            if weather == None or weather == {} or len(weather["weather"]) == 0:
+                return
             
-        display.set_icon(weather["weather"][0]["icon"])
-        display.set_description(weather["weather"][0]["description"])
-        
+            display.set_icon(weather["weather"][0]["icon"])
+            display.set_description(weather["weather"][0]["description"])
+        except Exception as ex:
+            print('Unable to display secondary info', ex)
 
 
     ''' Show the weather and conditions from OWM '''
     def show_weather(self, display):
-        weather = self.get_weather()
+        try:
+            weather = self.get_weather()
+        except Exception as ex:
+            print('Unable to get weather', ex)
+            weather = None
 
         if weather == None or weather == {} or weather["main"] == None:
             return
-
-        display.set_temperature(weather["main"]["temp"])        
-        display.set_humidity(weather["main"]["humidity"])
-        display.set_feels_like(weather["main"]["feels_like"])
-        display.set_wind(weather["wind"]["speed"])
-        self.show_secondary(display, weather)
-        display.show()
+        try:
+            display.set_temperature(weather["main"]["temp"])        
+            display.set_humidity(weather["main"]["humidity"])
+            display.set_feels_like(weather["main"]["feels_like"])
+            display.set_wind(weather["wind"]["speed"])
+            self.show_secondary(display, weather)
+        except Exception as e:
+            print('Unable to display weather', e)
+        finally:
+            display.show()
