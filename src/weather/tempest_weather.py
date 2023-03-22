@@ -28,23 +28,30 @@ class TempestWeather():
         return 20
 
     def show_weather(self, weather_display):
-        weather = self.get_weather()
+        try:
+            weather = self.get_weather()
+        except Exception as ex:
+            print('unable to get weather', ex)
+            weather = None
 
         if weather == {} or weather['obs'] == None or len(weather['obs']) == 0:
             weather_display.show()
             return
-                
-        if 'air_temperature' in weather['obs'][0].keys():
-            weather_display.set_temperature(self._convert_temperature(weather["obs"][0]["air_temperature"]))
 
-        if 'relative_humidity' in weather['obs'][0].keys():
-            weather_display.set_humidity(weather["obs"][0]["relative_humidity"])
-        if "feels_like" in weather["obs"][0].keys():
-            weather_display.set_feels_like(self._convert_temperature(weather["obs"][0]["feels_like"]))
-        if 'wind_avg' in weather['obs'][0].keys():
-            weather_display.set_wind(self._convert_windspeed(weather["obs"][0]["wind_avg"]))
-        
-        weather_display.show()
+        try:                
+            if 'air_temperature' in weather['obs'][0].keys():
+                weather_display.set_temperature(self._convert_temperature(weather["obs"][0]["air_temperature"]))
+
+            if 'relative_humidity' in weather['obs'][0].keys():
+                weather_display.set_humidity(weather["obs"][0]["relative_humidity"])
+            if "feels_like" in weather["obs"][0].keys():
+                weather_display.set_feels_like(self._convert_temperature(weather["obs"][0]["feels_like"]))
+            if 'wind_avg' in weather['obs'][0].keys():
+                weather_display.set_wind(self._convert_windspeed(weather["obs"][0]["wind_avg"]))
+        except Exception as ex:
+            print('Unable to display weather', ex)
+        finally:        
+            weather_display.show()
 
 
     def _get_reading(self, field, weather):
