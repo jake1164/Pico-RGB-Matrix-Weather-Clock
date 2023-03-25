@@ -1,11 +1,10 @@
 import board
 import digitalio
-from buzzer import Buzzer
 
 class KeyProcessing:
     """ Key processing is all handled with the KeyProcessing class
     """
-    def __init__(self, settings, date_processing) -> None:
+    def __init__(self, settings, date_processing, buzzer) -> None:
         """ 
             Initiates the keys used by the board. 
             Might move these to variables to 
@@ -20,14 +19,14 @@ class KeyProcessing:
         self._key_pin_array = []
         self._datetime = date_processing
         self._settings = settings
+        self._buzzer = buzzer
 
         # used outside of this class
         self.page_id = 0
         self.time_setting_label = 0
         self.select_setting_options = 0
 
-        # Initialize other methods
-        self._buzzer = Buzzer(settings)
+        # Initialize other methods        
         self._key_init(_KEYPRESS_PINS)
 
 

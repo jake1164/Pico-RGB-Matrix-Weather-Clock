@@ -3,7 +3,7 @@ import json
 
 DEFAULT_SETTINGS = {
     "12HR": True,
-    "BEEP": True,
+    "BEEP": False,
     "AUTODIM": True,
     #"DARKMODE": True,    # TODO - Add in when dark mode is implemented.
     #"NIGHT_LEVEL": 1000,

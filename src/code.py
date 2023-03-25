@@ -20,6 +20,7 @@ from network import WifiNetwork
 from weather.weather_factory import Factory
 from weather.weather_display import WeatherDisplay
 from settings import Settings
+from buzzer import Buzzer
 
 icon_spritesheet = "/images/weather-icons.bmp"
 time_format_flag = 0 # 12 or 24 (0 or 1) hour display.
@@ -76,11 +77,12 @@ except Exception as e:
 # TODO: Display wifi config icon 
 
 settings = Settings()
+buzzer = Buzzer(settings)
 
 datetime = DateTimeProcessing(settings, network)
 showSystem = DisplaySubsystem(display, datetime)
 light_sensor = LightSensor(settings, display)
-key_input = KeyProcessing(settings, datetime)
+key_input = KeyProcessing(settings, datetime, buzzer)
 
 weather_display = WeatherDisplay(display, icons)
 
@@ -123,8 +125,9 @@ while True:
     if key_input.page_id == 0:
         #showSystem.showDateTimePage()
         weather.show_datetime()
-        schedule.run_pending()
-        weather.scroll_label() # Scroll pending uses sleeps to scroll and makes button presses impossible currently
+        if not buzzer.is_beeping(): #This is a hack to try to stop buzzer from buzzing while doing something that might hang.
+            schedule.run_pending()
+            weather.scroll_label() # Scroll pending uses sleeps to scroll and makes button presses impossible currently
     if key_input.page_id == 1:
         showSystem.showSetListPage(key_input.select_setting_options)        
     if key_input.page_id == 2 and key_input.select_setting_options == 0:

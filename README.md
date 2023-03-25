@@ -88,4 +88,4 @@ to your .vscode.json config file.
 ```
 
 # KNOWN ISSUES
-* Pressing settings button is hard due to sleeps in scrolling label.
+* Pressing settings button is hard due to sleeps in scrolling label. To get into settings you have to keep pressing the buttons.

@@ -22,16 +22,19 @@ class Buzzer:
         self._buzzer.value = False
 
     def judgment_buzzer_switch(self):    
-        if self._settings.beep and self._start_beep:
+        if self.is_beeping():
             self.buzzer_start()
         self._start_beep = True
 
     def three_beep(self):
         """ beep over the cource of 3 ticks """
-        if self._settings.beep and self._start_beep:
+        if self.is_beeping():
             self.judgment_buzzer_switch()
             self.beep_count += 1
             if self.beep_count == 3:
                 self.buzzer_stop()
                 self.beep_count = 0
                 self._start_beep = False
+
+    def is_beeping(self):
+        return self._start_beep and self._settings.beep
