@@ -34,6 +34,19 @@ Requires a settings.toml file with the following settings in settings file:
 * OWM_ZIP="zip/post code"
 * OWM_COUNTRY="US" # Please use ISO 3166 country codes
 
+## Persistant Settings
+To enable in application settings you must rename the _boot.py file to boot.py and place it on your device.  
+
+With this setting enabled any changes to the in menu setting ( Buzzer/ Autodim / 12/24 hr clock / DST Adjust ) will persist when you turn the device off and turn it back on again. 
+
+Settings:
+* APPLY DST - Moves time ahead by 1 hour (you must manually turn it on and off) ** Only Works with NTP enabled **
+* BEEP SET - Turns the beeping for button presses on and off 
+* AUTODIM - When the light sensor detects its dark it will dim the display (turn the LED display off). 
+* 12/24 HR - Changes the clock between 12 and 24 hour display.
+
+**NOTE** When boot.py is enabled the drive becomes read only for your computer, to make changes you must hold down the menu / KEY0 button (Bottom button) when you turn on the device. This setting is only read at boot and restarting will have no effect on this setting. 
+
 ## Board
 This project requires the use of a [Raspberry Pico W](https://www.raspberrypi.com/products/raspberry-pi-pico/) to use the WIFI for getting information for displaying on the screen such as updated time, and eventually local weather. (api to be defined soon)
 
@@ -75,4 +88,4 @@ to your .vscode.json config file.
 ```
 
 # KNOWN ISSUES
-* Pressing settings button is hard due to sleeps in scrolling label.
+

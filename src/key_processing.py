@@ -1,11 +1,10 @@
 import board
 import digitalio
-from buzzer import Buzzer
 
 class KeyProcessing:
     """ Key processing is all handled with the KeyProcessing class
     """
-    def __init__(self, light_sensor, date_processing) -> None:
+    def __init__(self, settings, date_processing, buzzer) -> None:
         """ 
             Initiates the keys used by the board. 
             Might move these to variables to 
@@ -19,15 +18,17 @@ class KeyProcessing:
         self._key_up_value = 0
         self._key_pin_array = []
         self._datetime = date_processing
+        self._settings = settings
+        self._buzzer = buzzer
+        self._dst_adjusted = False
+        self._dst_setting = self._settings.dst_adjust
 
         # used outside of this class
         self.page_id = 0
         self.time_setting_label = 0
         self.select_setting_options = 0
 
-        # Initialize other methods
-        self._buzzer = Buzzer()
-        self._light_sensor = light_sensor 
+        # Initialize other methods        
         self._key_init(_KEYPRESS_PINS)
 
 
@@ -55,8 +56,12 @@ class KeyProcessing:
             self._key_up_value += 1
 
         self._buzzer.three_beep() # Short beep that a key press was made
+        #print(f'key_processing - key: {keyValue} menu: {self._key_menu_value}')
 
-        if self._key_menu_value > 0 and self._key_menu_value < 20 and keyValue == None:
+        # I think the premise is they wait for none to tell if the key has been released, but it only really relates to key 3
+        # Without the None key it will keypress twice. 
+        #if self._key_menu_value > 0 and self._key_menu_value < 20 and keyValue == None:        
+        if self._key_menu_value > 0 and keyValue == None:        
             self.key_menu_processing_function()
             self._buzzer.judgment_buzzer_switch() # When the menu exits it beeps also
             self._key_menu_value = 0
@@ -74,18 +79,24 @@ class KeyProcessing:
             self.key_up_processing_function()
             self._buzzer.judgment_buzzer_switch()
             self._key_up_value = 0
-        elif self._key_up_value >= 20 and keyValue == None:
+        elif self._key_up_value >= 20 and keyValue == None: # if keydown is >20 then would it exit for you?
             self.key_exit_processing_function()
             self._buzzer.judgment_buzzer_switch()
             self._key_up_value = 0
 
-    def key_exit_processing_function(self):
+    def key_exit_processing_function(self):        
         if self.page_id == 2 and self.select_setting_options <= 1:
             self._datetime.set_datetime(self.select_setting_options)
-            self.time_setting_label = 0
+            self.time_setting_label = 0   
         self.page_id -= 1
         if self.page_id < 0:
-            self.page_id = 0            
+            self.page_id = 0
+        if self.page_id == 0:
+            if self._dst_adjusted:
+                self._datetime.update_from_ntp()
+                self._dst_setting = self._settings.dst_adjust
+                self._dst_adjusted = False
+            self._settings.persist_settings()
 
 
     def key_menu_processing_function(self):
@@ -102,7 +113,7 @@ class KeyProcessing:
         if self.page_id == 1:
             self.select_setting_options -= 1
             if self.select_setting_options == -1:
-                self.select_setting_options = 4
+                self.select_setting_options = 5
         if self.page_id == 2:
             if self.select_setting_options == 0:
                 if self.time_setting_label == 0:
@@ -118,18 +129,20 @@ class KeyProcessing:
                     self._datetime.set_month(False)
                 else:
                     self._datetime.set_day(False)
-            if self.select_setting_options == 2:                
-                self._buzzer.toggle_enable_buzzer()
-            if self.select_setting_options == 3:
-                self._light_sensor.toggle_auto_dimming()
-            if self.select_setting_options == 4:
-                self._datetime.toggle_time_format()
-
+            if self.select_setting_options == 2: # Buzzer Enable / Disable               
+                self._settings.beep = not self._settings.beep
+            if self.select_setting_options == 3: # Autodim (turn off screen)
+                self._settings.autodim = not self._settings.autodim
+            if self.select_setting_options == 4: # 12/24hr clock
+                self._settings.twelve_hr = not self._settings.twelve_hr
+            if self.select_setting_options == 5: # DST ajust
+                self._settings.dst_adjust = not self._settings.dst_adjust
+                self._dst_adjusted = True
 
     def key_up_processing_function(self):
         if self.page_id == 1:
             self.select_setting_options += 1
-            if self.select_setting_options == 5:
+            if self.select_setting_options == 6:
                 self.select_setting_options = 0
         if self.page_id == 2:
             if self.select_setting_options == 0:
@@ -147,8 +160,11 @@ class KeyProcessing:
                 else:
                     self._datetime.set_day(True)
             if self.select_setting_options == 2:
-                self._buzzer.toggle_enable_buzzer()
+                self._settings.beep = not self._settings.beep
             if self.select_setting_options == 3:
-                self._light_sensor.toggle_auto_dimming()
+                self._settings.autodim = not self._settings.autodim
             if self.select_setting_options == 4:
-                self._datetime.toggle_time_format()
+                self._settings.twelve_hr = not self._settings.twelve_hr
+            if self.select_setting_options == 5: # DST ajust
+                self._settings.dst_adjust = not self._settings.dst_adjust
+                self._dst_adjusted = True

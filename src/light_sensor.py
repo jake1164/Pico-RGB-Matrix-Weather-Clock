@@ -2,10 +2,10 @@ import board
 from analogio import AnalogIn
 
 class LightSensor:
-    def __init__(self, display) -> None:
+    def __init__(self, settings, display) -> None:
         self.LIGHT_THRESHOLD = 2800 # Lower the value the brighter the light.
+        self._settings = settings
         self._display = display
-        self.auto_dimming = True
         self._analog_in = AnalogIn(board.GP26)
         self._dimming = False
 
@@ -20,7 +20,7 @@ class LightSensor:
 
     def check_light_sensor(self):
         """ Get the voltag and if its above a threshold then turn the display off """
-        if self.auto_dimming:
+        if self._settings.autodim:
             # TODO: need to do some sort of debouncing here. 
             light = self._get_voltage()
             if not self._dimming and light > self.LIGHT_THRESHOLD:
@@ -38,7 +38,3 @@ class LightSensor:
             self._display.brightness = 0.0
         else:
             self._display.brightness = 0.1
-
-
-    def toggle_auto_dimming(self):
-        self.auto_dimming = not self.auto_dimming
