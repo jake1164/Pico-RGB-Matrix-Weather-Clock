@@ -1,0 +1,3 @@
+# Exclude the boot.py file because it will be ignored if its compiled.
+
+_boot.py
