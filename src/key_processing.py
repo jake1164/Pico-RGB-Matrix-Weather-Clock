@@ -20,6 +20,8 @@ class KeyProcessing:
         self._datetime = date_processing
         self._settings = settings
         self._buzzer = buzzer
+        self._dst_adjusted = False
+        self._dst_setting = self._settings.dst_adjust
 
         # used outside of this class
         self.page_id = 0
@@ -90,6 +92,10 @@ class KeyProcessing:
         if self.page_id < 0:
             self.page_id = 0
         if self.page_id == 0:
+            if self._dst_adjusted:
+                self._datetime.update_from_ntp()
+                self._dst_setting = self._settings.dst_adjust
+                self._dst_adjusted = False
             self._settings.persist_settings()
 
 
@@ -131,6 +137,7 @@ class KeyProcessing:
                 self._settings.twelve_hr = not self._settings.twelve_hr
             if self.select_setting_options == 5: # DST ajust
                 self._settings.dst_adjust = not self._settings.dst_adjust
+                self._dst_adjusted = True
 
     def key_up_processing_function(self):
         if self.page_id == 1:
@@ -159,4 +166,5 @@ class KeyProcessing:
             if self.select_setting_options == 4:
                 self._settings.twelve_hr = not self._settings.twelve_hr
             if self.select_setting_options == 5: # DST ajust
-                self._settings.dst_adjust = not self._settings.dst_adjust                
+                self._settings.dst_adjust = not self._settings.dst_adjust
+                self._dst_adjusted = True
