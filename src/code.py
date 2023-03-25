@@ -121,13 +121,13 @@ while True:
     key_value = key_input.get_key_value()
     # TODO: key processing should return the page being displayed
     key_input.key_processing(key_value)
-    
+
+
     if key_input.page_id == 0:
-        #showSystem.showDateTimePage()
         weather.show_datetime()
         if not buzzer.is_beeping(): #This is a hack to try to stop buzzer from buzzing while doing something that might hang.
             schedule.run_pending()
-            weather.scroll_label() # Scroll pending uses sleeps to scroll and makes button presses impossible currently
+            weather.scroll_label(key_input) 
     if key_input.page_id == 1:
         showSystem.showSetListPage(key_input.select_setting_options)        
     if key_input.page_id == 2 and key_input.select_setting_options == 0:

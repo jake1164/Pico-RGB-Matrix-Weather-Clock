@@ -45,7 +45,7 @@ class Weather():
         return self._primary.get_update_interval()
 
 
-    def scroll_label(self):
-        self._display.scroll_label()
+    def scroll_label(self, key_input):
+        self._display.scroll_label(key_input)
 
 

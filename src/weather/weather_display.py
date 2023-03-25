@@ -141,12 +141,19 @@ class WeatherDisplay(displayio.Group):
             self.scroll_wind.text = "wind %d m/s" % wind
 
 
-    def scroll_label(self):
+    def scroll_label(self, key_input):
+        '''
+        Scrolls the label until all the text has been shown
+        TODO: Includes a hack to check if a button has been pressed to exit early because user is trying to get into the settings menu.
+        '''
         if self._current_label is not None and self._scrolling_group:
             current_text = self._scroll_array[self._current_label]
             text_width = current_text.bounding_box[2]
             for _ in range(text_width + 1):
                 self._scrolling_group.x = self._scrolling_group.x - 1
+                
+                if not key_input.get_key_value():
+                    return
                 time.sleep(self.scroll_delay)
 
         if self._current_label is not None:
@@ -165,7 +172,9 @@ class WeatherDisplay(displayio.Group):
         self._scrolling_group.y = 25
 
         for _ in range(self._display.width):
-            self._scrolling_group.x = self._scrolling_group.x - 1
+            self._scrolling_group.x = self._scrolling_group.x - 1            
+            if not key_input.get_key_value():
+                return
             time.sleep(self.scroll_delay)
 
     def show(self):
