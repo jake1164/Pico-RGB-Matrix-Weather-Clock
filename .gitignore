@@ -131,4 +131,6 @@ dmypy.json
 .picowgo
 .vscode
 
+# Settings Files
 /src/settings.toml
+boot.py
