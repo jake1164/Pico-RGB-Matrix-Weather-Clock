@@ -38,8 +38,8 @@ class Weather():
         self._display.set_time(self._datetime.get_time())
         self._display.set_date(
             self._datetime.get_date()
-        )        
-
+        )
+        self._display.show()
 
     def get_update_interval(self):
         return self._primary.get_update_interval()

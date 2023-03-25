@@ -151,8 +151,7 @@ class WeatherDisplay(displayio.Group):
             text_width = current_text.bounding_box[2]
             for _ in range(text_width + 1):
                 self._scrolling_group.x = self._scrolling_group.x - 1
-                
-                if not key_input.get_key_value():
+                if key_input.get_key_value() is not None:
                     return
                 time.sleep(self.scroll_delay)
 
@@ -173,7 +172,8 @@ class WeatherDisplay(displayio.Group):
 
         for _ in range(self._display.width):
             self._scrolling_group.x = self._scrolling_group.x - 1            
-            if not key_input.get_key_value():
+
+            if key_input.get_key_value() is not None:                
                 return
             time.sleep(self.scroll_delay)
 

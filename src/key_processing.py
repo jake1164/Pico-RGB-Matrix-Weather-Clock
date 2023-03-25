@@ -54,8 +54,12 @@ class KeyProcessing:
             self._key_up_value += 1
 
         self._buzzer.three_beep() # Short beep that a key press was made
+        #print(f'key_processing - key: {keyValue} menu: {self._key_menu_value}')
 
-        if self._key_menu_value > 0 and self._key_menu_value < 20 and keyValue == None:
+        # I think the premise is they wait for none to tell if the key has been released, but it only really relates to key 3
+        # Without the None key it will keypress twice. 
+        #if self._key_menu_value > 0 and self._key_menu_value < 20 and keyValue == None:        
+        if self._key_menu_value > 0 and keyValue == None:        
             self.key_menu_processing_function()
             self._buzzer.judgment_buzzer_switch() # When the menu exits it beeps also
             self._key_menu_value = 0

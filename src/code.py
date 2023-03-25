@@ -118,14 +118,12 @@ while True:
     if light_sensor.is_dimming():
         continue
 
-    key_value = key_input.get_key_value()
-    # TODO: key processing should return the page being displayed
+    key_value = key_input.get_key_value()    
     key_input.key_processing(key_value)
-
-
-    if key_input.page_id == 0:
+    
+    if key_value is None and key_input.page_id == 0:
         weather.show_datetime()
-        if not buzzer.is_beeping(): #This is a hack to try to stop buzzer from buzzing while doing something that might hang.
+        if not buzzer.is_beeping(): #This is a hack to try to stop buzzer from buzzing while doing something that might hang.            
             schedule.run_pending()
             weather.scroll_label(key_input) 
     if key_input.page_id == 1:
