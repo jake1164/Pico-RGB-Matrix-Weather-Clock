@@ -40,7 +40,7 @@ To enable in application settings you must rename the _boot.py file to boot.py a
 With this setting enabled any changes to the in menu setting ( Buzzer/ Autodim / 12/24 hr clock / DST Adjust ) will persist when you turn the device off and turn it back on again. 
 
 Settings:
-* APPLY DST - Moves time ahead by 1 hour (you must manually turn it on and off)
+* APPLY DST - Moves time ahead by 1 hour (you must manually turn it on and off) ** Only Works with NTP enabled **
 * BEEP SET - Turns the beeping for button presses on and off 
 * AUTODIM - When the light sensor detects its dark it will dim the display (turn the LED display off). 
 * 12/24 HR - Changes the clock between 12 and 24 hour display.
