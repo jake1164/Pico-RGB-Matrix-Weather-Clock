@@ -8,6 +8,7 @@ class DateTimeProcessing:
 
     def __init__(self, settings, network) -> None:
         self.DAYS_OF_WEEK = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday","Sunday" )
+        self.MONTHS = ("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")
         self._MAX_DAYS = [None, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
         self._DAYS_BEFORE_MONTH = (None, 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334)
         self.network = network
@@ -51,7 +52,9 @@ class DateTimeProcessing:
 
     def get_date(self):
         dt = self.rtc.datetime
-        return "%04d" % dt.tm_year + '-' + "%02d" % dt.tm_mon + '-' + "%02d" % dt.tm_mday
+        # DOW MON DD, YYYY
+        return f'{self.get_dow(dt)} {self.get_month(dt)} {dt.tm_mday:02d}, {dt.tm_year:02d}'# "%04d" % dt.tm_year + '-' + "%02d" % dt.tm_mon + '-' + "%02d" % dt.tm_mday
+        #return "%04d" % dt.tm_year + '-' + "%02d" % dt.tm_mon + '-' + "%02d" % dt.tm_mday
 
 
     def get_time(self):
@@ -96,10 +99,15 @@ class DateTimeProcessing:
         return "%02d" % self.date[0] + '-' + "%02d" % self.date[1] + '-' + "%02d" % self.date[2]
 
 
-    def get_dow(self):
-        time = self.rtc.datetime
-        return self.DAYS_OF_WEEK[int(time.tm_wday)]
+    def get_dow(self, datetime):
+        if datetime is None:
+            datetime = self.rtc.datetime
+        return self.DAYS_OF_WEEK[int(datetime.tm_wday)]
 
+    def get_month(self, datetime):
+        if datetime is None:
+            datetime = self.rtc.datetime
+        return self.MONTHS[int(datetime.tm_mon)]
 
     def set_hour(self, increment):
         if increment:

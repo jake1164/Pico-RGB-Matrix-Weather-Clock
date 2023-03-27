@@ -23,7 +23,7 @@ Implementation Notes
 
 """
 
-__version__ = "2.24.0"
+__version__ = "2.28.1"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_Display_Text.git"
 
 import time
@@ -41,7 +41,7 @@ class ScrollingLabel(bitmap_label.Label):
     in order to show the full text if it's larger than the fixed-width.
 
     :param font: The font to use for the label.
-    :type: ~FontProtocol
+    :type: ~fontio.FontProtocol
     :param int max_characters: The number of characters that sets the fixed-width. Default is 10.
     :param str text: The full text to show in the label. If this is longer than
      ``max_characters`` then the label will scroll to show everything.
@@ -86,7 +86,7 @@ class ScrollingLabel(bitmap_label.Label):
         if force or self._last_animate_time + self.animate_time <= _now:
 
             if len(self.full_text) <= self.max_characters:
-                self.text = self.full_text
+                super()._set_text(self.full_text, self.scale)
                 self._last_animate_time = _now
                 return
 
@@ -106,8 +106,7 @@ class ScrollingLabel(bitmap_label.Label):
                 _showing_string = "{}{}".format(
                     _showing_string_start, _showing_string_end
                 )
-            self.text = _showing_string
-
+            super()._set_text(_showing_string, self.scale)
             self.current_index += 1
             self._last_animate_time = _now
 
@@ -144,3 +143,16 @@ class ScrollingLabel(bitmap_label.Label):
         self._full_text = new_text
         self.current_index = 0
         self.update()
+
+    @property
+    def text(self):
+        """The full text to be shown. If it's longer than ``max_characters`` then
+        scrolling will occur as needed.
+
+        :return str: The full text of this label.
+        """
+        return self.full_text
+
+    @text.setter
+    def text(self, new_text):
+        self.full_text = new_text
