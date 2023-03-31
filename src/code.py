@@ -19,7 +19,7 @@ from light_sensor import LightSensor
 from network import WifiNetwork
 from weather.weather_factory import Factory
 from weather.weather_display import WeatherDisplay
-from settings import Settings
+from persistent_settings import Settings
 from buzzer import Buzzer
 
 icon_spritesheet = "/images/weather-icons.bmp"

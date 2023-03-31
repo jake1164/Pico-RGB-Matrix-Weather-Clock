@@ -6,17 +6,32 @@ class LightSensor:
         self.LIGHT_THRESHOLD = 2800 # Lower the value the brighter the light.
         self._settings = settings
         self._display = display
-        self._analog_in = AnalogIn(board.GP26)
-        self._dimming = False
+        self._analog_in = AnalogIn(board.GP26)        
+        self.dark_mode = False 
+        #self.display_off = False # if darkmode && <
+
+        self._dimming = False # TODO remove me
+
 
     def _get_voltage(self):
         """ returns the voltage of the light sensor """
         return int((self._analog_in.value * 3300) / 65536)
 
 
-    def is_dimming(self):
+    def is_dimming(self): # Access display_off directly.
         return self._dimming
 
+    def check_light_sensor1(self):
+        if self._settings.dark_mode:
+            light = self._get_voltage()
+            if not self.dark_mode and light > self._settings.night_level:
+                self.dark_mode = True
+            elif self.dark_mode and (light > self._settings.night_level - 100):
+                self.dark_mode = True
+            else:
+                self.dark_mode = False
+        else:
+            self.dark_mode = False
 
     def check_light_sensor(self):
         """ Get the voltag and if its above a threshold then turn the display off """

@@ -4,16 +4,22 @@ import json
 DEFAULT_SETTINGS = {
     "12HR": True,
     "BEEP": False,
-    "AUTODIM": True,
-    #"DARKMODE": True,    # TODO - Add in when dark mode is implemented.
-    #"NIGHT_LEVEL": 1000,
-    #"DIM_LEVEL": 2000 
-    "DST_ADJUST": False
+    "DST_ADJUST": False,    
+    "DARKMODE": True,    # When above the DIM_LEVEL it puts the clock in "darker colors"
+    "NIGHT_LEVEL": 2800, # Sets the level that the display turns to dark colors
+    "AUTODIM": True,     # Turns off LED based on / off times set.
+    "OFF_TIME": 2200,    # What time does the LED turn off
+    "ON_TIME": 600       # What time does the LED turn back on
     }
 
 
 class Settings:
     def __init__(self) -> None:
+        ''' 
+        The settings.json file is NOT the same as the settings.toml settings. 
+        This file only saves settings to the /.settings/settings.json file, 
+        NOT the settings.toml file.
+        '''
         self._SETTINGS_FOLDER = '.settings'
         SETTINGS_FILE = 'settings.json'
         self._settings_file = f'{self._SETTINGS_FOLDER}/{SETTINGS_FILE}'
@@ -131,19 +137,28 @@ class Settings:
         self._settings['DARKMODE'] = val
         
     @property
+    def on_time(self):
+        return self._settings['ON_TIME']
+    
+    @on_time.setter
+    def on_time(self, val):
+        self._dirty = True
+        self._settings['ON_TIME'] = val
+        
+    @property
+    def off_time(self):
+        return self._settings['OFF_TIME']
+    
+    @off_time.setter
+    def off_time(self, val):
+        self._dirty = True
+        self._settings['OFF_TIME'] = val
+
+    @property
     def night_level(self):
         return self._settings['NIGHT_LEVEL']
-    
+
     @night_level.setter
     def night_level(self, val):
         self._dirty = True
         self._settings['NIGHT_LEVEL'] = val
-        
-    @property
-    def dim_level(self):
-        return self._settings['DIM_LEVEL']
-
-    @dim_level.setter
-    def dim_level(self, val):
-        self._dirty = True
-        self._settings['DIM_LEVEL'] = val
