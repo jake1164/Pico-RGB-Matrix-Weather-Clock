@@ -78,10 +78,10 @@ except Exception as e:
 
 settings = Settings()
 buzzer = Buzzer(settings)
+light_sensor = LightSensor(settings)
 
 datetime = DateTimeProcessing(settings, network)
 showSystem = DisplaySubsystem(display, datetime)
-light_sensor = LightSensor(settings, display)
 key_input = KeyProcessing(settings, datetime, buzzer)
 
 weather_display = WeatherDisplay(display, icons)
@@ -113,11 +113,10 @@ if weather is not None:
 weather.show_weather()
 
 print('free memory', gc.mem_free())
-while True:
-    light_sensor.check_light_sensor()
-    if light_sensor.is_dimming():
-        continue
-
+while True:        
+    darkmode = light_sensor.get_display_mode()
+    weather_display.set_display_mode(darkmode)
+    
     key_value = key_input.get_key_value()    
     key_input.key_processing(key_value)
     
