@@ -113,19 +113,23 @@ if weather is not None:
 weather.show_weather()
 
 print('free memory', gc.mem_free())
-while True:        
-    darkmode = light_sensor.get_display_mode()
-    weather_display.set_display_mode(darkmode)
-    
+while True:
+    # Always process keys first
     key_value = key_input.get_key_value()    
-    key_input.key_processing(key_value)
+    key_input.key_processing(key_value)  
     
-    if key_value is None and key_input.page_id == 0:
-        weather.show_datetime()
+    if key_value is None and key_input.page_id == 0: # IF normal display                
+        if not weather.show_datetime(): # returns true if autodim enabled and outside of time
+            continue
+
+        darkmode = light_sensor.get_display_mode()
+        weather_display.set_display_mode(darkmode)
+
+        
         if not buzzer.is_beeping(): #This is a hack to try to stop buzzer from buzzing while doing something that might hang.            
             schedule.run_pending()
             weather.scroll_label(key_input) 
-    if key_input.page_id == 1:
+    if key_input.page_id == 1: # Process settings pages
         showSystem.showSetListPage(key_input.select_setting_options)        
     if key_input.page_id == 2 and key_input.select_setting_options == 0:
         showSystem.timeSettingPage(key_input.time_setting_label)

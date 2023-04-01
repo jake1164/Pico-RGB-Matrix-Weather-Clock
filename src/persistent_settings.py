@@ -8,8 +8,8 @@ DEFAULT_SETTINGS = {
     "DARKMODE": True,    # When above the DIM_LEVEL it puts the clock in "darker colors"
     "NIGHT_LEVEL": 2800, # Sets the level that the display turns to dark colors
     "AUTODIM": True,     # Turns off LED based on / off times set.
-    "OFF_TIME": 2200,    # What time does the LED turn off
-    "ON_TIME": 600       # What time does the LED turn back on
+    "OFF_TIME": 22,      # What hour does the LED turn off
+    "ON_TIME": 6         # What hour does the LED turn back on
     }
 
 

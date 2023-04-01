@@ -135,7 +135,6 @@ class WeatherDisplay(displayio.Group):
 
     def set_time(self, time_string):
         self.time.text = time_string
-        print('color changed?', self.time.color)
 
     
     def set_humidity(self, humidity):
@@ -199,3 +198,13 @@ class WeatherDisplay(displayio.Group):
 
     def show(self):
         self._display.show(self.root_group)
+
+
+    @property
+    def brightness(self):
+        return self._display.brightness
+    
+
+    @brightness.setter
+    def brightness(self, val):
+        self._display.brightness = val
