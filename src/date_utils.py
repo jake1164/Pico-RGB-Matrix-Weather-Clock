@@ -107,7 +107,7 @@ class DateTimeProcessing:
     def get_month(self, datetime):
         if datetime is None:
             datetime = self.rtc.datetime
-        return self.MONTHS[int(datetime.tm_mon)]
+        return self.MONTHS[int(datetime.tm_mon - 1)]
 
     def set_hour(self, increment):
         if increment:
