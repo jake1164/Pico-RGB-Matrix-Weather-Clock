@@ -87,11 +87,13 @@ class WeatherDisplay(displayio.Group):
             if darkmode:
                 self.temperature.color = COLOR_DARK
                 self.time.color = COLOR_DARK
+                self._icon_sprite.hidden = True
                 for label in self._scroll_array:
                     label.color = COLOR_DARK
             else:
                 self.temperature.color = COLOR_TEMP
                 self.time.color = COLOR_TIME
+                self._icon_sprite.hidden = False
                 for label in self._scroll_array:
                     label.color = COLOR_SCROLL
 
