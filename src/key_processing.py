@@ -1,5 +1,6 @@
 import board
 import digitalio
+from displaySubsystem import SETTINGS
 
 class KeyProcessing:
     """ Key processing is all handled with the KeyProcessing class
@@ -69,20 +70,21 @@ class KeyProcessing:
             self._key_menu_value = 0
 
         if self._key_down_value > 0 and self._key_down_value < 20 and keyValue == None:
-            self.key_down_processing_function()
+            self.key_press_processing(up_key=False)
             self._buzzer.judgment_buzzer_switch()
             self._key_down_value = 0
         elif self._key_down_value >= 20 and keyValue == None:
             self._key_down_value = 0
 
         if self._key_up_value > 0 and self._key_up_value < 20 and keyValue == None:
-            self.key_up_processing_function()
+            self.key_press_processing(up_key=True)
             self._buzzer.judgment_buzzer_switch()
             self._key_up_value = 0
         elif self._key_up_value >= 20 and keyValue == None: # if keydown is >20 then would it exit for you?
             self.key_exit_processing_function()
             self._buzzer.judgment_buzzer_switch()
             self._key_up_value = 0
+
 
     def key_exit_processing_function(self):        
         if self.page_id == 2 and self.select_setting_options <= 1:
@@ -109,61 +111,33 @@ class KeyProcessing:
             self.page_id = 2
 
 
-    def key_down_processing_function(self):
+    def key_press_processing(self, up_key):
         if self.page_id == 1:
-            self.select_setting_options -= 1
+            self.select_setting_options = self.select_setting_options + 1 if up_key else self.select_setting_options - 1
             if self.select_setting_options == -1:
-                self.select_setting_options = 5
+                self.select_setting_options = len(SETTINGS - 1)
+            elif self.select_setting_options == len(SETTINGS):
+                self.select_setting_options = 0
         if self.page_id == 2:
             if self.select_setting_options == 0:
                 if self.time_setting_label == 0:
-                    self._datetime.set_hour(False) # decrement
+                    self._datetime.set_hour(up_key) # decrement
                 elif self.time_setting_label == 1:
-                    self._datetime.set_min(False)
+                    self._datetime.set_min(up_key)
                 else:
-                    self._datetime.set_sec(False)
+                    self._datetime.set_sec(up_key)
             if self.select_setting_options == 1:
                 if self.time_setting_label == 0:
-                    self._datetime.set_year(False)
+                    self._datetime.set_year(up_key)
                 elif self.time_setting_label == 1:
-                    self._datetime.set_month(False)
+                    self._datetime.set_month(up_key)
                 else:
-                    self._datetime.set_day(False)
+                    self._datetime.set_day(up_key)
             if self.select_setting_options == 2: # Buzzer Enable / Disable               
                 self._settings.beep = not self._settings.beep
             if self.select_setting_options == 3: # Autodim (turn off screen)
                 self._settings.autodim = not self._settings.autodim
             if self.select_setting_options == 4: # 12/24hr clock
-                self._settings.twelve_hr = not self._settings.twelve_hr
-            if self.select_setting_options == 5: # DST ajust
-                self._settings.dst_adjust = not self._settings.dst_adjust
-                self._dst_adjusted = True
-
-    def key_up_processing_function(self):
-        if self.page_id == 1:
-            self.select_setting_options += 1
-            if self.select_setting_options == 6:
-                self.select_setting_options = 0
-        if self.page_id == 2:
-            if self.select_setting_options == 0:
-                if self.time_setting_label == 0:
-                    self._datetime.set_hour(True) # increment                    
-                elif self.time_setting_label == 1:
-                    self._datetime.set_min(True)
-                else:
-                    self._datetime.set_sec(True)
-            if self.select_setting_options == 1:
-                if self.time_setting_label == 0:
-                    self._datetime.set_year(True)
-                elif self.time_setting_label == 1:
-                    self._datetime.set_month(True)
-                else:
-                    self._datetime.set_day(True)
-            if self.select_setting_options == 2:
-                self._settings.beep = not self._settings.beep
-            if self.select_setting_options == 3:
-                self._settings.autodim = not self._settings.autodim
-            if self.select_setting_options == 4:
                 self._settings.twelve_hr = not self._settings.twelve_hr
             if self.select_setting_options == 5: # DST ajust
                 self._settings.dst_adjust = not self._settings.dst_adjust

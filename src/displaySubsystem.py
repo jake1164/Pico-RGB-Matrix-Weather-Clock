@@ -2,6 +2,49 @@ import terminalio
 import displayio
 from adafruit_display_text.label import Label
 
+SETTINGS = [
+    {
+        "text": "TIME SET",
+        "type": "set_time"
+    },    
+    {
+        "text": "DATE SET",
+        "type": "set_time"
+    },
+    {
+        "text": "BEEP SET",
+        "type": "bool"
+    },
+    {
+        "text": "AUTODIM",
+        "type": "bool"
+    },
+    {
+        "text": "12/24 HR",
+        "type": "bool"
+    },
+    {
+        "text": "APPLY DST",
+        "type": "bool"
+    },
+    {
+        "text": "DARK MODE",
+        "type": "bool"
+    },
+    {
+        "text": "DM LEVEL",
+        "type": "number"
+    },
+    {
+        "text": "TIME ON",
+        "type": "time"
+    },
+    {
+        "text": "TIME OFF",
+        "type": "time"
+    }
+    ]
+
 
 class DisplaySubsystem(displayio.Group):
     def __init__(self, display, datetime_processing):
@@ -27,20 +70,6 @@ class DisplaySubsystem(displayio.Group):
         self.append(self._line2)
         self.append(self._line3)    
 
-    def showDateTimePage(self):
-        self._line1.x = 2
-        self._line1.y = 5
-        self._line2.x = 8
-        self._line2.y = 15
-        self._line3.x = 10
-        self._line3.y = 25
-        date_string = self._datetime.get_date()
-        time_string = self._datetime.get_time()
-        dow = self._datetime.get_dow()
-        self._line1.text = date_string
-        self._line2.text = time_string
-        self._line3.text= dow
-
 
     def showSetListPage(self, selectSettingOptions):
         self._line3.text = ""
@@ -49,18 +78,8 @@ class DisplaySubsystem(displayio.Group):
         self._line2.x = 8
         self._line2.y = 23
         self._line1.text = "SET LIST"
-        if selectSettingOptions == 0:
-            self._line2.text = "TIME SET"
-        if selectSettingOptions == 1:
-            self._line2.text = "DATE SET"
-        if selectSettingOptions == 2:
-            self._line2.text = "BEEP SET"
-        if selectSettingOptions == 3:
-            self._line2.text = "AUTODIM"
-        if selectSettingOptions == 4:
-            self._line2.text = "12/24 HR"
-        if selectSettingOptions == 5:
-            self._line2.text = "APPLY DST"
+        self._line2.text = SETTINGS[selectSettingOptions]["text"]
+
         if not self._first_enter_page:
             self._first_enter_page = True
         self.display.show(self._line_group)
