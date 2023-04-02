@@ -118,7 +118,7 @@ class DateTimeProcessing:
     def get_month(self, datetime):
         if datetime is None:
             datetime = self.rtc.datetime
-        return self.MONTHS[int(datetime.tm_mon)]
+        return self.MONTHS[int(datetime.tm_mon) - 1]
 
     def set_hour(self, increment):
         if increment:
@@ -217,9 +217,9 @@ class DateTimeProcessing:
 
     def ymd2ord(self, year, month, day):
         "year, month, day -> ordinal, considering 01-Jan-0001 as day 1."
-        assert 1 <= month <= 12, "month must be in 1..12"
+        assert 1 <= month <= 12, f"month {month} must be in 1..12"
         dim = self._days_in_month(year, month)
-        assert 1 <= day <= dim, "day must be in 1..%d" % dim
+        assert 1 <= day <= dim, f"day {day} must be in 1..{dim}"
         return self._days_before_year(year) + self._days_before_month(year, month) + day
 
 

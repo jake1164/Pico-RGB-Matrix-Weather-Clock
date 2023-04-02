@@ -12,7 +12,7 @@ from rgbmatrix import RGBMatrix
 import circuitpython_schedule as schedule
 
 # project classes 
-from displaySubsystem import DisplaySubsystem
+from displaySubsystem import SETTINGS, DisplaySubsystem
 from date_utils import DateTimeProcessing
 from key_processing import KeyProcessing
 from light_sensor import LightSensor
@@ -111,32 +111,42 @@ if weather is not None:
     schedule.every(weather.get_update_interval()).seconds.do(weather.show_weather)
 
 weather.show_weather()
-
+settings_visited = False
 print('free memory', gc.mem_free())
 while True:
     # Always process keys first
     key_value = key_input.get_key_value()    
     key_input.key_processing(key_value)  
-    
-    if key_value is None and key_input.page_id == 0: # IF normal display                
-        if not weather.show_datetime(): # returns true if autodim enabled and outside of time
-            continue
 
-        darkmode = light_sensor.get_display_mode()
-        weather_display.set_display_mode(darkmode)
+    if key_value is None and key_input.page_id == 0: # IF normal display
+        if settings_visited:                        
+            showSystem.clean()
+            settings_visited = False
+        if weather.show_datetime(): # returns true if autodim enabled and outside of time
+            darkmode = light_sensor.get_display_mode()
+            weather_display.set_display_mode(darkmode)
+            
+            if not buzzer.is_beeping(): #This is a hack to try to stop buzzer from buzzing while doing something that might hang.            
+                schedule.run_pending()
+                weather.scroll_label(key_input) 
 
-        
-        if not buzzer.is_beeping(): #This is a hack to try to stop buzzer from buzzing while doing something that might hang.            
-            schedule.run_pending()
-            weather.scroll_label(key_input) 
-    if key_input.page_id == 1: # Process settings pages
-        showSystem.showSetListPage(key_input.select_setting_options)        
-    if key_input.page_id == 2 and key_input.select_setting_options == 0:
-        showSystem.timeSettingPage(key_input.time_setting_label)
-    if key_input.page_id == 2 and key_input.select_setting_options == 1:
-        showSystem.dateSettingPage(key_input.time_setting_label)
-    if key_input.page_id == 2 and key_input.select_setting_options > 1:
-        showSystem.onOffPage(
-            key_input.select_setting_options, 
-            settings
-        )
+    elif key_input.page_id == 1: # Process settings pages
+        showSystem.showSetListPage(key_input.select_setting_options)
+        settings_visited = True
+    elif key_input.page_id == 2: # Process settings pages
+        if SETTINGS[key_input.select_setting_options]["type"] == 'set_time':
+            showSystem.timeSettingPage(key_input.time_setting_label)            
+        elif SETTINGS[key_input.select_setting_options]["type"] == 'set_date':
+            showSystem.dateSettingPage(key_input.time_setting_label)
+        elif SETTINGS[key_input.select_setting_options]["type"] == 'bool':
+            showSystem.onOffPage(
+                key_input.select_setting_options, 
+                settings
+            )
+        elif SETTINGS[key_input.select_setting_options]["type"] == 'number':
+            showSystem.number_display_page(settings)
+        elif SETTINGS[key_input.select_setting_options]["type"] == 'time':
+            showSystem.time_page(
+                SETTINGS[key_input.select_setting_options]["text"], 
+                settings.on_time if key_input.select_setting_options == 8 else settings.off_time
+            )

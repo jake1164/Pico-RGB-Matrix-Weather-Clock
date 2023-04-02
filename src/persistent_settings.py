@@ -142,6 +142,8 @@ class Settings:
     
     @on_time.setter
     def on_time(self, val):
+        if val < 1 or val > 24 or val >= self.off_time:
+            return # Invalid setting
         self._dirty = True
         self._settings['ON_TIME'] = val
         
@@ -151,6 +153,8 @@ class Settings:
     
     @off_time.setter
     def off_time(self, val):
+        if val < 1 or val > 24 or val <= self.on_time:
+            return # Invalid setting        
         self._dirty = True
         self._settings['OFF_TIME'] = val
 
@@ -160,5 +164,7 @@ class Settings:
 
     @night_level.setter
     def night_level(self, val):
+        if val > 3900 or val < 1000:
+            return
         self._dirty = True
         self._settings['NIGHT_LEVEL'] = val

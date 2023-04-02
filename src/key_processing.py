@@ -115,18 +115,18 @@ class KeyProcessing:
         if self.page_id == 1:
             self.select_setting_options = self.select_setting_options + 1 if up_key else self.select_setting_options - 1
             if self.select_setting_options == -1:
-                self.select_setting_options = len(SETTINGS - 1)
+                self.select_setting_options = len(SETTINGS) - 1
             elif self.select_setting_options == len(SETTINGS):
                 self.select_setting_options = 0
         if self.page_id == 2:
-            if self.select_setting_options == 0:
+            if self.select_setting_options == 0: # TIME SETTING 
                 if self.time_setting_label == 0:
                     self._datetime.set_hour(up_key) # decrement
                 elif self.time_setting_label == 1:
                     self._datetime.set_min(up_key)
-                else:
+                else: #TODO: Remove seconds and just set hour/ min
                     self._datetime.set_sec(up_key)
-            if self.select_setting_options == 1:
+            if self.select_setting_options == 1: # DATE SETTING
                 if self.time_setting_label == 0:
                     self._datetime.set_year(up_key)
                 elif self.time_setting_label == 1:
@@ -139,6 +139,18 @@ class KeyProcessing:
                 self._settings.autodim = not self._settings.autodim
             if self.select_setting_options == 4: # 12/24hr clock
                 self._settings.twelve_hr = not self._settings.twelve_hr
-            if self.select_setting_options == 5: # DST ajust
+            if self.select_setting_options == 5: # DST adjust
                 self._settings.dst_adjust = not self._settings.dst_adjust
                 self._dst_adjusted = True
+            if self.select_setting_options == 6: # DARK MODE
+                self._settings.dark_mode = not self._settings.dark_mode
+            if self.select_setting_options == 7: # DARK MODE LEVEL
+                level = 100 if up_key else -100
+                self._settings.night_level = self._settings.night_level + level
+            if self.select_setting_options == 8: # TIME ON
+                # Display the time_on setting and incremnet the hour only
+                adj = 1 if up_key else -1
+                self._settings.on_time = self._settings.on_time + adj
+            if self.select_setting_options == 9: # TIME OFF
+                adj = 1 if up_key else -1
+                self._settings.off_time = self._settings.off_time + adj

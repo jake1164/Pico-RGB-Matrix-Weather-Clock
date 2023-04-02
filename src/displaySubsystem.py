@@ -1,3 +1,4 @@
+import gc
 import terminalio
 import displayio
 from adafruit_display_text.label import Label
@@ -9,7 +10,7 @@ SETTINGS = [
     },    
     {
         "text": "DATE SET",
-        "type": "set_time"
+        "type": "set_date"
     },
     {
         "text": "BEEP SET",
@@ -71,6 +72,13 @@ class DisplaySubsystem(displayio.Group):
         self.append(self._line3)    
 
 
+    def clean(self):
+        self.display.show(None)
+        self._line1.text = ""
+        self._line2.text = ""
+        self._line3.text = ""
+        gc.collect()
+
     def showSetListPage(self, selectSettingOptions):
         self._line3.text = ""
         self._line1.x = 8
@@ -83,6 +91,7 @@ class DisplaySubsystem(displayio.Group):
         if not self._first_enter_page:
             self._first_enter_page = True
         self.display.show(self._line_group)
+
 
     def timeSettingPage(self, timeSettingLabel):
         self._line1.text = ""
@@ -103,6 +112,23 @@ class DisplaySubsystem(displayio.Group):
         else:
             self._line3.x = 47
             self._line3.y = 24
+        self.display.show(self._line_group)
+
+
+    def time_page(self, setting_text, setting_time):
+        ''' 
+        Eventual replacement time. 
+        '''
+        self._line1.text = setting_text
+        if self._first_enter_page:
+            self._line2.x = 18
+            self._line2.y = 18
+            self._first_enter_page = False
+ 
+        self._line2.text = f"{setting_time:02d}:00"
+        self._line3.text = "^"
+        self._line3.x = 21
+        self._line3.y = 28
         self.display.show(self._line_group)
 
 
@@ -130,7 +156,7 @@ class DisplaySubsystem(displayio.Group):
 
     def onOffPage(self, selectSettingOptions, settings):
         self._line1.text = ""
-        if selectSettingOptions == 2:
+        if selectSettingOptions == 2: # BEEP
             self._line2.x = 20
             self._line2.y = 7
             self._line3.x = 20
@@ -141,7 +167,7 @@ class DisplaySubsystem(displayio.Group):
             else:
                 self._line2.text = "  on"
                 self._line3.text = "> off"
-        if selectSettingOptions == 3:
+        if selectSettingOptions == 3: # AUTODIM
             self._line2.x = 20
             self._line2.y = 7
             self._line3.x = 20
@@ -153,7 +179,7 @@ class DisplaySubsystem(displayio.Group):
             else:
                 self._line2.text = "  on"
                 self._line3.text = "> off"
-        if selectSettingOptions == 4:
+        if selectSettingOptions == 4: # 12/24 HR
             self._line2.x = 10
             self._line2.y = 7
             self._line3.x = 10
@@ -164,7 +190,7 @@ class DisplaySubsystem(displayio.Group):
             else:
                 self._line2.text = "  12 Hr"
                 self._line3.text = "> 24 Hr"
-        if selectSettingOptions == 5:
+        if selectSettingOptions == 5: # DST ADJUST
             self._line2.x = 20
             self._line2.y = 7
             self._line3.x = 20
@@ -175,5 +201,34 @@ class DisplaySubsystem(displayio.Group):
                 self._line3.text = "  off"
             else:
                 self._line2.text = "  on"
-                self._line3.text = "> off"                
+                self._line3.text = "> off" 
+        if selectSettingOptions == 6: # DARK MODE
+            self._line2.x = 20
+            self._line2.y = 7
+            self._line3.x = 20
+            self._line3.y = 23
+            
+            if settings.dark_mode:
+                self._line2.text = "> on"
+                self._line3.text = "  off"
+            else:
+                self._line2.text = "  on"
+                self._line3.text = "> off" 
         self.display.show(self._line_group)
+
+
+    def number_display_page(self, settings):
+        '''
+        Display a number to be incremented / decremented
+        '''
+        self._line1.text = "DM Level"
+
+        self._line2.x = 20
+        self._line2.y = 18
+        self._line2.text = str(settings.night_level)
+        self._line3.text = "^"
+
+        self._line3.x = 29
+        self._line3.y = 28
+
+        self.display.show(self._line_group)        
