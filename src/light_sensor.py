@@ -2,39 +2,28 @@ import board
 from analogio import AnalogIn
 
 class LightSensor:
-    def __init__(self, settings, display) -> None:
+    def __init__(self, settings) -> None:
         self.LIGHT_THRESHOLD = 2800 # Lower the value the brighter the light.
         self._settings = settings
-        self._display = display
-        self._analog_in = AnalogIn(board.GP26)
-        self._dimming = False
+        self._analog_in = AnalogIn(board.GP26)        
+        self.dark_mode = False 
+
 
     def _get_voltage(self):
         """ returns the voltage of the light sensor """
         return int((self._analog_in.value * 3300) / 65536)
 
 
-    def is_dimming(self):
-        return self._dimming
-
-
-    def check_light_sensor(self):
-        """ Get the voltag and if its above a threshold then turn the display off """
-        if self._settings.autodim:
-            # TODO: need to do some sort of debouncing here. 
+    def get_display_mode(self):
+        if self._settings.dark_mode:
             light = self._get_voltage()
-            if not self._dimming and light > self.LIGHT_THRESHOLD:
-                self._dimming = True                
-            if self._dimming and (light > self.LIGHT_THRESHOLD - 200):
-                self._dimming = True
+            if not self.dark_mode and light > self._settings.night_level:
+                self.dark_mode = True
+            elif self.dark_mode and (light > self._settings.night_level - 100):
+                self.dark_mode = True
             else:
-                self._dimming = False
-
-            self._set_dimming()    
-
-
-    def _set_dimming(self):
-        if self._dimming:
-            self._display.brightness = 0.0
+                self.dark_mode = False
         else:
-            self._display.brightness = 0.1
+            self.dark_mode = False
+
+        return self.dark_mode

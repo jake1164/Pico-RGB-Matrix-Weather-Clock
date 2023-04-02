@@ -4,7 +4,11 @@ import os
 import displayio
 from adafruit_display_text.label import Label
 from adafruit_bitmap_font import bitmap_font
-#from adafruit_display_shapes.circle import Circle
+
+COLOR_SCROLL = 0x0000DD  # Dark blue
+COLOR_TEMP = 0x00DD00    # Green
+COLOR_TIME = 0x00DDDD    # Light Blue
+COLOR_DARK = 0x800000    # Dark Red
 
 class WeatherDisplay(displayio.Group):
     def __init__(self, display, icons) -> None:
@@ -20,17 +24,19 @@ class WeatherDisplay(displayio.Group):
         self._small_font.load_glyphs(glyphs)
         self._small_font.load_glyphs(("°",))
 
+        self._dark_mode = False
+
         icon_width = 16
         icon_height = 16
 
         self.scroll_delay = 0.03
         self._current_icon = None
         self._scroll_array = []
-        self.scroll_description = Label(self._small_font, color=0x0000DD)
-        self.scroll_humidity = Label(self._small_font, color=0x0000DD)
-        self.scroll_date = Label(self._small_font, color=0x0000DD)
-        self.scroll_feels = Label(self._small_font, color=0x0000DD)
-        self.scroll_wind = Label(self._small_font, color=0x0000DD)
+        self.scroll_description = Label(self._small_font, color=COLOR_SCROLL)
+        self.scroll_humidity = Label(self._small_font, color=COLOR_SCROLL)
+        self.scroll_date = Label(self._small_font, color=COLOR_SCROLL)
+        self.scroll_feels = Label(self._small_font, color=COLOR_SCROLL)
+        self.scroll_wind = Label(self._small_font, color=COLOR_SCROLL)
         self._scroll_array.append(self.scroll_description)
         self._scroll_array.append(self.scroll_date)
         self._scroll_array.append(self.scroll_humidity)
@@ -41,22 +47,18 @@ class WeatherDisplay(displayio.Group):
         self._text_group = displayio.Group()
         self._icon_group = displayio.Group()
         self._scrolling_group = displayio.Group()        
-        #self._wind_icon_group = displayio.Group() # TODO: create a wind gauge
 
         self._icon_group.x = 48
         self._icon_group.y = 0
 
-        self.temperature = Label(self._small_font, color=0x00DD00)
+        self.temperature = Label(self._small_font, color=COLOR_TEMP)        
         self.temperature.x = 1
         self.temperature.y = 5
 
-        self.time = Label(self._small_font, color=0x00DDDD)
+        self.time = Label(self._small_font, color=COLOR_TIME)
         self.time.anchor_point = (0, 0)
         self.time.x = 0
         self.time.y = 15
-        self.wind = Label(self._small_font, color=0xCCCCCC)
-        #self.circle = Circle(40, 6, 5, outline=0xFF00FF)
-        #self._wind_icon_group.append(self.circle)
 
         self.root_group.append(self)
         self._text_group.append(self.time)
@@ -65,7 +67,6 @@ class WeatherDisplay(displayio.Group):
         self.append(self._text_group) 
         self.append(self._scrolling_group)
         self.append(self._icon_group)
-        #self.append(self._wind_icon_group)
 
         self._icon_sprite = displayio.TileGrid(
             icons,
@@ -76,6 +77,26 @@ class WeatherDisplay(displayio.Group):
 
         self.set_icon(None)
         gc.collect()
+
+
+    def set_display_mode(self, darkmode):        
+        if self._dark_mode == darkmode:            
+            pass # No change
+        else:
+            self._dark_mode = darkmode # Only change once
+            if darkmode:
+                self.temperature.color = COLOR_DARK
+                self.time.color = COLOR_DARK
+                self._icon_sprite.hidden = True
+                for label in self._scroll_array:
+                    label.color = COLOR_DARK
+            else:
+                self.temperature.color = COLOR_TEMP
+                self.time.color = COLOR_TIME
+                self._icon_sprite.hidden = False
+                for label in self._scroll_array:
+                    label.color = COLOR_SCROLL
+
 
     def set_temperature(self, temp):        
         self.temperature.text = self.get_temperature(temp)
@@ -127,7 +148,7 @@ class WeatherDisplay(displayio.Group):
 
 
     def set_feels_like(self, feels_like):
-        self.scroll_feels.text = "Feels Like " + self.get_temperature(feels_like)
+        self.scroll_feels.text = "Feels Like " + self.get_temperature(feels_like)        
 
 
     def set_date(self, date_text):
@@ -179,3 +200,13 @@ class WeatherDisplay(displayio.Group):
 
     def show(self):
         self._display.show(self.root_group)
+
+
+    @property
+    def brightness(self):
+        return self._display.brightness
+    
+
+    @brightness.setter
+    def brightness(self, val):
+        self._display.brightness = val

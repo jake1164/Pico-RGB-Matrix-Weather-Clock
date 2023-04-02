@@ -67,10 +67,9 @@ class WifiNetwork:
             print('free memory after', gc.mem_free())
             return response.json()
         except Exception as e:
-            print('Exception', e)
+            print('response.json Exception:', e)
             gc.collect()
-        return {}
-        
+        return {}        
 
 
     def get_interval(self):
