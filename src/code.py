@@ -9,14 +9,14 @@ import framebufferio
 from rgbmatrix import RGBMatrix 
 
 # Imported from lib
-import circuitpython_schedule as schedule
+import circuitpython_schedule as schedule # Expensive 40k
 
 # project classes 
-from displaySubsystem import SETTINGS, DisplaySubsystem
-from date_utils import DateTimeProcessing
+from displaySubsystem import SETTINGS, DisplaySubsystem # 10k
+from date_utils import DateTimeProcessing # 27k
 from key_processing import KeyProcessing
 from light_sensor import LightSensor
-from network import WifiNetwork
+from network import WifiNetwork # 12k
 from weather.weather_factory import Factory
 from weather.weather_display import WeatherDisplay
 from persistent_settings import Settings
@@ -75,16 +75,13 @@ except Exception as e:
     print('Network exception?', e)
 
 # TODO: Display wifi config icon 
-
 settings = Settings()
 buzzer = Buzzer(settings)
 light_sensor = LightSensor(settings)
-
 datetime = DateTimeProcessing(settings, network)
 showSystem = DisplaySubsystem(display, datetime)
 key_input = KeyProcessing(settings, datetime, buzzer)
-
-weather_display = WeatherDisplay(display, icons)
+weather_display = WeatherDisplay(display, icons) # 19k
 
 try:
     if os.getenv('TEMPEST_ENABLE'):

@@ -69,8 +69,7 @@ class WifiNetwork:
         except Exception as e:
             print('response.json Exception:', e)
             gc.collect()
-        return {}
-        
+        return {}        
 
 
     def get_interval(self):
