@@ -88,4 +88,4 @@ to your .vscode.json config file.
 ```
 
 # KNOWN ISSUES
-
+* Buttons to go into settings do not work when in autodim mode.
