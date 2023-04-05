@@ -9,14 +9,14 @@ import framebufferio
 from rgbmatrix import RGBMatrix 
 
 # Imported from lib
-import circuitpython_schedule as schedule # Expensive 40k
+import circuitpython_schedule as schedule
 
 # project classes 
-from displaySubsystem import SETTINGS, DisplaySubsystem # 10k
-from date_utils import DateTimeProcessing # 27k
+from displaySubsystem import SETTINGS, DisplaySubsystem
+from date_utils import DateTimeProcessing
 from key_processing import KeyProcessing
 from light_sensor import LightSensor
-from network import WifiNetwork # 12k
+from network import WifiNetwork
 from weather.weather_factory import Factory
 from weather.weather_display import WeatherDisplay
 from persistent_settings import Settings
@@ -75,13 +75,16 @@ except Exception as e:
     print('Network exception?', e)
 
 # TODO: Display wifi config icon 
+
 settings = Settings()
 buzzer = Buzzer(settings)
 light_sensor = LightSensor(settings)
+
 datetime = DateTimeProcessing(settings, network)
 showSystem = DisplaySubsystem(display, datetime)
 key_input = KeyProcessing(settings, datetime, buzzer)
-weather_display = WeatherDisplay(display, icons) # 19k
+
+weather_display = WeatherDisplay(display, icons)
 
 try:
     if os.getenv('TEMPEST_ENABLE'):
@@ -114,7 +117,7 @@ while True:
     # Always process keys first
     key_value = key_input.get_key_value()    
     key_input.key_processing(key_value)  
-
+    
     if key_value is None and key_input.page_id == 0: # IF normal display
         if settings_visited:                        
             showSystem.clean()
@@ -127,7 +130,8 @@ while True:
                 schedule.run_pending()
                 weather.scroll_label(key_input) 
 
-    elif key_input.page_id == 1: # Process settings pages
+    elif key_input.page_id == 1: # Process settings pages        
+        weather.display_on()
         showSystem.showSetListPage(key_input.select_setting_options)
         settings_visited = True
     elif key_input.page_id == 2: # Process settings pages
