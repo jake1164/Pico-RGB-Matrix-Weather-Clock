@@ -88,4 +88,3 @@ to your .vscode.json config file.
 ```
 
 # KNOWN ISSUES
-* Buttons do not work while in autodim mode (screen off)
