@@ -59,4 +59,6 @@ class Weather():
     def scroll_label(self, key_input):
         self._weather_display.scroll_label(key_input)
 
-
+    def display_on(self):        
+        self._weather_display.brightness = 0.1        
+        self._display_current = True
