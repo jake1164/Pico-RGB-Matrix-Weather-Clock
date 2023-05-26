@@ -88,3 +88,4 @@ to your .vscode.json config file.
 ```
 
 # KNOWN ISSUES
+Does not work with CircuitPython 8.1.0 (or 8.2.0_beta)
