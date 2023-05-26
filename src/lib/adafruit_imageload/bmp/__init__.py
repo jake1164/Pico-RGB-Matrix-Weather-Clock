@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2018 Scott Shawcroft for Adafruit Industries
-# SPDX-FileCopyrightText: 2022 Matt Land
+# SPDX-FileCopyrightText: 2022-2023 Matt Land
 #
 # SPDX-License-Identifier: MIT
 
@@ -22,20 +22,22 @@ try:
 except ImportError:
     pass
 
-__version__ = "1.17.0"
+__version__ = "1.17.2"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
 
 def load(
     file: BufferedReader,
     *,
-    bitmap: BitmapConstructor = None,
-    palette: PaletteConstructor = None
-) -> Tuple[Bitmap, Optional[Palette]]:
+    bitmap: Optional[BitmapConstructor] = None,
+    palette: Optional[PaletteConstructor] = None
+) -> Tuple[Optional[Bitmap], Optional[Palette]]:
     """Loads a bmp image from the open ``file``.
 
     Returns tuple of bitmap object and palette object.
 
+    :param io.BufferedReader file: Open file handle or compatible (like `io.BytesIO`)
+      with the data of a BMP file.
     :param object bitmap: Type to store bitmap data. Must have API similar to `displayio.Bitmap`.
       Will be skipped if None
     :param object palette: Type to store the palette. Must have API similar to

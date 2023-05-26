@@ -28,7 +28,7 @@ except ImportError:
 
 from adafruit_display_shapes.polygon import Polygon
 
-__version__ = "2.6.0"
+__version__ = "2.6.1"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_Display_Shapes.git"
 
 
@@ -47,6 +47,7 @@ class Triangle(Polygon):
     :param int|None outline: The outline of the triangle. Can be a hex value for a color or
                     ``None`` for no outline.
     """
+
     # pylint: disable=too-many-locals
     def __init__(
         self,

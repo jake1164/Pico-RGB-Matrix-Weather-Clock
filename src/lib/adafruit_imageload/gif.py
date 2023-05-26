@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2019 Radomir Dopieralski for Adafruit Industries
-# SPDX-FileCopyrightText: 2022 Matt Land
+# SPDX-FileCopyrightText: 2022-2023 Matt Land
 #
 # SPDX-License-Identifier: MIT
 
@@ -24,7 +24,7 @@ try:
 except ImportError:
     pass
 
-__version__ = "1.17.0"
+__version__ = "1.17.2"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
 
@@ -32,17 +32,18 @@ def load(
     file: BufferedReader,
     *,
     bitmap: BitmapConstructor,
-    palette: PaletteConstructor = None
+    palette: Optional[PaletteConstructor] = None
 ) -> Tuple[Bitmap, Optional[Palette]]:
     """Loads a GIF image from the open ``file``.
 
     Returns tuple of bitmap object and palette object.
 
-    :param BufferedReader file: The *.gif file being loaded
+    :param io.BufferedReader file: Open file handle or compatible (like `io.BytesIO`)
+      with the data of a GIF file.
     :param object bitmap: Type to store bitmap data. Must have API similar to `displayio.Bitmap`.
-      Will be skipped if None
     :param object palette: Type to store the palette. Must have API similar to
-      `displayio.Palette`. Will be skipped if None"""
+      `displayio.Palette`. Will be skipped if None.
+    """
     header = file.read(6)
     if header not in {b"GIF87a", b"GIF89a"}:
         raise ValueError("Not a GIF file")
@@ -50,6 +51,8 @@ def load(
         "<HHBBB", file.read(7)
     )
     if (flags & 0x80) != 0:
+        if not palette:
+            raise RuntimeError("palette argument required")
         palette_size = 1 << ((flags & 0x07) + 1)
         palette_obj = palette(palette_size)
         for i in range(palette_size):

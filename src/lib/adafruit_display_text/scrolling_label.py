@@ -23,7 +23,7 @@ Implementation Notes
 
 """
 
-__version__ = "2.28.1"
+__version__ = "2.28.2"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_Display_Text.git"
 
 import time
@@ -60,7 +60,6 @@ class ScrollingLabel(bitmap_label.Label):
         current_index: Optional[int] = 0,
         **kwargs
     ) -> None:
-
         super().__init__(font, **kwargs)
         self.animate_time = animate_time
         self._current_index = current_index
@@ -84,7 +83,6 @@ class ScrollingLabel(bitmap_label.Label):
         """
         _now = time.monotonic()
         if force or self._last_animate_time + self.animate_time <= _now:
-
             if len(self.full_text) <= self.max_characters:
                 super()._set_text(self.full_text, self.scale)
                 self._last_animate_time = _now

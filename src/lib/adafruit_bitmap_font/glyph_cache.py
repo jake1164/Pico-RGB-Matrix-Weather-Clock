@@ -30,7 +30,7 @@ except ImportError:
 
 import gc
 
-__version__ = "1.5.11"
+__version__ = "2.0.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_Bitmap_Font.git"
 
 

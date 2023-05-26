@@ -5,11 +5,12 @@ import os
 import gc
 import board
 import displayio
+import time
 import framebufferio
 from rgbmatrix import RGBMatrix 
 
 # Imported from lib
-import circuitpython_schedule as schedule
+#import circuitpython_schedule as schedule
 
 # project classes 
 from displaySubsystem import SETTINGS, DisplaySubsystem
@@ -102,16 +103,17 @@ except Exception as e:
 #Update the clock when first starting.
 # TODO: Make async
 datetime.update_from_ntp()
-
+last_ntp = time.time()
 # Update the RTC every 60 min (settable via settings.toml file
-schedule.every(datetime.get_interval()).minutes.do(datetime.update_from_ntp)
+#schedule.every(datetime.get_interval()).minutes.do(datetime.update_from_ntp)
 
 #update weather every min
-if weather is not None:
-    schedule.every(weather.get_update_interval()).seconds.do(weather.show_weather)
-
+#if weather is not None:
+#    schedule.every(weather.get_update_interval()).seconds.do(weather.show_weather)
 weather.show_weather()
+last_weather = time.time()
 settings_visited = False
+
 print('free memory', gc.mem_free())
 while True:
     # Always process keys first
@@ -122,13 +124,22 @@ while True:
         if settings_visited:                        
             showSystem.clean()
             settings_visited = False
+        # current_time in seconds > start_time in seconds + interval in seconds.
+        if time.time() > last_ntp + datetime.get_interval():            
+            datetime.update_from_ntp()
+            last_ntp = time.time()
         if weather.show_datetime(): # returns true if autodim enabled and outside of time
             darkmode = light_sensor.get_display_mode()
             weather_display.set_display_mode(darkmode)
-            
-            if not buzzer.is_beeping(): #This is a hack to try to stop buzzer from buzzing while doing something that might hang.            
-                schedule.run_pending()
+            #This is a hack to try to stop buzzer from buzzing while doing something that might hang. 
+            if not buzzer.is_beeping():
+                if time.time() > last_weather + weather.get_update_interval():
+                    weather.show_weather()
+                    last_weather = time.time()
+                #schedule.run_pending()
+                #weather.show_weather()                
                 weather.scroll_label(key_input) 
+
 
     elif key_input.page_id == 1: # Process settings pages        
         weather.display_on()
