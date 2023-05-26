@@ -3,7 +3,7 @@
 import os
 
 STATIONS_URL = 'https://swd.weatherflow.com/swd/rest/stations?token={}'
-URL = 'http://swd.weatherflow.com/swd/rest/observations/station/{}?token={}'
+URL = 'https://swd.weatherflow.com/swd/rest/observations/station/{}?token={}'
 #BETTER_URL = 'https://swd.weatherflow.com/swd/rest/better_forecast?station_id={}&units_temp=f&units_wind=mph&units_pressure=mmhg&units_precip=in&units_distance=mi&token={}'
 
 class TempestWeather():

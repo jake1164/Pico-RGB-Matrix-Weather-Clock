@@ -20,7 +20,7 @@ except ImportError:
     pass
 
 
-__version__ = "5.2.3"
+__version__ = "5.2.5"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_BusDevice.git"
 
 
@@ -55,7 +55,6 @@ class I2CDevice:
     """
 
     def __init__(self, i2c: I2C, device_address: int, probe: bool = True) -> None:
-
         self.i2c = i2c
         self.device_address = device_address
 

@@ -33,7 +33,7 @@ import gc
 from fontio import Glyph
 from .glyph_cache import GlyphCache
 
-__version__ = "1.5.11"
+__version__ = "2.0.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_Bitmap_Font.git"
 
 
@@ -108,7 +108,7 @@ class BDF(GlyphCache):
         try:
             self._boundingbox
         except AttributeError as error:
-            raise Exception(
+            raise RuntimeError(
                 "Source file does not have the FOUNTBOUNDINGBOX parameter"
             ) from error
 

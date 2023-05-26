@@ -22,7 +22,7 @@ Implementation Notes
 
 """
 
-__version__ = "2.28.1"
+__version__ = "2.28.2"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_Display_Text.git"
 
 
@@ -161,7 +161,6 @@ class Label(LabelBase):
             if self._base_alignment:
                 y_box_offset = -ascent - padding_to_use
             else:
-
                 y_box_offset = -ascent + y_offset - padding_to_use
 
         box_width = max(0, box_width)  # remove any negative values

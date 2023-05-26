@@ -7,7 +7,7 @@
 =======================
 """
 
-__version__ = "2.28.1"
+__version__ = "2.28.2"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_Display_Text.git"
 
 from displayio import Group, Palette
