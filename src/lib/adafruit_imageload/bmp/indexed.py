@@ -30,7 +30,7 @@ except ImportError:
     _bitmap_readinto = None  # pylint: disable=invalid-name  # type: Callable
 
 
-__version__ = "1.17.2"
+__version__ = "1.17.3"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
 
