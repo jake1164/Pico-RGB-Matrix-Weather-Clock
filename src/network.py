@@ -59,7 +59,6 @@ class WifiNetwork:
         try:
             pool = socketpool.SocketPool(wifi.radio)
             context = ssl.create_default_context()
-            context.check_hostname = False
             requests = adafruit_requests.Session(pool, context)
             #requests = adafruit_requests.Session(pool, ssl.create_default_context())
             print('getting url:', url)
@@ -74,7 +73,6 @@ class WifiNetwork:
             print('response.json Exception:', e)
             gc.collect()
         return {}        
-
 
     def get_interval(self):
         return int(self.INTERVAL)

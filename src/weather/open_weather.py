@@ -7,15 +7,17 @@ URL = 'http://api.openweathermap.org/data/2.5/weather?lat={}&lon={}&units={}&app
 
 
 class OpenWeather():
-    def __init__(self, network, units) -> None:
-        self._units = units
+    def __init__(self, weather_display, datetime, network) -> None:
+        self._display_current = None
+        self._weather_display = weather_display
         self._network = network
+        self._datetime = datetime
         token = os.getenv('OWM_API_TOKEN')
         zip = os.getenv('OWM_ZIP')
         country = os.getenv('OWM_COUNTRY')
         # TODO: check parameters here and ensure geo works.
         lat, lon = self._get_geo(zip, country, token)        
-        self._url = URL.format(lat, lon, self._units, token)      
+        self._url = URL.format(lat, lon, weather_display.units, token)      
 
 
     def _get_geo(self, zip, country, token):
@@ -39,24 +41,25 @@ class OpenWeather():
         # TODO: reduce size of json data and purge gc
         return weather
 
+    def show_datetime(self) -> bool:
+        self._weather_display.set_time(self._datetime.get_time())
+        self._weather_display.set_date(
+            self._datetime.get_date()
+        )
 
-    ''' Show just the current condtions and maps '''
-    def show_secondary(self, display, weather=None):
-        try:
-            if not weather:
-                weather = self.get_weather()        
+        # Only adjust the brightness once
+        if self._datetime.display_on != self._display_current:
+            self._weather_display.brightness = 0.1 if self._datetime.display_on else 0.0
+            self._display_current = self._datetime.display_on
 
-            if weather == None or weather == {} or len(weather["weather"]) == 0:
-                return
-            
-            display.set_icon(weather["weather"][0]["icon"])
-            display.set_description(weather["weather"][0]["description"])
-        except Exception as ex:
-            print('Unable to display secondary info', ex)
+        if self._datetime.display_on:            
+            self._weather_display.show()            
 
+        return self._display_current
+         
 
     ''' Show the weather and conditions from OWM '''
-    def show_weather(self, display):
+    def show_weather(self):
         try:
             weather = self.get_weather()
         except Exception as ex:
@@ -66,12 +69,13 @@ class OpenWeather():
         if weather == None or weather == {} or weather["main"] == None:
             return
         try:
-            display.set_temperature(weather["main"]["temp"])        
-            display.set_humidity(weather["main"]["humidity"])
-            display.set_feels_like(weather["main"]["feels_like"])
-            display.set_wind(weather["wind"]["speed"])
-            self.show_secondary(display, weather)
+            self._weather_display.set_temperature(weather["main"]["temp"])        
+            self._weather_display.set_humidity(weather["main"]["humidity"])
+            self._weather_display.set_feels_like(weather["main"]["feels_like"])
+            self._weather_display.set_wind(weather["wind"]["speed"])
+            self._weather_display.set_icon(weather["weather"][0]["icon"])
+            self._weather_display.set_description(weather["weather"][0]["description"])
         except Exception as e:
             print('Unable to display weather', e)
         finally:
-            display.show()
+            self._weather_display.show()
