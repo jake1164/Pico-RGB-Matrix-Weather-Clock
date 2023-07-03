@@ -1,12 +1,10 @@
 # Basic Roadmap of clock
-
   * Reformat Code
     * key up/down Processing functions (merge to single function)
   * Look into updating of local storage settings
   * Better wifi support
     * When not connected open webserver with settings to connect via browser (app?)
     * Show icon in settings if connected / not connected?
-  * Compile releases to mpy files
   * Add inline documention
 
 ## Layout Ideas

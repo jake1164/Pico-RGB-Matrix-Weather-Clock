@@ -9,16 +9,13 @@ import time
 import framebufferio
 from rgbmatrix import RGBMatrix 
 
-# Imported from lib
-#import circuitpython_schedule as schedule
-
 # project classes 
 from displaySubsystem import SETTINGS, DisplaySubsystem
 from date_utils import DateTimeProcessing
 from key_processing import KeyProcessing
 from light_sensor import LightSensor
 from network import WifiNetwork
-from weather.weather_factory import Factory
+from weather.open_weather import OpenWeather
 from weather.weather_display import WeatherDisplay
 from persistent_settings import Settings
 from buzzer import Buzzer
@@ -88,13 +85,7 @@ key_input = KeyProcessing(settings, datetime, buzzer)
 weather_display = WeatherDisplay(display, icons)
 
 try:
-    if os.getenv('TEMPEST_ENABLE'):
-        weather = Factory('TEMPEST', weather_display, datetime, network)
-    elif os.getenv('OWM_ENABLE'):
-        weather = Factory('OWM', weather_display, datetime, network)
-    else:
-        print('Better handling required.')
-        raise Exception("No weather api's enabled")
+    weather = OpenWeather(weather_display, datetime, network)
 except Exception as e:
     print("Unable to configure weather, exiting")
     exit()
@@ -104,12 +95,8 @@ except Exception as e:
 # TODO: Make async
 datetime.update_from_ntp()
 last_ntp = time.time()
-# Update the RTC every 60 min (settable via settings.toml file
-#schedule.every(datetime.get_interval()).minutes.do(datetime.update_from_ntp)
 
-#update weather every min
-#if weather is not None:
-#    schedule.every(weather.get_update_interval()).seconds.do(weather.show_weather)
+# Get the initial display and set it.
 weather.show_weather()
 last_weather = time.time()
 settings_visited = False
@@ -135,10 +122,8 @@ while True:
             if not buzzer.is_beeping():
                 if time.time() > last_weather + weather.get_update_interval():
                     weather.show_weather()
-                    last_weather = time.time()
-                #schedule.run_pending()
-                #weather.show_weather()                
-                weather.scroll_label(key_input) 
+                    last_weather = time.time()               
+                weather_display.scroll_label(key_input) 
 
 
     elif key_input.page_id == 1: # Process settings pages        
