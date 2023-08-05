@@ -43,9 +43,6 @@ class OpenWeather():
 
     def show_datetime(self) -> bool:
         self._weather_display.set_time(self._datetime.get_time())
-        self._weather_display.set_date(
-            self._datetime.get_date()
-        )
 
         # Only adjust the brightness once
         if self._datetime.display_on != self._display_current:
@@ -66,16 +63,26 @@ class OpenWeather():
             print('Unable to get weather', ex)
             weather = None
 
+        # Always add the date so there is something to scroll.
+        self._weather_display.set_date(
+            self._datetime.get_date()
+        )
+
         if weather == None or weather == {} or weather["main"] == None:
             return
-        try:
+        try:            
             self._weather_display.set_temperature(weather["main"]["temp"])        
+            self._weather_display.set_icon(weather["weather"][0]["icon"])
+            # add Scrolling items
+            # TODO: These should really be a list of items that can be added and tracked easier.
             self._weather_display.set_humidity(weather["main"]["humidity"])
             self._weather_display.set_feels_like(weather["main"]["feels_like"])
-            self._weather_display.set_wind(weather["wind"]["speed"])
-            self._weather_display.set_icon(weather["weather"][0]["icon"])
+            self._weather_display.set_wind(weather["wind"]["speed"])            
             self._weather_display.set_description(weather["weather"][0]["description"])
         except Exception as e:
             print('Unable to display weather', e)
         finally:
             self._weather_display.show()
+
+    def weather_complete(self) -> bool:        
+        return not self._weather_display.scroll_queue
