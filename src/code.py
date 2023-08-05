@@ -120,7 +120,7 @@ while True:
             weather_display.set_display_mode(darkmode)
             #This is a hack to try to stop buzzer from buzzing while doing something that might hang. 
             if not buzzer.is_beeping():
-                if time.time() > last_weather + weather.get_update_interval():
+                if weather.weather_complete() and time.time() > last_weather + weather.get_update_interval():
                     weather.show_weather()
                     last_weather = time.time()               
                 weather_display.scroll_label(key_input) 
