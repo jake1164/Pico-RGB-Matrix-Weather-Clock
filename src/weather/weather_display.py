@@ -164,8 +164,9 @@ class WeatherDisplay(displayio.Group):
             scroll_text = self.scroll_queue.popleft()
             scroll_label = Label(self._small_font, color=COLOR_DARK if self._dark_mode else COLOR_SCROLL , text=scroll_text)
             text_length = scroll_label.bounding_box[2]
-            self._scrolling_group.append(scroll_label)
+
             self._scrolling_group.x = self._display.width
+            self._scrolling_group.append(scroll_label)            
 
             # Start scrolling label
             for _ in range(text_length + 1):
