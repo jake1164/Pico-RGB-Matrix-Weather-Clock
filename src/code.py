@@ -112,7 +112,9 @@ while True:
         if settings_visited:                                    
             settings_visited = False
             del settings_display
-            weather_display.scroll_queue.clear()
+            while len(weather_display.scroll_queue) > 0:
+                print('clearing')
+                weather_display.scroll_queue.popleft()
             gc.collect()
             
         # current_time in seconds > start_time in seconds + interval in seconds.
