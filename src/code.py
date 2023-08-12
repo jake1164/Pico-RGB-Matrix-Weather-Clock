@@ -113,7 +113,6 @@ while True:
             settings_visited = False
             del settings_display
             while len(weather_display.scroll_queue) > 0:
-                print('clearing')
                 weather_display.scroll_queue.popleft()
             gc.collect()
             

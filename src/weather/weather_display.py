@@ -12,7 +12,7 @@ COLOR_TEMP = 0x00DD00    # Green
 COLOR_TIME = 0x00DDDD    # Light Blue
 COLOR_DARK = 0x800000    # Dark Red
 SCROLL_DELAY = 0.06       # How fast does text scroll
-SCROLL_END_WAIT = 0.2    # How long do you display the label after the scrolling ends.
+SCROLL_END_WAIT = 0.75    # How long do you display the label after the scrolling ends.
 
 class WeatherDisplay(displayio.Group):
     def __init__(self, display, icons) -> None:
