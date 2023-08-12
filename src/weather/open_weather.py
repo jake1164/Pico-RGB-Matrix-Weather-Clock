@@ -8,7 +8,7 @@ URL = 'http{}://api.openweathermap.org/data/2.5/weather?lat={}&lon={}&units={}&a
 
 class OpenWeather():
     def __init__(self, weather_display, datetime, network) -> None:
-        self._display_current = None
+        self._is_display_on = False
         self._weather_display = weather_display
         self._network = network
         self._datetime = datetime
@@ -46,14 +46,14 @@ class OpenWeather():
         self._weather_display.set_time(self._datetime.get_time())
 
         # Only adjust the brightness once
-        if self._datetime.display_on != self._display_current:
-            self._weather_display.brightness = 0.1 if self._datetime.display_on else 0.0
-            self._display_current = self._datetime.display_on
+        if self._datetime.is_display_on != self._is_display_on:
+            self._weather_display.brightness = 0.1 if self._datetime.is_display_on else 0.0
+            self._is_display_on = self._datetime.is_display_on
 
-        if self._datetime.display_on:            
+        if self._datetime.is_display_on:            
             self._weather_display.show()            
 
-        return self._display_current
+        return self._is_display_on
          
 
     ''' Show the weather and conditions from OWM '''
@@ -87,3 +87,7 @@ class OpenWeather():
 
     def weather_complete(self) -> bool:        
         return not self._weather_display.scroll_queue
+    
+    def display_off(self):
+        self._datetime.is_display_on = False
+        self._is_display_on = False

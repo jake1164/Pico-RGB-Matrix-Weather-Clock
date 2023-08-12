@@ -10,7 +10,7 @@ import framebufferio
 from rgbmatrix import RGBMatrix 
 
 # project classes 
-from displaySubsystem import SETTINGS, DisplaySubsystem
+from settings_display import SETTINGS, SettingsDisplay
 from date_utils import DateTimeProcessing
 from key_processing import KeyProcessing
 from light_sensor import LightSensor
@@ -20,6 +20,7 @@ from weather.weather_display import WeatherDisplay
 from persistent_settings import Settings
 from buzzer import Buzzer
 
+gc.collect()
 icon_spritesheet = "/images/weather-icons.bmp"
 time_format_flag = 0 # 12 or 24 (0 or 1) hour display.
 bit_depth_value = 1
@@ -79,7 +80,7 @@ buzzer = Buzzer(settings)
 light_sensor = LightSensor(settings)
 
 datetime = DateTimeProcessing(settings, network)
-showSystem = DisplaySubsystem(display, datetime)
+#settings_display = SettingsDisplay(display, datetime)
 key_input = KeyProcessing(settings, datetime, buzzer)
 
 weather_display = WeatherDisplay(display, icons)
@@ -108,9 +109,12 @@ while True:
     key_input.key_processing(key_value)  
     
     if key_value is None and key_input.page_id == 0: # IF normal display
-        if settings_visited:                        
-            showSystem.clean()
+        if settings_visited:                                    
             settings_visited = False
+            del settings_display
+            weather_display.scroll_queue.clear()
+            gc.collect()
+            
         # current_time in seconds > start_time in seconds + interval in seconds.
         if time.time() > last_ntp + datetime.get_interval():            
             datetime.update_from_ntp()
@@ -127,23 +131,24 @@ while True:
 
 
     elif key_input.page_id == 1: # Process settings pages        
-        weather.display_on()
-        showSystem.showSetListPage(key_input.select_setting_options)
+        weather.display_off()
+        settings_display = SettingsDisplay(display, datetime)
+        settings_display.showSetListPage(key_input.select_setting_options)
         settings_visited = True
     elif key_input.page_id == 2: # Process settings pages
         if SETTINGS[key_input.select_setting_options]["type"] == 'set_time':
-            showSystem.timeSettingPage(key_input.time_setting_label)            
+            settings_display.timeSettingPage(key_input.time_setting_label)            
         elif SETTINGS[key_input.select_setting_options]["type"] == 'set_date':
-            showSystem.dateSettingPage(key_input.time_setting_label)
+            settings_display.dateSettingPage(key_input.time_setting_label)
         elif SETTINGS[key_input.select_setting_options]["type"] == 'bool':
-            showSystem.onOffPage(
+            settings_display.onOffPage(
                 key_input.select_setting_options, 
                 settings
             )
         elif SETTINGS[key_input.select_setting_options]["type"] == 'number':
-            showSystem.number_display_page(settings)
+            settings_display.number_display_page(settings)
         elif SETTINGS[key_input.select_setting_options]["type"] == 'time':
-            showSystem.time_page(
+            settings_display.time_page(
                 SETTINGS[key_input.select_setting_options]["text"], 
                 settings.on_time if key_input.select_setting_options == 8 else settings.off_time
             )
