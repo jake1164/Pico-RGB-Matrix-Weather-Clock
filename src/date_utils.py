@@ -17,7 +17,7 @@ class DateTimeProcessing:
         self.date = [0, 0, 0]
         i2c = busio.I2C(board.GP7,board.GP6)  # uses board.SCL and board.SDA
         self.rtc = adafruit_ds3231.DS3231(i2c)
-        self.display_on = True
+        self.is_display_on = True
 
     def update_from_ntp(self):
         try:            
@@ -32,7 +32,7 @@ class DateTimeProcessing:
             self.rtc.datetime = new_time
             print('updated RTC datetime')
         except Exception as e:
-            print('update exception', e)
+            print('Failed to update from NTP', e)
 
 
     def get_interval(self):
@@ -85,9 +85,9 @@ class DateTimeProcessing:
         When autodim is enabled the current time must be between the on_time and off_time
         '''        
         if self._settings.autodim and (datetime.tm_hour < self._settings.on_time or datetime.tm_hour >= self._settings.off_time):
-            self.display_on = False
+            self.is_display_on = False
         else:
-            self.display_on = True
+            self.is_display_on = True
 
 
     def get_setting_time(self, update):

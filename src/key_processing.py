@@ -1,6 +1,6 @@
 import board
 import digitalio
-from displaySubsystem import SETTINGS
+from settings_display import SETTINGS
 
 class KeyProcessing:
     """ Key processing is all handled with the KeyProcessing class

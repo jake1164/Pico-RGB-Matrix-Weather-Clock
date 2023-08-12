@@ -1,7 +1,8 @@
 import gc
 import terminalio
 import displayio
-from adafruit_display_text.label import Label
+#from adafruit_display_text.label import Label
+from adafruit_display_text import bitmap_label
 
 SETTINGS = [
     {
@@ -47,7 +48,7 @@ SETTINGS = [
     ]
 
 
-class DisplaySubsystem(displayio.Group):
+class SettingsDisplay(displayio.Group):
     def __init__(self, display, datetime_processing):
         super().__init__()
         display.rotation = 0
@@ -55,9 +56,9 @@ class DisplaySubsystem(displayio.Group):
         self._first_enter_page = True
         self._datetime = datetime_processing
 
-        line1 = Label(terminalio.FONT, color=0x00DD00)
-        line2 = Label(terminalio.FONT, color=0x00DDDD)
-        line3 = Label(terminalio.FONT, color=0x0000DD)
+        line1 = bitmap_label.Label(terminalio.FONT, color=0x00DD00)
+        line2 = bitmap_label.Label(terminalio.FONT, color=0x00DDDD)
+        line3 = bitmap_label.Label(terminalio.FONT, color=0x0000DD)
         line3.x = 12
         line3.y = 56
 
@@ -71,13 +72,6 @@ class DisplaySubsystem(displayio.Group):
         self.append(self._line2)
         self.append(self._line3)    
 
-
-    def clean(self):
-        self.display.show(None)
-        self._line1.text = ""
-        self._line2.text = ""
-        self._line3.text = ""
-        gc.collect()
 
     def showSetListPage(self, selectSettingOptions):
         self._line3.text = ""

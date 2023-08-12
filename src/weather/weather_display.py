@@ -3,7 +3,8 @@ import gc
 import os
 import displayio
 from collections import deque
-from adafruit_display_text.label import Label
+#from adafruit_display_text.label import Label
+from adafruit_display_text import bitmap_label
 from adafruit_bitmap_font import bitmap_font
 
 COLOR_SCROLL = 0x0000DD  # Dark blue
@@ -11,7 +12,7 @@ COLOR_TEMP = 0x00DD00    # Green
 COLOR_TIME = 0x00DDDD    # Light Blue
 COLOR_DARK = 0x800000    # Dark Red
 SCROLL_DELAY = 0.06       # How fast does text scroll
-SCROLL_END_WAIT = 0.2    # How long do you display the label after the scrolling ends.
+SCROLL_END_WAIT = 0.75    # How long do you display the label after the scrolling ends.
 
 class WeatherDisplay(displayio.Group):
     def __init__(self, display, icons) -> None:
@@ -19,7 +20,6 @@ class WeatherDisplay(displayio.Group):
         self._display = display
         small_font = "/fonts/helvB12.bdf"
         glyphs = b"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-,.: "
-        self._current_label = None #index of current label
 
         self.units = os.getenv('UNITS')
         
@@ -47,11 +47,11 @@ class WeatherDisplay(displayio.Group):
         self._icon_group.x = 48
         self._icon_group.y = 0
 
-        self.temperature = Label(self._small_font, color=COLOR_TEMP)        
+        self.temperature = bitmap_label.Label(self._small_font, color=COLOR_TEMP)        
         self.temperature.x = 1
         self.temperature.y = 5
 
-        self.time = Label(self._small_font, color=COLOR_TIME)
+        self.time = bitmap_label.Label(self._small_font, color=COLOR_TIME)
         self.time.anchor_point = (0, 0)
         self.time.x = 0
         self.time.y = 15
@@ -160,9 +160,13 @@ class WeatherDisplay(displayio.Group):
         TODO: Includes a hack to check if a button has been pressed to exit early because user is trying to get into the settings menu.
         '''      
         # Take the top item to display
+        
+        while len(self._scrolling_group) > 0:
+            self._scrolling_group.pop()
+
         if self.scroll_queue:
             scroll_text = self.scroll_queue.popleft()
-            scroll_label = Label(self._small_font, color=COLOR_DARK if self._dark_mode else COLOR_SCROLL , text=scroll_text)
+            scroll_label = bitmap_label.Label(self._small_font, color=COLOR_DARK if self._dark_mode else COLOR_SCROLL , text=scroll_text)            
             text_length = scroll_label.bounding_box[2]
 
             self._scrolling_group.x = self._display.width
@@ -176,6 +180,7 @@ class WeatherDisplay(displayio.Group):
                 time.sleep(SCROLL_DELAY)
             time.sleep(SCROLL_END_WAIT)
             self._scrolling_group.pop()
+            del scroll_label
             gc.collect()
             
 
