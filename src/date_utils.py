@@ -32,7 +32,7 @@ class DateTimeProcessing:
             self.rtc.datetime = new_time
             print('updated RTC datetime')
         except Exception as e:
-            print('update exception', e)
+            print('Failed to update from NTP', e)
 
 
     def get_interval(self):
