@@ -80,7 +80,6 @@ buzzer = Buzzer(settings)
 light_sensor = LightSensor(settings)
 
 datetime = DateTimeProcessing(settings, network)
-#settings_display = SettingsDisplay(display, datetime)
 key_input = KeyProcessing(settings, datetime, buzzer)
 
 weather_display = WeatherDisplay(display, icons)
@@ -101,6 +100,9 @@ last_ntp = time.time()
 weather.show_weather()
 last_weather = time.time()
 settings_visited = False
+
+# remove splash from memory
+del bg, splash
 
 print('free memory', gc.mem_free())
 while True:

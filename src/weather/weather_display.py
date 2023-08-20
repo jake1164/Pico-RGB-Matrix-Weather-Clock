@@ -98,10 +98,14 @@ class WeatherDisplay(displayio.Group):
         if self.units == 'metric':
             unit = "%d°C"
         else:
-            unit = "%d°F"
-            
-        
+            unit = "%d°F"                  
         return unit % temp
+
+
+    def hide_temperature(self):
+        self.temperature.text = ""
+        if self._icon_group:
+            self._icon_group.pop()        
 
 
     def set_icon(self, name):
@@ -127,8 +131,11 @@ class WeatherDisplay(displayio.Group):
         gc.collect()
 
 
-    def set_time(self, time_string):
-        self.time.text = time_string
+    def set_time(self, time_string) -> bool:
+        if self.time.text != time_string:
+            self.time.text = time_string
+            return True
+        return False
 
     
     def set_humidity(self, humidity):
@@ -153,14 +160,17 @@ class WeatherDisplay(displayio.Group):
         else:
             self.scroll_queue.append(f'wind {wind:.1f} m/s')
 
-        
+
+    def add_test_display(self, text):
+        self.scroll_queue.append(text)
+
+
     def scroll_label(self, key_input):
         '''
         Scrolls the label until all the text has been shown
         TODO: Includes a hack to check if a button has been pressed to exit early because user is trying to get into the settings menu.
         '''      
-        # Take the top item to display
-        
+        # Button press leaves items in scroll group and mucks things up
         while len(self._scrolling_group) > 0:
             self._scrolling_group.pop()
 

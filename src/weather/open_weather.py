@@ -19,6 +19,7 @@ class OpenWeather():
         # TODO: check parameters here and ensure geo works.
         lat, lon = self._get_geo(https, zip, country, token)        
         self._url = URL.format(https, lat, lon, weather_display.units, token)      
+        self._missed_weather = 0
 
 
     def _get_geo(self, https, zip, country, token):
@@ -42,16 +43,17 @@ class OpenWeather():
         # TODO: reduce size of json data and purge gc
         return weather
 
+
     def show_datetime(self) -> bool:
-        self._weather_display.set_time(self._datetime.get_time())
+        changed = self._weather_display.set_time(self._datetime.get_time())
 
         # Only adjust the brightness once
         if self._datetime.is_display_on != self._is_display_on:
             self._weather_display.brightness = 0.1 if self._datetime.is_display_on else 0.0
             self._is_display_on = self._datetime.is_display_on
 
-        if self._datetime.is_display_on:            
-            self._weather_display.show()            
+        if changed and self._datetime.is_display_on:
+            self._weather_display.show()
 
         return self._is_display_on
          
@@ -70,8 +72,15 @@ class OpenWeather():
         )
 
         if weather == None or weather == {} or weather["main"] == None:
+            if self._missed_weather > 5:
+                self._weather_display.hide_temperature()
+                self._weather_display.add_test_display("Unable to contact API")
+            else:
+                self._missed_weather += 1                
             return
-        try:            
+
+        try:
+            self._missed_weather = 0
             self._weather_display.set_temperature(weather["main"]["temp"])        
             self._weather_display.set_icon(weather["weather"][0]["icon"])
             # add Scrolling items
