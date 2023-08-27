@@ -9,15 +9,19 @@ Go to the [OWM sign up](https://openweathermap.org/appid) and using the free sub
 Put the token from the [OWM API Keys page](https://home.openweathermap.org/api_keys) into the settings.toml file in the OWM_API_TOKEN="" setting.
 OWM uses your geolocation which gets looked up via the Geolocation api, for this you need to provide your zipcode and the Country under OWM settings listed below.
 
+### NTP Servers 
+You can define up to 3 NTP servers, one primary and two fallbacks, to use for time syncronization. The servers are separated by a "pipe" | character. You can find 
+a list of [NTP Servers](https://timetoolsltd.com/information/public-ntp-server/) to use if you need something closer. 
+
 ## Settings
 Requires a settings.toml file with the following settings in settings file:
 
 * WIFI_SSID="your ssid"
 * WIFI_PASSWORD="yoursupersecretpassword"
-* NTP_HOST="0.adafruit.pool.ntp.org"
-* TZ_OFFSET=<timezone offset> ie TZ_OFFSET=-5
-* NTP_INTERVAL=6
-* UNITS="imperial" # imperial or metric
+* NTP_HOST="0.adafruit.pool.ntp.org|0.us.pool.ntp.org"
+* TZ_OFFSET=-5 
+* NTP_INTERVAL=21600 **ie 21600 = 6hr, 43200 = 12hr, 86400 = 24hr**
+* UNITS="imperial" **ie imperial or metric**
 
 ### openweathermap.org Data Authorization
 * OWM_API_TOKEN="Your Token"
