@@ -1,8 +1,9 @@
 WIFI_SSID="yourWIFI"
 WIFI_PASSWORD="YourPassword"
-NTP_HOST="0.adafruit.pool.ntp.org"
+NTP_HOST="0.adafruit.pool.ntp.org|0.us.pool.ntp.org"
 TZ_OFFSET=-5
-NTP_INTERVAL=60
+# 21600 = 6hr, 43200 = 12hr, 86400 = 24hr
+NTP_INTERVAL=21600 
 
 # weather settings # imperial or metric
 UNITS="imperial"
