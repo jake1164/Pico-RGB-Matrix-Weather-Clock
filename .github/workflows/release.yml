@@ -12,6 +12,8 @@ jobs:
       uses: actions/checkout@v3
       with:
         submodules: true
+    - name:
+      run: echo "${{ github.event.release.tag_name }}" > src/.version
     - name: Run MPY Action
       uses: adafruit/build-mpy@v1
       with:
@@ -21,3 +23,4 @@ jobs:
         mpy-manifest-file: "mpy-manifest.txt"
         mpy-manifest-type: "exclude"
         zip-directory: "src"
+        zip-filename: "weather-matrix-${{ github.event.release.tag_name }}.zip"
