@@ -1,7 +1,6 @@
 import gc
 import terminalio
 import displayio
-#from adafruit_display_text.label import Label
 from adafruit_display_text import bitmap_label
 
 SETTINGS = [
