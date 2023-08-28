@@ -18,7 +18,7 @@ jobs:
       uses: adafruit/build-mpy@v1
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        circuitpy-tag: "8.0.3"
+        circuitpy-tag: "8.2.3"
         mpy-directory: "src"
         mpy-manifest-file: "mpy-manifest.txt"
         mpy-manifest-type: "exclude"
