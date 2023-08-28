@@ -10,6 +10,7 @@ import framebufferio
 from rgbmatrix import RGBMatrix 
 
 # project classes 
+from splash_display import SplashDisplay
 from settings_display import SETTINGS, SettingsDisplay
 from date_utils import DateTimeProcessing
 from key_processing import KeyProcessing
@@ -19,6 +20,7 @@ from weather.open_weather import OpenWeather
 from weather.weather_display import WeatherDisplay
 from persistent_settings import Settings
 from buzzer import Buzzer
+from version import Version
 
 gc.collect()
 icon_spritesheet = "/images/weather-icons.bmp"
@@ -32,6 +34,11 @@ serpentine_value = True
 
 width_value = base_width * chain_across
 height_value = base_height * tile_down
+
+version = Version()
+# read the version if it exists.
+print(f'Version: {version.get_version_string()}')
+icons = displayio.OnDiskBitmap(open(icon_spritesheet, "rb"))
 
 # release displays  before creating a new one.
 displayio.release_displays()
@@ -55,17 +62,7 @@ matrix = RGBMatrix(
 display = framebufferio.FramebufferDisplay(matrix, auto_refresh=True)
 
 #display a splash screen to hide the random text that appears.
-icons = displayio.OnDiskBitmap(open(icon_spritesheet, "rb"))
-splash = displayio.Group()
-splash.x = 24
-splash.y = 8
-bg = displayio.TileGrid(
-    icons,
-    pixel_shader=getattr(icons, 'pixel_shader', displayio.ColorConverter()),
-    tile_width=16,
-    tile_height=16
-)
-splash.append(bg)
+splash = SplashDisplay(icons, version)
 display.show(splash)
 
 try:
@@ -102,7 +99,9 @@ last_weather = time.time()
 settings_visited = False
 
 # remove splash from memory
-del bg, splash
+#del bg, splash
+del splash
+gc.collect()
 
 print('free memory', gc.mem_free())
 while True:

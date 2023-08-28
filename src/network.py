@@ -65,9 +65,9 @@ class WifiNetwork:
         try:
             pool = socketpool.SocketPool(wifi.radio)
             context = ssl.create_default_context()
-            requests = adafruit_requests.Session(pool, context)
-            #requests = adafruit_requests.Session(pool, ssl.create_default_context())
-            print('getting url:', url)
+            #requests = adafruit_requests.Session(pool, context)
+            requests = adafruit_requests.Session(pool, ssl.create_default_context())
+            print(f'getting url: {url}')
             gc.collect()
             print('free memory', gc.mem_free())
 
@@ -79,6 +79,7 @@ class WifiNetwork:
             print('response.json Exception:', e)
             gc.collect()
         return {}        
+
 
     def get_interval(self):
         return int(self.INTERVAL)
