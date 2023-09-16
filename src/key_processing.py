@@ -120,6 +120,7 @@ class KeyProcessing:
                 self.select_setting_options = 0
         if self.page_id == 2:
             if self.select_setting_options == 0: # TIME SETTING 
+                self._settings.ntp_enabled = False
                 if self.time_setting_label == 0:
                     self._datetime.set_hour(up_key) # decrement
                 elif self.time_setting_label == 1:
@@ -127,6 +128,7 @@ class KeyProcessing:
                 else: #TODO: Remove seconds and just set hour/ min
                     self._datetime.set_sec(up_key)
             if self.select_setting_options == 1: # DATE SETTING
+                self._settings.ntp_enabled = False
                 if self.time_setting_label == 0:
                     self._datetime.set_year(up_key)
                 elif self.time_setting_label == 1:
@@ -156,3 +158,6 @@ class KeyProcessing:
                 self._settings.off_time = self._settings.off_time + adj
             if self.select_setting_options == 10: # NTP ON / OFF
                 self._settings.ntp_enabled = not self._settings.ntp_enabled
+                # Force the time to be synced.
+                if self._settings.ntp_enabled:
+                    self._dst_adjusted = True
