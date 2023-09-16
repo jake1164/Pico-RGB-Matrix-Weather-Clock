@@ -154,3 +154,5 @@ class KeyProcessing:
             if self.select_setting_options == 9: # TIME OFF
                 adj = 1 if up_key else -1
                 self._settings.off_time = self._settings.off_time + adj
+            if self.select_setting_options == 10: # NTP ON / OFF
+                self._settings.ntp_enabled = not self._settings.ntp_enabled

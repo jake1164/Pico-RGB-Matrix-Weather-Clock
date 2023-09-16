@@ -43,6 +43,10 @@ SETTINGS = [
     {
         "text": "TIME OFF",
         "type": "time"
+    },
+    {
+        "text": "NTP ON",
+        "type": "bool"
     }
     ]
 
@@ -74,13 +78,16 @@ class SettingsDisplay(displayio.Group):
 
     def showSetListPage(self, selectSettingOptions):
         self._line3.text = ""
+
+        self._line1.text = "SET LIST"
         self._line1.x = 8
         self._line1.y = 7
-        self._line2.x = 8
-        self._line2.y = 23
-        self._line1.text = "SET LIST"
-        self._line2.text = SETTINGS[selectSettingOptions]["text"]
 
+        self._line2.text = SETTINGS[selectSettingOptions]["text"]
+        #self._line2.x = 8
+        self._line2.x = self._get_x_position(self._line2.text)
+        self._line2.y = 23
+            
         if not self._first_enter_page:
             self._first_enter_page = True
         self.display.show(self._line_group)
@@ -206,7 +213,19 @@ class SettingsDisplay(displayio.Group):
                 self._line3.text = "  off"
             else:
                 self._line2.text = "  on"
-                self._line3.text = "> off" 
+                self._line3.text = "> off"                 
+        if selectSettingOptions == 10: # NTP ENABLED
+            self._line2.x = 20
+            self._line2.y = 7
+            self._line3.x = 20
+            self._line3.y = 23
+            
+            if settings.ntp_enabled:
+                self._line2.text = "> on"
+                self._line3.text = "  off"
+            else:
+                self._line2.text = "  on"
+                self._line3.text = "> off"
         self.display.show(self._line_group)
 
 
@@ -224,4 +243,15 @@ class SettingsDisplay(displayio.Group):
         self._line3.x = 29
         self._line3.y = 28
 
-        self.display.show(self._line_group)        
+        self.display.show(self._line_group)
+
+
+    def _get_x_position(self, text) -> int:
+        '''
+        Each digit has a length of 6 so return the padding required on the left to center it.
+        '''
+        size = len(text)
+        if size > 9 or size == 0:
+            return 1
+        
+        return int((64 - (size * 6)) / 2)
