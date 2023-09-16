@@ -20,6 +20,10 @@ class DateTimeProcessing:
         self.is_display_on = True
 
     def update_from_ntp(self):
+        if not self._settings.ntp_enabled:
+            print('NTP has been disabled')
+            return 
+        
         try:            
             new_time = self.network.get_time()            
 

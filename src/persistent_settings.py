@@ -9,7 +9,8 @@ DEFAULT_SETTINGS = {
     "NIGHT_LEVEL": 2800, # Sets the level that the display turns to dark colors
     "AUTODIM": True,     # Turns off LED based on / off times set.
     "OFF_TIME": 22,      # What hour does the LED turn off
-    "ON_TIME": 6         # What hour does the LED turn back on
+    "ON_TIME": 6,         # What hour does the LED turn back on
+    "NTP_ENABLED": True
     }
 
 
@@ -168,3 +169,12 @@ class Settings:
             return
         self._dirty = True
         self._settings['NIGHT_LEVEL'] = val
+
+    @property
+    def ntp_enabled(self):
+        return self._settings['NTP_ENABLED']
+
+    @ntp_enabled.setter
+    def ntp_enabled(self, val):
+        self._dirty = True
+        self._settings['NTP_ENABLED'] = val
