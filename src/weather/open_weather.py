@@ -20,7 +20,8 @@ class OpenWeather():
         lat, lon = self._get_geo(https, zip, country, token)        
         self._url = URL.format(https, lat, lon, weather_display.units, token)      
         self._missed_weather = 0
-
+        self.pixel_x = 0
+        self.pixel_y = 0
 
     def _get_geo(self, https, zip, country, token):
         # TODO: Need some better error handling here
@@ -54,6 +55,26 @@ class OpenWeather():
 
         if changed and self._datetime.is_display_on:
             self._weather_display.show()
+
+        # display by hour, min        
+        
+        if self._datetime.is_display_on:
+            self._weather_display.hide_pixel(self.pixel_x, self.pixel_y)
+            pass
+        else:
+
+            x = self.pixel_x
+            y = self.pixel_y
+
+            self.pixel_x = self._datetime.get_minute()
+            self.pixel_y = self._datetime.get_hour()
+            
+            if x != self.pixel_x or y != self.pixel_y:
+                # turn off original pixel
+                self._weather_display.hide_pixel(x, y)
+                #display another pixel.
+                self._weather_display.show_pixel(self.pixel_x, self.pixel_y)
+            
 
         return self._is_display_on
          

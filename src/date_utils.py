@@ -13,6 +13,7 @@ class DateTimeProcessing:
         self._DAYS_BEFORE_MONTH = (None, 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334)
         self.network = network
         self._settings = settings
+        # NOTE: these are only used during the settings display (changing time / date)
         self.time = [0, 0, 0]
         self.date = [0, 0, 0]
         i2c = busio.I2C(board.GP7,board.GP6)  # uses board.SCL and board.SDA
@@ -134,6 +135,13 @@ class DateTimeProcessing:
             if self.time[0] < 0:
                 self.time[0] = 23
 
+
+    def get_hour(self):
+        return self.rtc.datetime.tm_hour
+
+
+    def get_minute(self): 
+        return self.rtc.datetime.tm_min
 
 
     def set_min(self, increment):
