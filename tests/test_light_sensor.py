@@ -14,7 +14,7 @@ from light_sensor import LightSensor
 
 
 
-class Test_LightSensor(unittest.TestCase):
+class TestLightSensor(unittest.TestCase):
     """
         Tests for the LightSensor Class
     """
