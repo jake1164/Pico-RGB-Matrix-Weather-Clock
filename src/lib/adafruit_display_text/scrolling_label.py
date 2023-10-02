@@ -23,7 +23,7 @@ Implementation Notes
 
 """
 
-__version__ = "2.28.2"
+__version__ = "3.0.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_Display_Text.git"
 
 import time

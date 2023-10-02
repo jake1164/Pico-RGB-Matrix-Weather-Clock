@@ -28,7 +28,7 @@ except ImportError:
 
 import displayio
 
-__version__ = "2.6.1"
+__version__ = "2.7.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_Display_Shapes.git"
 
 
@@ -59,6 +59,9 @@ class Rect(displayio.TileGrid):
         outline: Optional[int] = None,
         stroke: int = 1,
     ) -> None:
+        if width <= 0 or height <= 0:
+            raise ValueError("Rectangle dimensions must be larger than 0.")
+
         self._bitmap = displayio.Bitmap(width, height, 2)
         self._palette = displayio.Palette(2)
 

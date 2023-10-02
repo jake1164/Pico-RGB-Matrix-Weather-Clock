@@ -18,12 +18,14 @@ class WifiNetwork:
 
         # NTP specific constants
         self.TZ = os.getenv('TZ_OFFSET')
-        self.NTP_HOST = os.getenv('NTP_HOST')
+        # Offer up to 3 ntp api's.
+        self.NTP_HOST = os.getenv('NTP_HOST').split('|', 2)
         self.INTERVAL = os.getenv('NTP_INTERVAL')
 
         if self.TZ is None or self.NTP_HOST is None or self.INTERVAL is None:
             raise Exception("NTP_HOST, NTP_INTERVAL & TZ_OFFSET are stored in settings.toml, please add them")
         
+        self._last_ntp_sync = None
         self.connect()
 
 
@@ -46,23 +48,26 @@ class WifiNetwork:
 
 
     def get_time(self):
-        # Need better connection testing
-        # has IP before connecting.
-        #if wifi.radio.ipv4_address is None:
-        #self.connect() # This just feels wrong to connect every time.
         pool = socketpool.SocketPool(wifi.radio)
-        ntp = adafruit_ntp.NTP(pool, tz_offset=self.TZ, server=self.NTP_HOST)
-        return ntp.datetime
-                    
+        ntp_try = 0
+        while ntp_try < len(self.NTP_HOST):
+            try:
+                ntp = adafruit_ntp.NTP(pool, tz_offset=self.TZ, server=self.NTP_HOST[ntp_try])
+                self._last_ntp_sync = ntp.datetime
+                return ntp.datetime
+            except Exception as ex:
+                print(f'Unable to connect to NTP Server {self.NTP_HOST[ntp_try]} with exception:', ex)
+                ntp_try += 1
+        raise Exception("Unable to contact NTP servers")
+                                                
 
     def getJson(self, url):
         try:
             pool = socketpool.SocketPool(wifi.radio)
             context = ssl.create_default_context()
-            context.check_hostname = False
-            requests = adafruit_requests.Session(pool, context)
-            #requests = adafruit_requests.Session(pool, ssl.create_default_context())
-            print('getting url:', url)
+            #requests = adafruit_requests.Session(pool, context)
+            requests = adafruit_requests.Session(pool, ssl.create_default_context())
+            print(f'getting url: {url}')
             gc.collect()
             print('free memory', gc.mem_free())
 

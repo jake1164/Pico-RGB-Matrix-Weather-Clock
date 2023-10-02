@@ -2,13 +2,17 @@ import time
 import gc
 import os
 import displayio
-from adafruit_display_text.label import Label
+from collections import deque
+#from adafruit_display_text.label import Label
+from adafruit_display_text import bitmap_label
 from adafruit_bitmap_font import bitmap_font
 
 COLOR_SCROLL = 0x0000DD  # Dark blue
 COLOR_TEMP = 0x00DD00    # Green
 COLOR_TIME = 0x00DDDD    # Light Blue
 COLOR_DARK = 0x800000    # Dark Red
+SCROLL_DELAY = 0.06       # How fast does text scroll
+SCROLL_END_WAIT = 0.75    # How long do you display the label after the scrolling ends.
 
 class WeatherDisplay(displayio.Group):
     def __init__(self, display, icons) -> None:
@@ -16,7 +20,6 @@ class WeatherDisplay(displayio.Group):
         self._display = display
         small_font = "/fonts/helvB12.bdf"
         glyphs = b"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-,.: "
-        self._current_label = None #index of current label
 
         self.units = os.getenv('UNITS')
         
@@ -29,33 +32,26 @@ class WeatherDisplay(displayio.Group):
         icon_width = 16
         icon_height = 16
 
-        self.scroll_delay = 0.03
         self._current_icon = None
-        self._scroll_array = []
-        self.scroll_description = Label(self._small_font, color=COLOR_SCROLL)
-        self.scroll_humidity = Label(self._small_font, color=COLOR_SCROLL)
-        self.scroll_date = Label(self._small_font, color=COLOR_SCROLL)
-        self.scroll_feels = Label(self._small_font, color=COLOR_SCROLL)
-        self.scroll_wind = Label(self._small_font, color=COLOR_SCROLL)
-        self._scroll_array.append(self.scroll_description)
-        self._scroll_array.append(self.scroll_date)
-        self._scroll_array.append(self.scroll_humidity)
-        self._scroll_array.append(self.scroll_feels)
-        self._scroll_array.append(self.scroll_wind)
+        
+        self.scroll_queue = deque((), 5) # TODO: this size needs to come from openweather.. 
 
         self.root_group = displayio.Group()      
         self._text_group = displayio.Group()
         self._icon_group = displayio.Group()
         self._scrolling_group = displayio.Group()        
+        
+        self._scrolling_group.y = 25
+        # _scrolling_group.x is set during scrolling
 
         self._icon_group.x = 48
         self._icon_group.y = 0
 
-        self.temperature = Label(self._small_font, color=COLOR_TEMP)        
+        self.temperature = bitmap_label.Label(self._small_font, color=COLOR_TEMP)        
         self.temperature.x = 1
         self.temperature.y = 5
 
-        self.time = Label(self._small_font, color=COLOR_TIME)
+        self.time = bitmap_label.Label(self._small_font, color=COLOR_TIME)
         self.time.anchor_point = (0, 0)
         self.time.x = 0
         self.time.y = 15
@@ -88,14 +84,10 @@ class WeatherDisplay(displayio.Group):
                 self.temperature.color = COLOR_DARK
                 self.time.color = COLOR_DARK
                 self._icon_sprite.hidden = True
-                for label in self._scroll_array:
-                    label.color = COLOR_DARK
             else:
                 self.temperature.color = COLOR_TEMP
                 self.time.color = COLOR_TIME
                 self._icon_sprite.hidden = False
-                for label in self._scroll_array:
-                    label.color = COLOR_SCROLL
 
 
     def set_temperature(self, temp):        
@@ -106,10 +98,14 @@ class WeatherDisplay(displayio.Group):
         if self.units == 'metric':
             unit = "%d°C"
         else:
-            unit = "%d°F"
-            
-        
+            unit = "%d°F"                  
         return unit % temp
+
+
+    def hide_temperature(self):
+        self.temperature.text = ""
+        if self._icon_group:
+            self._icon_group.pop()        
 
 
     def set_icon(self, name):
@@ -135,73 +131,73 @@ class WeatherDisplay(displayio.Group):
         gc.collect()
 
 
-    def set_time(self, time_string):
-        self.time.text = time_string
+    def set_time(self, time_string) -> bool:
+        if self.time.text != time_string:
+            self.time.text = time_string
+            return True
+        return False
 
     
     def set_humidity(self, humidity):
-        self.scroll_humidity.text = "%d%% humidity" % humidity
+        self.scroll_queue.append(f'{humidity}% humidity')        
 
 
     def set_description(self, description_text):
-        self.scroll_description.text = description_text
+        self.scroll_queue.append(description_text)
 
 
     def set_feels_like(self, feels_like):
-        self.scroll_feels.text = "Feels Like " + self.get_temperature(feels_like)        
+        self.scroll_queue.append("Feels Like " + self.get_temperature(feels_like))
 
 
-    def set_date(self, date_text):
-        self.scroll_date.text = date_text
+    def set_date(self, date_text):        
+        self.scroll_queue.append(date_text)       
 
 
-    def set_wind(self, wind):
+    def set_wind(self, wind):       
         if self.units == "imperial":
-            self.scroll_wind.text = "wind %d mph" % wind
+            self.scroll_queue.append(f'wind {wind:.1f} mph')
         else:
-            self.scroll_wind.text = "wind %d m/s" % wind
+            self.scroll_queue.append(f'wind {wind:.1f} m/s')
+
+
+    def add_test_display(self, text):
+        self.scroll_queue.append(text)
 
 
     def scroll_label(self, key_input):
         '''
         Scrolls the label until all the text has been shown
         TODO: Includes a hack to check if a button has been pressed to exit early because user is trying to get into the settings menu.
-        '''
-        if self._current_label is not None and self._scrolling_group:
-            current_text = self._scroll_array[self._current_label]
-            text_width = current_text.bounding_box[2]
-            for _ in range(text_width + 1):
+        '''      
+        # Button press leaves items in scroll group and mucks things up
+        while len(self._scrolling_group) > 0:
+            self._scrolling_group.pop()
+
+        if self.scroll_queue:
+            scroll_text = self.scroll_queue.popleft()
+            scroll_label = bitmap_label.Label(self._small_font, color=COLOR_DARK if self._dark_mode else COLOR_SCROLL , text=scroll_text)            
+            text_length = scroll_label.bounding_box[2]
+
+            self._scrolling_group.x = self._display.width
+            self._scrolling_group.append(scroll_label)            
+
+            # Start scrolling label
+            for _ in range(text_length + 1):
                 self._scrolling_group.x = self._scrolling_group.x - 1
                 if key_input.get_key_value() is not None:
                     return
-                time.sleep(self.scroll_delay)
-
-        if self._current_label is not None:
-            self._current_label += 1
-        if self._current_label is None or self._current_label >= len(self._scroll_array):
-            self._current_label = 0
-
-        
-        if self._scrolling_group:
+                time.sleep(SCROLL_DELAY)
+            time.sleep(SCROLL_END_WAIT)
             self._scrolling_group.pop()
-
-        current_text = self._scroll_array[self._current_label]
-        self._scrolling_group.append(current_text)
-
-        self._scrolling_group.x = self._display.width
-        self._scrolling_group.y = 25
-
-        for _ in range(self._display.width):
-            self._scrolling_group.x = self._scrolling_group.x - 1            
-
-            if key_input.get_key_value() is not None:                
-                return
-            time.sleep(self.scroll_delay)
+            del scroll_label
+            gc.collect()
+            
 
     def show(self):
         self._display.show(self.root_group)
 
-
+    
     @property
     def brightness(self):
         return self._display.brightness

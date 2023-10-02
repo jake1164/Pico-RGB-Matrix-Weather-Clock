@@ -28,7 +28,7 @@ except ImportError:
 
 import displayio
 
-__version__ = "2.6.1"
+__version__ = "2.7.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_Display_Shapes.git"
 
 
