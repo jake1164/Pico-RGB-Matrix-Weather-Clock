@@ -30,9 +30,9 @@ class TestLightSensor(unittest.TestCase):
 
     def test_get_voltage(self):
         ls = self.make_a_LightSensor()
-        ls._get_voltage()
+        volts = ls._get_voltage()
 
-        print(ls)
+        print(f'volts: {volts}')
 
 
 
