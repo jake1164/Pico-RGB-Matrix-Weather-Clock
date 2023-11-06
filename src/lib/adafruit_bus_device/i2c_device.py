@@ -20,7 +20,7 @@ except ImportError:
     pass
 
 
-__version__ = "5.2.6"
+__version__ = "5.2.7"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_BusDevice.git"
 
 

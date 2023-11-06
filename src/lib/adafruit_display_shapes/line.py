@@ -28,7 +28,7 @@ except ImportError:
 
 from adafruit_display_shapes.polygon import Polygon
 
-__version__ = "2.7.0"
+__version__ = "2.7.2"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_Display_Shapes.git"
 
 
