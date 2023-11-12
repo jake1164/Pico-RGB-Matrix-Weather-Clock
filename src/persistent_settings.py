@@ -75,8 +75,8 @@ class Settings:
         with open(self._settings_file, 'w') as file:
             try:
                 json.dump(content, file)
-            except Exception as e:
-                print('Unable to write file', e)
+            except OSError as e:
+                print(f'Could not write to file: ', e)
 
 
     def persist_settings(self):
@@ -84,10 +84,9 @@ class Settings:
             try:
                 with open(self._settings_file, 'w') as file:                                
                     json.dump(self._settings, file)
-            except Exception as e:
-                self._disabled = True
-                print('Unable to write file', e)
-        
+            except OSError as e:
+                self._disabled = True # Do not attempt to continue to save file if write protected.
+                print(f'Could not write to file: ', e)
         self._dirty = False
         pass
 

@@ -6,9 +6,7 @@ class KeyProcessing:
     """ Key processing is all handled with the KeyProcessing class
     """
     def __init__(self, settings, date_processing, buzzer) -> None:
-        """ 
-            Initiates the keys used by the board. 
-            Might move these to variables to 
+        """ Initiates the keys used by the board.
         """
         _KEYPRESS_PINS = [board.GP15, board.GP19, board.GP21]
         self._KEY_MENU = 0
@@ -29,26 +27,35 @@ class KeyProcessing:
         self.time_setting_label = 0
         self.select_setting_options = 0
 
-        # Initialize other methods        
+        # Initialize other methods
         self._key_init(_KEYPRESS_PINS)
 
 
-    def _key_init(self, pins):
+    def _key_init(self, pins) -> None:
+        """ We initialize multiple buttons to listen to,
+            pass in the pins they listen on and we will
+            initialize them all here.
+        """
         for pin in pins:
             key_pin =digitalio.DigitalInOut(pin)
             key_pin.direction = digitalio.Direction.INPUT
             key_pin.pull = digitalio.Pull.UP
-            self._key_pin_array.append(key_pin)    
+            self._key_pin_array.append(key_pin)
 
 
-    def get_key_value(self):
+    def get_key_value(self) -> int:
+        """ When one of the buttons has been pressed it is identified here
+            The value is return identifiying which key was pressed. 
+        """
         for key_pin in self._key_pin_array:
             if not key_pin.value:
                 key_value = self._key_pin_array.index(key_pin)
                 return key_value
 
 
-    def key_processing(self, keyValue):        
+    def key_processing(self, keyValue) -> None:
+        """ When a value is passed in this function will interperate the button press.
+        """
         if keyValue == self._KEY_MENU:
             self._key_menu_value += 1
         if keyValue == self._KEY_DOWN:
@@ -61,8 +68,8 @@ class KeyProcessing:
 
         # I think the premise is they wait for none to tell if the key has been released, but it only really relates to key 3
         # Without the None key it will keypress twice. 
-        #if self._key_menu_value > 0 and self._key_menu_value < 20 and keyValue == None:        
-        if self._key_menu_value > 0 and keyValue == None:        
+        #if self._key_menu_value > 0 and self._key_menu_value < 20 and keyValue == None:
+        if self._key_menu_value > 0 and keyValue == None:
             self.key_menu_processing_function()
             self._buzzer.judgment_buzzer_switch() # When the menu exits it beeps also
             self._key_menu_value = 0
@@ -101,7 +108,7 @@ class KeyProcessing:
             self._settings.persist_settings()
 
 
-    def key_menu_processing_function(self):
+    def key_menu_processing_function(self) -> None:
         if self.page_id == 2 and self.select_setting_options <= 1:
             self.time_setting_label += 1
             if self.time_setting_label > 2:
@@ -111,7 +118,7 @@ class KeyProcessing:
             self.page_id = 2
 
 
-    def key_press_processing(self, up_key):
+    def key_press_processing(self, up_key) -> None:
         if self.page_id == 1:
             self.select_setting_options = self.select_setting_options + 1 if up_key else self.select_setting_options - 1
             if self.select_setting_options == -1:
@@ -135,7 +142,7 @@ class KeyProcessing:
                     self._datetime.set_month(up_key)
                 else:
                     self._datetime.set_day(up_key)
-            if self.select_setting_options == 2: # Buzzer Enable / Disable               
+            if self.select_setting_options == 2: # Buzzer Enable / Disable
                 self._settings.beep = not self._settings.beep
             if self.select_setting_options == 3: # Autodim (turn off screen)
                 self._settings.autodim = not self._settings.autodim
