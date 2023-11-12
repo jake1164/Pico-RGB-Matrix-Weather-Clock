@@ -22,7 +22,7 @@ class WeatherDisplay(displayio.Group):
         glyphs = b"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-,.: "
         self._pallete = displayio.Palette(2)
         self._pallete[0] = 0x000000
-        self._pallete[1] = 0xffffff
+        self._pallete[1] = COLOR_DARK
 
         self._random_pixel = displayio.Bitmap(64, 32, 2)
 
@@ -210,6 +210,7 @@ class WeatherDisplay(displayio.Group):
 
     
     def show_pixel(self, x, y):
+        print('show pixel', x, y)
         #TODO: only run this once.
         self._display.show(self._random_pixel_group)
         #TODO: This is what is changed:

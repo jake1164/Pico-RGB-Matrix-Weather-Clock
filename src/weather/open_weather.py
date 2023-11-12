@@ -8,8 +8,6 @@ URL = 'http{}://api.openweathermap.org/data/2.5/weather?lat={}&lon={}&units={}&a
 
 class OpenWeather():
     def __init__(self, weather_display, datetime, network) -> None:
-        self._first_display = True 
-        self._is_display_on = False
         self._weather_display = weather_display
         self._network = network
         self._datetime = datetime
@@ -49,12 +47,6 @@ class OpenWeather():
     def show_datetime(self) -> bool:
         changed = self._weather_display.set_time(self._datetime.get_time())
 
-        # Only adjust the brightness once
-        if self._first_display or self._datetime.is_display_on != self._is_display_on:
-            self._weather_display.brightness = 0.1 if self._datetime.is_display_on else 0.0
-            self._is_display_on = self._datetime.is_display_on
-            self._first_display = False
-
         if changed and self._datetime.is_display_on:
             self._weather_display.show()
 
@@ -62,24 +54,23 @@ class OpenWeather():
         
         if self._datetime.is_display_on:
             self._weather_display.hide_pixel(self.pixel_x, self.pixel_y)
-            pass
         else:
-
+            # Get current pixel being shown
             x = self.pixel_x
             y = self.pixel_y
 
+            # find the new pixel that should be shown
             self.pixel_x = self._datetime.get_minute()
             self.pixel_y = self._datetime.get_hour()
-            
+
+            # If the pixel has changed then hide the old one and show the new one.
             if x != self.pixel_x or y != self.pixel_y:
                 # turn off original pixel
                 self._weather_display.hide_pixel(x, y)
                 #display another pixel.
                 self._weather_display.show_pixel(self.pixel_x, self.pixel_y)
-            
+        return self._datetime.is_display_on
 
-        return self._is_display_on
-         
 
     ''' Show the weather and conditions from OWM '''
     def show_weather(self):
@@ -122,4 +113,3 @@ class OpenWeather():
     
     def display_off(self):
         self._datetime.is_display_on = False
-        self._is_display_on = False
