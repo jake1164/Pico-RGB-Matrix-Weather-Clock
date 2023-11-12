@@ -106,40 +106,41 @@ gc.collect()
 print('free memory', gc.mem_free())
 while True:
     # Always process keys first
-    key_value = key_input.get_key_value()    
-    key_input.key_processing(key_value)  
-    
-    if key_value is None and key_input.page_id == 0: # IF normal display
-        if settings_visited:                                    
+    key_value = key_input.get_key_value()
+    key_input.key_processing(key_value)
+
+    if key_value is None and key_input.page_id == 0: # normal display
+        if settings_visited:
             settings_visited = False
             del settings_display
             while len(weather_display.scroll_queue) > 0:
                 weather_display.scroll_queue.popleft()
+            weather.show_weather()
             gc.collect()
             
         # current_time in seconds > start_time in seconds + interval in seconds.
-        if time.time() > last_ntp + datetime.get_interval():            
+        if time.time() > last_ntp + datetime.get_interval():
             datetime.update_from_ntp()
             last_ntp = time.time()
         if weather.show_datetime(): # returns true if autodim enabled and outside of time
             darkmode = light_sensor.get_display_mode()
             weather_display.set_display_mode(darkmode)
-            #This is a hack to try to stop buzzer from buzzing while doing something that might hang. 
+            #This is a hack to try to stop buzzer from buzzing while doing something that might hang.
             if not buzzer.is_beeping():
                 if weather.weather_complete() and time.time() > last_weather + weather.get_update_interval():
                     weather.show_weather()
-                    last_weather = time.time()               
-                weather_display.scroll_label(key_input) 
+                    last_weather = time.time()
+                weather_display.scroll_label(key_input)
 
 
-    elif key_input.page_id == 1: # Process settings pages        
+    elif key_input.page_id == 1: # Process settings pages
         weather.display_off()
         settings_display = SettingsDisplay(display, datetime)
         settings_display.showSetListPage(key_input.select_setting_options)
         settings_visited = True
     elif key_input.page_id == 2: # Process settings pages
         if SETTINGS[key_input.select_setting_options]["type"] == 'set_time':
-            settings_display.timeSettingPage(key_input.time_setting_label)            
+            settings_display.timeSettingPage(key_input.time_setting_label)
         elif SETTINGS[key_input.select_setting_options]["type"] == 'set_date':
             settings_display.dateSettingPage(key_input.time_setting_label)
         elif SETTINGS[key_input.select_setting_options]["type"] == 'bool':
@@ -151,6 +152,6 @@ while True:
             settings_display.number_display_page(settings)
         elif SETTINGS[key_input.select_setting_options]["type"] == 'time':
             settings_display.time_page(
-                SETTINGS[key_input.select_setting_options]["text"], 
+                SETTINGS[key_input.select_setting_options]["text"],
                 settings.on_time if key_input.select_setting_options == 8 else settings.off_time
             )
