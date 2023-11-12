@@ -20,6 +20,11 @@ class WeatherDisplay(displayio.Group):
         self._display = display
         small_font = "/fonts/helvB12.bdf"
         glyphs = b"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-,.: "
+        self._pallete = displayio.Palette(2)
+        self._pallete[0] = 0x000000
+        self._pallete[1] = 0xffffff
+
+        self._random_pixel = displayio.Bitmap(64, 32, 2)
 
         self.units = os.getenv('UNITS')
         
@@ -40,7 +45,9 @@ class WeatherDisplay(displayio.Group):
         self._text_group = displayio.Group()
         self._icon_group = displayio.Group()
         self._scrolling_group = displayio.Group()        
-        
+        self._random_pixel_group = displayio.Group()
+        self._random_pixel_group.append(displayio.TileGrid(self._random_pixel, pixel_shader=self._pallete))
+
         self._scrolling_group.y = 25
         # _scrolling_group.x is set during scrolling
 
@@ -197,7 +204,18 @@ class WeatherDisplay(displayio.Group):
     def show(self):
         self._display.show(self.root_group)
 
+
+    def hide_pixel(self, x, y):
+        self._random_pixel[x, y] = 0
+
     
+    def show_pixel(self, x, y):
+        #TODO: only run this once.
+        self._display.show(self._random_pixel_group)
+        #TODO: This is what is changed:
+        self._random_pixel[x, y] = 1
+    
+
     @property
     def brightness(self):
         return self._display.brightness
