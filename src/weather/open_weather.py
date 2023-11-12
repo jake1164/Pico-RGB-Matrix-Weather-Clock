@@ -8,6 +8,7 @@ URL = 'http{}://api.openweathermap.org/data/2.5/weather?lat={}&lon={}&units={}&a
 
 class OpenWeather():
     def __init__(self, weather_display, datetime, network) -> None:
+        self._first_display = True 
         self._is_display_on = False
         self._weather_display = weather_display
         self._network = network
@@ -48,9 +49,10 @@ class OpenWeather():
         changed = self._weather_display.set_time(self._datetime.get_time())
 
         # Only adjust the brightness once
-        if self._datetime.is_display_on != self._is_display_on:
+        if self._first_display or self._datetime.is_display_on != self._is_display_on:
             self._weather_display.brightness = 0.1 if self._datetime.is_display_on else 0.0
             self._is_display_on = self._datetime.is_display_on
+            self._first_display = False
 
         if changed and self._datetime.is_display_on:
             self._weather_display.show()
