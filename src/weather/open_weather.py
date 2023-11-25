@@ -88,7 +88,7 @@ class OpenWeather():
         if weather == None or weather == {} or weather["main"] == None:
             if self._missed_weather > 5:
                 self._weather_display.hide_temperature()
-                self._weather_display.add_test_display("Unable to contact API")
+                self._weather_display.add_text_display("Unable to contact API")
             else:
                 self._missed_weather += 1                
             return
