@@ -1,3 +1,9 @@
+#######################################################
+## This file is provided as a template of settings   ##
+## used by the pico-weather-clock.                   ##
+## Copy the contents of this file to settings.toml   ##
+#######################################################
+
 WIFI_SSID="yourWIFI"
 WIFI_PASSWORD="YourPassword"
 NTP_HOST="0.adafruit.pool.ntp.org|0.us.pool.ntp.org"
@@ -9,6 +15,8 @@ NTP_INTERVAL=21600
 UNITS="imperial"
 
 # openweathermap.org Data Authorization
+# Set to 0 to disable weather.
+OWM_ENABLE_WEATHER=1
 OWM_API_TOKEN="Your Token"
 OWM_ZIP="zip/post code"
 OWM_COUNTRY="US" # Please use ISO 3166 country codes

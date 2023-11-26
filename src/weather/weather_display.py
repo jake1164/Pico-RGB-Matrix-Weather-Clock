@@ -168,7 +168,7 @@ class WeatherDisplay(displayio.Group):
             self.scroll_queue.append(f'wind {wind:.1f} m/s')
 
 
-    def add_test_display(self, text):
+    def add_text_display(self, text):
         self.scroll_queue.append(text)
 
 
