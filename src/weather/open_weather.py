@@ -15,12 +15,14 @@ class OpenWeather():
         zip = os.getenv('OWM_ZIP')
         country = os.getenv('OWM_COUNTRY')
         https = 's' if os.getenv('OWM_USE_HTTPS') == 1 else ''
-        # TODO: check parameters here and ensure geo works.
-        lat, lon = self._get_geo(https, zip, country, token)        
-        self._url = URL.format(https, lat, lon, weather_display.units, token)      
         self._missed_weather = 0
         self.pixel_x = 0
         self.pixel_y = 0
+        self._enabled = False if os.getenv('OWM_ENABLE_WEATHER') == 0 else True
+        # TODO: check parameters here and ensure geo works.
+        if self._enabled:
+            lat, lon = self._get_geo(https, zip, country, token)        
+            self._url = URL.format(https, lat, lon, weather_display.units, token)      
 
     def _get_geo(self, https, zip, country, token):
         # TODO: Need some better error handling here
@@ -38,7 +40,10 @@ class OpenWeather():
 
 
     def get_weather(self):
-        weather = self._network.getJson(self._url)
+        if self._enabled:
+            weather = self._network.getJson(self._url)
+        else:
+            weather = {}
         #print(weather)
         # TODO: reduce size of json data and purge gc
         return weather
@@ -84,9 +89,11 @@ class OpenWeather():
         self._weather_display.set_date(
             self._datetime.get_date()
         )
-
+        
         if weather == None or weather == {} or weather["main"] == None:
-            if self._missed_weather > 5:
+            if not self._enabled:
+                return
+            elif self._missed_weather > 5:
                 self._weather_display.hide_temperature()
                 self._weather_display.add_text_display("Unable to contact API")
             else:
