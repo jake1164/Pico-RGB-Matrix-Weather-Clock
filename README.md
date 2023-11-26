@@ -13,7 +13,8 @@ OWM uses your geolocation which gets looked up via the Geolocation API, for this
 You can define up to 3 NTP servers, one primary and two fallbacks, to use for time synchronization. The servers are separated by a "pipe" | character. You can find a list of [NTP Servers](https://timetoolsltd.com/information/public-ntp-server/) to use if you need something closer. 
 
 ## Settings
-Requires a settings.toml file with the following settings in settings file:
+Requires a settings.toml file with the following settings in settings file.
+A settings.toml.default file has been provided with the required settings for the application. Copy or rename the settings.toml.default file to settings.toml.
 
 * WIFI_SSID="your ssid"
 * WIFI_PASSWORD="yoursupersecretpassword"
@@ -23,6 +24,7 @@ Requires a settings.toml file with the following settings in settings file:
 * UNITS="imperial" **ie imperial or metric**
 
 ### openweathermap.org Data Authorization
+* OWM_ENABLE_WEATHER=1 # 0 disables weather, removing or setting to 1 enables weather
 * OWM_API_TOKEN="Your Token"
 * OWM_ZIP="zip/post code"
 * OWM_COUNTRY="US" # Please use ISO 3166 country codes
