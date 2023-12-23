@@ -63,7 +63,7 @@ display = framebufferio.FramebufferDisplay(matrix, auto_refresh=True)
 
 #display a splash screen to hide the random text that appears.
 splash = SplashDisplay(icons, version)
-display.show(splash)
+display.root_group = splash
 
 try:
     network = WifiNetwork() # TODO: catch exception and do something meaninful with it.
