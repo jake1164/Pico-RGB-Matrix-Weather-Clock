@@ -90,7 +90,7 @@ class SettingsDisplay(displayio.Group):
             
         if not self._first_enter_page:
             self._first_enter_page = True
-        self.display.show(self._line_group)
+        self.display.root_group = self._line_group
 
 
     def timeSettingPage(self, timeSettingLabel):
@@ -112,7 +112,8 @@ class SettingsDisplay(displayio.Group):
         else:
             self._line3.x = 47
             self._line3.y = 24
-        self.display.show(self._line_group)
+        self.display.root_group = self._line_group
+
 
 
     def time_page(self, setting_text, setting_time):
@@ -129,7 +130,7 @@ class SettingsDisplay(displayio.Group):
         self._line3.text = "^"
         self._line3.x = 21
         self._line3.y = 28
-        self.display.show(self._line_group)
+        self.display.root_group = self._line_group
 
 
     def dateSettingPage(self, timeSettingLabel):
@@ -151,7 +152,7 @@ class SettingsDisplay(displayio.Group):
         else:
             self._line3.x = 54
             self._line3.y = 24
-        self.display.show(self._line_group)
+        self.display.root_group = self._line_group
             
 
     def onOffPage(self, selectSettingOptions, settings):
@@ -226,7 +227,7 @@ class SettingsDisplay(displayio.Group):
             else:
                 self._line2.text = "  on"
                 self._line3.text = "> off"
-        self.display.show(self._line_group)
+        self.display.root_group = self._line_group
 
 
     def number_display_page(self, settings):
@@ -243,7 +244,7 @@ class SettingsDisplay(displayio.Group):
         self._line3.x = 29
         self._line3.y = 28
 
-        self.display.show(self._line_group)
+        self.display.root_group = self._line_group
 
 
     def _get_x_position(self, text) -> int:

@@ -202,7 +202,7 @@ class WeatherDisplay(displayio.Group):
             
 
     def show(self):
-        self._display.show(self.root_group)
+        self._display.root_group = self.root_group
 
 
     def hide_pixel(self, x, y):
@@ -212,7 +212,7 @@ class WeatherDisplay(displayio.Group):
     def show_pixel(self, x, y):
         print('show pixel', x, y)
         #TODO: only run this once.
-        self._display.show(self._random_pixel_group)
+        self._display.root_group = self._random_pixel_group
         #TODO: This is what is changed:
         self._random_pixel[x, y] = 1
     
