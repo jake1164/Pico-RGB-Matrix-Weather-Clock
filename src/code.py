@@ -132,26 +132,28 @@ while True:
                     last_weather = time.time()
                 weather_display.scroll_label(key_input)
 
-
     elif key_input.page_id == 1: # Process settings pages
-        weather.display_off()
+        if not settings_visited:
+            weather.display_off()
+            settings_visited = True
         settings_display = SettingsDisplay(display, datetime)
         settings_display.showSetListPage(key_input.select_setting_options)
-        settings_visited = True
+        
     elif key_input.page_id == 2: # Process settings pages
         if SETTINGS[key_input.select_setting_options]["type"] == 'set_time':
-            settings_display.timeSettingPage(key_input.time_setting_label)
+            settings_display.timeSettingPage(key_input.select_setting_options, key_input.time_setting_label)
         elif SETTINGS[key_input.select_setting_options]["type"] == 'set_date':
-            settings_display.dateSettingPage(key_input.time_setting_label)
+            settings_display.dateSettingPage(key_input.select_setting_options, key_input.time_setting_label)
         elif SETTINGS[key_input.select_setting_options]["type"] == 'bool':
             settings_display.onOffPage(
                 key_input.select_setting_options, 
                 settings
             )
         elif SETTINGS[key_input.select_setting_options]["type"] == 'number':
-            settings_display.number_display_page(settings)
+            settings_display.number_display_page(key_input.select_setting_options, settings)
         elif SETTINGS[key_input.select_setting_options]["type"] == 'time':
             settings_display.time_page(
+                key_input.select_setting_options,
                 SETTINGS[key_input.select_setting_options]["text"],
                 settings.on_time if key_input.select_setting_options == 8 else settings.off_time
             )

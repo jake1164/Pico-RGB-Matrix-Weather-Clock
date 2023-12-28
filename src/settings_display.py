@@ -33,7 +33,7 @@ SETTINGS = [
         "type": "bool"
     },
     {
-        "text": "DM LEVEL",
+        "text": "DIM LEVEL",
         "type": "number"
     },
     {
@@ -54,6 +54,7 @@ SETTINGS = [
 class SettingsDisplay(displayio.Group):
     def __init__(self, display, datetime_processing):
         super().__init__()
+        self.settings_page = None
         display.rotation = 0
         self.display = display
         self._first_enter_page = True
@@ -76,14 +77,15 @@ class SettingsDisplay(displayio.Group):
         self.append(self._line3)    
 
 
-    def showSetListPage(self, selectSettingOptions):
+    def showSetListPage(self, select_setting_options):
+        self.settings_page = None
         self._line3.text = ""
 
         self._line1.text = "SET LIST"
         self._line1.x = 8
         self._line1.y = 7
 
-        self._line2.text = SETTINGS[selectSettingOptions]["text"]
+        self._line2.text = SETTINGS[select_setting_options]["text"]
         #self._line2.x = 8
         self._line2.x = self._get_x_position(self._line2.text)
         self._line2.y = 23
@@ -93,33 +95,36 @@ class SettingsDisplay(displayio.Group):
         self.display.root_group = self._line_group
 
 
-    def timeSettingPage(self, timeSettingLabel):
-        self._line1.text = ""
+    def timeSettingPage(self, select_setting_options, time_setting_label):
         update = False
-        if self._first_enter_page:
+
+        if self.settings_page != SETTINGS[select_setting_options]["type"]:
+            update = True
             self._line2.x = 8
             self._line2.y = 13
-            update = True
-            self._first_enter_page = False
-        self._line2.text = self._datetime.get_setting_time(update)
-        self._line3.text = "^"
-        if timeSettingLabel == 0:
+            self._line1.text = ""            
+            self.settings_page = SETTINGS[select_setting_options]["type"]
+
+        if time_setting_label == 0:
             self._line3.x = 12
             self._line3.y = 24
-        elif timeSettingLabel == 1:
+        elif time_setting_label == 1:
             self._line3.x = 29
             self._line3.y = 24
         else:
             self._line3.x = 47
             self._line3.y = 24
+
+        self._line3.text = "^"
+        self._line2.text = self._datetime.get_setting_time(update)
         self.display.root_group = self._line_group
 
 
-
-    def time_page(self, setting_text, setting_time):
+    def time_page(self, select_setting_options, setting_text, setting_time):
         ''' 
         Eventual replacement time. 
         '''
+        self.settings_page = SETTINGS[select_setting_options]["type"]
         self._line1.text = setting_text
         if self._first_enter_page:
             self._line2.x = 18
@@ -133,7 +138,8 @@ class SettingsDisplay(displayio.Group):
         self.display.root_group = self._line_group
 
 
-    def dateSettingPage(self, timeSettingLabel):
+    def dateSettingPage(self, select_setting_options, time_setting_label):
+        self.settings_page = SETTINGS[select_setting_options]["type"]
         self._line1.text = ""
         update = False
         if self._first_enter_page:
@@ -143,10 +149,10 @@ class SettingsDisplay(displayio.Group):
             self._first_enter_page = False
         self._line2.text = self._datetime.get_setting_date(update)
         self._line3.text = "^"
-        if timeSettingLabel == 0:
+        if time_setting_label == 0:
             self._line3.x = 12
             self._line3.y = 24
-        elif timeSettingLabel == 1:
+        elif time_setting_label == 1:
             self._line3.x = 36
             self._line3.y = 24
         else:
@@ -155,9 +161,10 @@ class SettingsDisplay(displayio.Group):
         self.display.root_group = self._line_group
             
 
-    def onOffPage(self, selectSettingOptions, settings):
+    def onOffPage(self, select_setting_options, settings):
+        self.settings_page = SETTINGS[select_setting_options]["type"]
         self._line1.text = ""
-        if selectSettingOptions == 2: # BEEP
+        if select_setting_options == 2: # BEEP
             self._line2.x = 20
             self._line2.y = 7
             self._line3.x = 20
@@ -168,7 +175,7 @@ class SettingsDisplay(displayio.Group):
             else:
                 self._line2.text = "  on"
                 self._line3.text = "> off"
-        if selectSettingOptions == 3: # AUTODIM
+        if select_setting_options == 3: # AUTODIM
             self._line2.x = 20
             self._line2.y = 7
             self._line3.x = 20
@@ -180,7 +187,7 @@ class SettingsDisplay(displayio.Group):
             else:
                 self._line2.text = "  on"
                 self._line3.text = "> off"
-        if selectSettingOptions == 4: # 12/24 HR
+        if select_setting_options == 4: # 12/24 HR
             self._line2.x = 10
             self._line2.y = 7
             self._line3.x = 10
@@ -191,7 +198,7 @@ class SettingsDisplay(displayio.Group):
             else:
                 self._line2.text = "  12 Hr"
                 self._line3.text = "> 24 Hr"
-        if selectSettingOptions == 5: # DST ADJUST
+        if select_setting_options == 5: # DST ADJUST
             self._line2.x = 20
             self._line2.y = 7
             self._line3.x = 20
@@ -203,7 +210,7 @@ class SettingsDisplay(displayio.Group):
             else:
                 self._line2.text = "  on"
                 self._line3.text = "> off" 
-        if selectSettingOptions == 6: # DARK MODE
+        if select_setting_options == 6: # DARK MODE
             self._line2.x = 20
             self._line2.y = 7
             self._line3.x = 20
@@ -215,7 +222,7 @@ class SettingsDisplay(displayio.Group):
             else:
                 self._line2.text = "  on"
                 self._line3.text = "> off"                 
-        if selectSettingOptions == 10: # NTP ENABLED
+        if select_setting_options == 10: # NTP ENABLED
             self._line2.x = 20
             self._line2.y = 7
             self._line3.x = 20
@@ -230,11 +237,12 @@ class SettingsDisplay(displayio.Group):
         self.display.root_group = self._line_group
 
 
-    def number_display_page(self, settings):
+    def number_display_page(self, select_setting_options, settings):
         '''
         Display a number to be incremented / decremented
         '''
-        self._line1.text = "DM Level"
+        self.settings_page = SETTINGS[select_setting_options]["type"]
+        self._line1.text = SETTINGS[select_setting_options]["text"]
 
         self._line2.x = 20
         self._line2.y = 18
