@@ -25,5 +25,5 @@ jobs:
         mpy-directory: "src"
         mpy-manifest-file: "mpy-manifest.txt"
         mpy-manifest-type: "exclude"
-        zip-directory: "src"
+        zip-directory: "."
         zip-filename: "weather-matrix-${{ github.event.release.tag_name }}.zip"
