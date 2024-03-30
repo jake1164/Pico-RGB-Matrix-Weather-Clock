@@ -12,7 +12,7 @@ Binary Coded Decimal date and time register
 * Author(s): Scott Shawcroft
 """
 
-__version__ = "1.9.17"
+__version__ = "1.9.18"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_Register.git"
 
 import time
