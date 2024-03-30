@@ -18,7 +18,7 @@ jobs:
         echo '{ "version":"${{ github.event.release.tag_name }}" }' > src/.version
     
     - name: Run MPY Action
-      uses: adafruit/build-mpy@fetch-submodules-fix
+      uses: adafruit/build-mpy
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         circuitpy-tag: "8.0.0"
