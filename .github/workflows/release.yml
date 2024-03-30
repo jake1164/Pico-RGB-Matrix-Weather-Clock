@@ -21,9 +21,9 @@ jobs:
       uses: jake1164/build-mpy@fetch-submodules-fix
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        circuitpy-tag: "8.2.0"
+        circuitpy-tag: "9.0.0"
         mpy-directory: "src"
         mpy-manifest-file: "mpy-manifest.txt"
         mpy-manifest-type: "exclude"
-        zip-directory: "."
+        zip-directory: "src"
         zip-filename: "weather-matrix-${{ github.event.release.tag_name }}.zip"
