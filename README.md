@@ -1,7 +1,7 @@
 # Pico-RGB-Matrix-Clock
 LED Matrix Clock with Open Weather Map enabled weather running on a Raspberry Pico W and a WaveShare [Pico-RGB-Matrix-P3-64x32](https://www.waveshare.com/wiki/Pico-RGB-Matrix-P3-64x32)
 
-## NOTE: THIS PROJECT HAS BEEN UPDATED AND REQUIRES CircuitPython 9.0.0
+## NOTE: THIS PROJECT HAS BEEN UPDATED AND REQUIRES CircuitPython 9.0.0 or later
 This project requires that you use [circuitpython 9.x.x](https://circuitpython.org/board/raspberry_pi_pico_w/). 
 If you still wish to use 8.x you will need to use an older [release](https://github.com/jake1164/Pico-RGB-Matrix-Weather-Clock/releases/tag/v0.54.0)
 
