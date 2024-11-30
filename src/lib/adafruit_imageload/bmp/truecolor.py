@@ -25,7 +25,11 @@ except ImportError:
 
 from displayio import Bitmap, ColorConverter, Colorspace
 
+<<<<<<< HEAD
 __version__ = "1.23.5"
+=======
+__version__ = "1.20.2"
+>>>>>>> ae84eef1491903d49de0e32510d1ab243185d8ff
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
 bitfield_colorspaces = (
