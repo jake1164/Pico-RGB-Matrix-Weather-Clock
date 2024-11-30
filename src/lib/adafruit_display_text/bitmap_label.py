@@ -23,15 +23,7 @@ Implementation Notes
 
 """
 
-<<<<<<< HEAD
-__version__ = "3.1.0"
-=======
-<<<<<<< HEAD
 __version__ = "3.2.0"
-=======
-__version__ = "3.1.0"
->>>>>>> ae84eef1491903d49de0e32510d1ab243185d8ff
->>>>>>> origin/update_dependencies
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_Display_Text.git"
 
 import displayio
