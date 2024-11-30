@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: MIT
 # pylint: disable=too-few-public-methods
+# pylint: disable=too-many-branches
 
 """
 `adafruit_register.i2c_bcd_alarm`
@@ -12,7 +13,7 @@ Binary Coded Decimal alarm register
 * Author(s): Scott Shawcroft
 """
 
-__version__ = "1.9.17"
+__version__ = "1.10.1"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_Register.git"
 
 import time
@@ -23,7 +24,7 @@ try:
     from circuitpython_typing.device_drivers import I2CDeviceDriver
 
     FREQUENCY_T = Literal[
-        "monthly", "weekly", "daily", "hourly", "secondly", "minutely"
+        "monthly", "weekly", "daily", "hourly", "minutely", "secondly"
     ]
 except ImportError:
     pass
@@ -115,6 +116,9 @@ class BCDAlarmTimeRegister:
                 frequency = "minutely"
                 seconds = _bcd2bin(self.buffer[1] & 0x7F)
             i = 2
+        else:
+            frequency = "minutely"
+            seconds = _bcd2bin(self.buffer[i] & 0x7F)
         minute = 0
         if (self.buffer[i] & 0x80) == 0:
             frequency = "hourly"
@@ -169,7 +173,7 @@ class BCDAlarmTimeRegister:
             raise ValueError(error_message)
 
         frequency = FREQUENCY.index(frequency_name)
-        if frequency <= 1 and not self.has_seconds:
+        if frequency < 1 and not self.has_seconds:
             raise ValueError(error_message)
 
         # i is the index of the minute byte

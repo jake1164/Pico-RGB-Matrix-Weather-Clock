@@ -12,24 +12,25 @@ Load pixel values (indices or colors) into a bitmap and colors into a palette.
 * Author(s): Scott Shawcroft, Matt Land
 
 """
-# pylint: disable=import-outside-toplevel
 
 try:
+    from io import BufferedReader
     from typing import (
-        Tuple,
-        Iterator,
-        Optional,
-        List,
         Iterable,
+        Iterator,
+        List,
+        Optional,
+        Tuple,
         Union,
     )
-    from io import BufferedReader
-    from displayio import Palette, Bitmap
-    from .displayio_types import PaletteConstructor, BitmapConstructor
+
+    from displayio import Bitmap, ColorConverter, Palette
+
+    from .displayio_types import BitmapConstructor, PaletteConstructor
 except ImportError:
     pass
 
-__version__ = "1.20.1"
+__version__ = "1.23.5"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
 
@@ -37,8 +38,8 @@ def load(
     file_or_filename: Union[str, BufferedReader],
     *,
     bitmap: Optional[BitmapConstructor] = None,
-    palette: Optional[PaletteConstructor] = None
-) -> Tuple[Bitmap, Optional[Palette]]:
+    palette: Optional[PaletteConstructor] = None,
+) -> Tuple[Bitmap, Optional[Union[Palette, ColorConverter]]]:
     """Load pixel values (indices or colors) into a bitmap and colors into a palette.
 
     bitmap is the desired type. It must take width, height and color_depth in the constructor. It
@@ -89,4 +90,8 @@ def load(
             from . import png
 
             return png.load(file, bitmap=bitmap, palette=palette)
+        if header.startswith(b"\xff\xd8"):
+            from . import jpg
+
+            return jpg.load(file, bitmap=bitmap)
         raise RuntimeError("Unsupported image format")

@@ -31,7 +31,7 @@ try:
 except ImportError:
     pass
 
-__version__ = "2.1.0"
+__version__ = "2.1.3"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_Bitmap_Font.git"
 
 

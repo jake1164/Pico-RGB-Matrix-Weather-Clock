@@ -15,15 +15,18 @@ return None for pallet.
 * Author(s):  Matt Land, Brooke Storm, Sam McGahan
 
 """
+
 try:
-    from typing import Tuple, Optional, Set
     from io import BufferedReader
-    from displayio import Palette, Bitmap
-    from ..displayio_types import PaletteConstructor, BitmapConstructor
+    from typing import Optional, Set, Tuple
+
+    from displayio import Bitmap, Palette
+
+    from ..displayio_types import BitmapConstructor, PaletteConstructor
 except ImportError:
     pass
 
-__version__ = "1.20.1"
+__version__ = "1.23.5"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
 
@@ -38,7 +41,6 @@ def load(
     Load pixel values (indices or colors) into a bitmap and for a binary
     ppm, return None for pallet.
     """
-    # pylint: disable=too-many-locals
 
     data_start = file.tell()
     palette_colors = set()  # type: Set[Tuple[int, int, int]]

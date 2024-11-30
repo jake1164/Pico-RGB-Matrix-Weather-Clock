@@ -1,6 +1,6 @@
 # UPDATE the settings.toml file before starting!
 
-# Following are imported from circuitpython 8.x
+# Following are imported from circuitpython 9.x
 import os
 import gc
 import board

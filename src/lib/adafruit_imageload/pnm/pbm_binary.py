@@ -15,14 +15,16 @@ return None for pallet.
 * Author(s):  Matt Land, Brooke Storm, Sam McGahan
 
 """
+
 try:
-    from typing import Tuple, Optional, Iterator
     from io import BufferedReader
-    from displayio import Palette, Bitmap
+    from typing import Iterator, Optional, Tuple
+
+    from displayio import Bitmap, Palette
 except ImportError:
     pass
 
-__version__ = "1.20.1"
+__version__ = "1.23.5"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
 
