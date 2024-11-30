@@ -22,7 +22,15 @@ except ImportError:
     pass
 
 
+<<<<<<< HEAD
 __version__ = "5.2.8"
+=======
+<<<<<<< HEAD
+__version__ = "5.2.10"
+=======
+__version__ = "5.2.8"
+>>>>>>> ae84eef1491903d49de0e32510d1ab243185d8ff
+>>>>>>> origin/update_dependencies
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_BusDevice.git"
 
 
@@ -89,7 +97,7 @@ class SPIDevice:
         self.chip_select = chip_select
         self.cs_active_value = cs_active_value
         if self.chip_select:
-            self.chip_select.switch_to_output(value=True)
+            self.chip_select.switch_to_output(value=not self.cs_active_value)
 
     def __enter__(self) -> SPI:
         while not self.spi.try_lock():

@@ -16,20 +16,30 @@ return None for pallet.
 
 """
 
+<<<<<<< HEAD
 __version__ = "1.20.2"
+=======
+<<<<<<< HEAD
+__version__ = "1.23.5"
+=======
+__version__ = "1.20.2"
+>>>>>>> ae84eef1491903d49de0e32510d1ab243185d8ff
+>>>>>>> origin/update_dependencies
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
 try:
-    from typing import (
-        Tuple,
-        Iterator,
-        Optional,
-        List,
-        Set,
-    )
     from io import BufferedReader
-    from displayio import Palette, Bitmap
-    from ..displayio_types import PaletteConstructor, BitmapConstructor
+    from typing import (
+        Iterator,
+        List,
+        Optional,
+        Set,
+        Tuple,
+    )
+
+    from displayio import Bitmap, Palette
+
+    from ..displayio_types import BitmapConstructor, PaletteConstructor
 except ImportError:
     pass
 

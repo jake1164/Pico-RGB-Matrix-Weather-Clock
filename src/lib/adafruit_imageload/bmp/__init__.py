@@ -12,17 +12,26 @@ Load pixel values (indices or colors) into a bitmap and colors into a palette fr
 * Author(s): Scott Shawcroft, Matt Land
 
 """
-# pylint: disable=import-outside-toplevel
 
 try:
-    from typing import Tuple, Optional, Set, List
     from io import BufferedReader
-    from displayio import Palette, Bitmap
-    from ..displayio_types import PaletteConstructor, BitmapConstructor
+    from typing import List, Optional, Set, Tuple, Union
+
+    from displayio import Bitmap, ColorConverter, Palette
+
+    from ..displayio_types import BitmapConstructor, PaletteConstructor
 except ImportError:
     pass
 
+<<<<<<< HEAD
 __version__ = "1.20.2"
+=======
+<<<<<<< HEAD
+__version__ = "1.23.5"
+=======
+__version__ = "1.20.2"
+>>>>>>> ae84eef1491903d49de0e32510d1ab243185d8ff
+>>>>>>> origin/update_dependencies
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
 
@@ -30,11 +39,12 @@ def load(
     file: BufferedReader,
     *,
     bitmap: Optional[BitmapConstructor] = None,
-    palette: Optional[PaletteConstructor] = None
-) -> Tuple[Optional[Bitmap], Optional[Palette]]:
+    palette: Optional[PaletteConstructor] = None,
+) -> Tuple[Optional[Bitmap], Optional[Union[Palette, ColorConverter]]]:
     """Loads a bmp image from the open ``file``.
 
-    Returns tuple of bitmap object and palette object.
+    Returns tuple of `displayio.Bitmap` object and
+    `displayio.Palette` object, or `displayio.ColorConverter` object.
 
     :param io.BufferedReader file: Open file handle or compatible (like `io.BytesIO`)
       with the data of a BMP file.

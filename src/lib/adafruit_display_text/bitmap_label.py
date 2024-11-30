@@ -23,7 +23,15 @@ Implementation Notes
 
 """
 
+<<<<<<< HEAD
 __version__ = "3.1.0"
+=======
+<<<<<<< HEAD
+__version__ = "3.2.0"
+=======
+__version__ = "3.1.0"
+>>>>>>> ae84eef1491903d49de0e32510d1ab243185d8ff
+>>>>>>> origin/update_dependencies
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_Display_Text.git"
 
 import displayio
@@ -183,6 +191,10 @@ class Label(LabelBase):
             if self._background_tight:
                 box_y = tight_box_y
                 y_offset = tight_y_offset
+                self._padding_left = 0
+                self._padding_right = 0
+                self._padding_top = 0
+                self._padding_bottom = 0
 
             else:  # calculate the box size for a loose background
                 box_y = loose_box_y
@@ -288,15 +300,18 @@ class Label(LabelBase):
     def _text_bounding_box(
         self, text: str, font: FontProtocol
     ) -> Tuple[int, int, int, int, int, int]:
-        # pylint: disable=too-many-locals
+        # pylint: disable=too-many-locals,too-many-branches
 
-        ascender_max, descender_max = self._ascent, self._descent
+        bbox = font.get_bounding_box()
+        if len(bbox) == 4:
+            ascender_max, descender_max = bbox[1], -bbox[3]
+        else:
+            ascender_max, descender_max = self._ascent, self._descent
 
         lines = 1
 
-        xposition = (
-            x_start
-        ) = yposition = y_start = 0  # starting x and y position (left margin)
+        # starting x and y position (left margin)
+        xposition = x_start = yposition = y_start = 0
 
         left = None
         right = x_start

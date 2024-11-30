@@ -33,7 +33,15 @@ import gc
 from fontio import Glyph
 from .glyph_cache import GlyphCache
 
+<<<<<<< HEAD
 __version__ = "2.1.1"
+=======
+<<<<<<< HEAD
+__version__ = "2.1.3"
+=======
+__version__ = "2.1.1"
+>>>>>>> ae84eef1491903d49de0e32510d1ab243185d8ff
+>>>>>>> origin/update_dependencies
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_Bitmap_Font.git"
 
 

@@ -7,7 +7,15 @@
 =======================
 """
 
+<<<<<<< HEAD
 __version__ = "3.1.0"
+=======
+<<<<<<< HEAD
+__version__ = "3.2.0"
+=======
+__version__ = "3.1.0"
+>>>>>>> ae84eef1491903d49de0e32510d1ab243185d8ff
+>>>>>>> origin/update_dependencies
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_Display_Text.git"
 
 from displayio import Group, Palette
@@ -246,7 +254,6 @@ class LabelBase(Group):
         tab_replacement: Tuple[int, str] = (4, " "),
         label_direction: str = "LTR",
         verbose: bool = False,
-        **kwargs,  # pylint: disable=unused-argument
     ) -> None:
         # pylint: disable=too-many-arguments, too-many-locals
 
@@ -270,9 +277,6 @@ class LabelBase(Group):
         self._tab_replacement = tab_replacement
         self._tab_text = self._tab_replacement[1] * self._tab_replacement[0]
         self._verbose = verbose
-
-        if "max_glyphs" in kwargs:
-            print("Please update your code: 'max_glyphs' is not needed anymore.")
 
         self._ascent, self._descent = self._get_ascent_descent()
         self._bounding_box = None
@@ -428,12 +432,12 @@ class LabelBase(Group):
     @property
     def height(self) -> int:
         """The height of the label determined from the bounding box."""
-        return self._bounding_box[3] - self._bounding_box[1]
+        return self._bounding_box[3]
 
     @property
     def width(self) -> int:
         """The width of the label determined from the bounding box."""
-        return self._bounding_box[2] - self._bounding_box[0]
+        return self._bounding_box[2]
 
     @property
     def line_spacing(self) -> float:

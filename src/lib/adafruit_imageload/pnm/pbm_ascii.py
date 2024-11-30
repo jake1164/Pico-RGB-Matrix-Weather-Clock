@@ -17,13 +17,22 @@ return None for pallet.
 """
 
 try:
-    from typing import Tuple, Optional
     from io import BufferedReader
-    from displayio import Palette, Bitmap
+    from typing import Optional, Tuple
+
+    from displayio import Bitmap, Palette
 except ImportError:
     pass
 
+<<<<<<< HEAD
 __version__ = "1.20.2"
+=======
+<<<<<<< HEAD
+__version__ = "1.23.5"
+=======
+__version__ = "1.20.2"
+>>>>>>> ae84eef1491903d49de0e32510d1ab243185d8ff
+>>>>>>> origin/update_dependencies
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
 

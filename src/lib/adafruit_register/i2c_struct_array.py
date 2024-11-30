@@ -12,7 +12,15 @@ Array of structured registers based on `struct`
 * Author(s): Scott Shawcroft
 """
 
+<<<<<<< HEAD
 __version__ = "1.9.18"
+=======
+<<<<<<< HEAD
+__version__ = "1.10.1"
+=======
+__version__ = "1.9.18"
+>>>>>>> ae84eef1491903d49de0e32510d1ab243185d8ff
+>>>>>>> origin/update_dependencies
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_Register.git"
 
 import struct

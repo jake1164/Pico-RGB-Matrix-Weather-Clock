@@ -13,14 +13,24 @@ definition readable by humans.
 * Author(s): Matt Land
 
 """
+
 try:
     from typing import Callable
-    from displayio import Palette, Bitmap
+
+    from displayio import Bitmap, Palette
 
     PaletteConstructor = Callable[[int], Palette]
     BitmapConstructor = Callable[[int, int, int], Bitmap]
 except ImportError:
     pass
 
+<<<<<<< HEAD
 __version__ = "1.20.2"
+=======
+<<<<<<< HEAD
+__version__ = "1.23.5"
+=======
+__version__ = "1.20.2"
+>>>>>>> ae84eef1491903d49de0e32510d1ab243185d8ff
+>>>>>>> origin/update_dependencies
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"

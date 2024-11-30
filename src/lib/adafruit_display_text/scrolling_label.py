@@ -23,10 +23,18 @@ Implementation Notes
 
 """
 
+<<<<<<< HEAD
 __version__ = "3.1.0"
+=======
+<<<<<<< HEAD
+__version__ = "3.2.0"
+=======
+__version__ = "3.1.0"
+>>>>>>> ae84eef1491903d49de0e32510d1ab243185d8ff
+>>>>>>> origin/update_dependencies
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_Display_Text.git"
 
-import time
+import adafruit_ticks
 from adafruit_display_text import bitmap_label
 
 try:
@@ -66,7 +74,7 @@ class ScrollingLabel(bitmap_label.Label):
         self._last_animate_time = -1
         self.max_characters = max_characters
 
-        if text[-1] != " ":
+        if text and text[-1] != " ":
             text = "{} ".format(text)
         self._full_text = text
 
@@ -81,10 +89,13 @@ class ScrollingLabel(bitmap_label.Label):
          Default is False.
         :return: None
         """
-        _now = time.monotonic()
-        if force or self._last_animate_time + self.animate_time <= _now:
+        _now = adafruit_ticks.ticks_ms()
+        if force or adafruit_ticks.ticks_less(
+            self._last_animate_time + int(self.animate_time * 1000), _now
+        ):
             if len(self.full_text) <= self.max_characters:
-                super()._set_text(self.full_text, self.scale)
+                if self._text != self.full_text:
+                    super()._set_text(self.full_text, self.scale)
                 self._last_animate_time = _now
                 return
 
@@ -120,10 +131,10 @@ class ScrollingLabel(bitmap_label.Label):
 
     @current_index.setter
     def current_index(self, new_index: int) -> None:
-        if new_index < len(self.full_text):
-            self._current_index = new_index
-        else:
+        if self.full_text:
             self._current_index = new_index % len(self.full_text)
+        else:
+            self._current_index = 0
 
     @property
     def full_text(self) -> str:
@@ -136,11 +147,12 @@ class ScrollingLabel(bitmap_label.Label):
 
     @full_text.setter
     def full_text(self, new_text: str) -> None:
-        if new_text[-1] != " ":
+        if new_text and new_text[-1] != " ":
             new_text = "{} ".format(new_text)
-        self._full_text = new_text
-        self.current_index = 0
-        self.update()
+        if new_text != self._full_text:
+            self._full_text = new_text
+            self.current_index = 0
+            self.update(True)
 
     @property
     def text(self):
