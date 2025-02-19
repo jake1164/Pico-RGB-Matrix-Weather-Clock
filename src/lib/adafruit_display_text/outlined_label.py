@@ -22,7 +22,7 @@ Implementation Notes
   https://circuitpython.org/downloads
 
 """
-__version__ = "3.2.0"
+__version__ = "3.2.2"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_Display_Text.git"
 
 import bitmaptools
