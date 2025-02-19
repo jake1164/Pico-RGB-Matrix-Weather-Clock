@@ -7,7 +7,7 @@
 =======================
 """
 
-__version__ = "3.2.0"
+__version__ = "3.2.2"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_Display_Text.git"
 
 from displayio import Group, Palette
@@ -413,6 +413,8 @@ class LabelBase(Group):
 
     @text.setter  # Cannot set color or background color with text setter, use separate setter
     def text(self, new_text: str) -> None:
+        if new_text == self._text:
+            return
         self._set_text(new_text, self.scale)
 
     @property

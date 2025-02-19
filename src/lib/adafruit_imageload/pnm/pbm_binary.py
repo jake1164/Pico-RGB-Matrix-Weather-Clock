@@ -24,7 +24,7 @@ try:
 except ImportError:
     pass
 
-__version__ = "1.23.5"
+__version__ = "1.23.9"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
 

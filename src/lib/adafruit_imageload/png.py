@@ -28,7 +28,7 @@ except ImportError:
 import struct
 import zlib
 
-__version__ = "1.23.5"
+__version__ = "1.23.9"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
 
@@ -113,7 +113,10 @@ def load(  # noqa: PLR0912, PLR0915, Too many branches, Too many statements
             for x in range(0, width, pixels_per_byte):
                 byte = data_bytes[src_b]
                 for pixel in range(pixels_per_byte):
-                    bmp[x + pixel, y] = (byte >> ((pixels_per_byte - pixel - 1) * depth)) & pixmask
+                    if x + pixel < width:
+                        bmp[x + pixel, y] = (
+                            byte >> ((pixels_per_byte - pixel - 1) * depth)
+                        ) & pixmask
                 src_b += 1
             src += scanline + 1
             src_b = src
@@ -168,7 +171,6 @@ def load(  # noqa: PLR0912, PLR0915, Too many branches, Too many statements
                 src += 1
         else:
             raise ValueError("Wrong filter.")
-        prev, line = line, prev
         if mode in (0, 4):  # grayscale
             for x in range(width):
                 c = line[x * unit]
@@ -180,5 +182,8 @@ def load(  # noqa: PLR0912, PLR0915, Too many branches, Too many statements
                 )
         else:
             raise ValueError("Unsupported color mode.")
+
+        prev, line = line, prev
+
     pal = displayio.ColorConverter(input_colorspace=displayio.Colorspace.RGB565)
     return bmp, pal
