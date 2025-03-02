@@ -3,7 +3,7 @@ import gc
 import os
 import displayio
 from collections import deque
-#from adafruit_display_text.label import Label
+
 from adafruit_display_text import bitmap_label
 from adafruit_bitmap_font import bitmap_font
 
@@ -25,12 +25,11 @@ class WeatherDisplay(displayio.Group):
         self._pallete[1] = COLOR_DARK
 
         self._random_pixel = displayio.Bitmap(64, 32, 2)
-
-        self.units = os.getenv('UNITS')
-        
         self._small_font = bitmap_font.load_font(small_font)
         self._small_font.load_glyphs(glyphs)
         self._small_font.load_glyphs(("°",))
+
+        self.units = os.getenv('UNITS')
 
         self._dark_mode = False
 
@@ -41,10 +40,10 @@ class WeatherDisplay(displayio.Group):
         
         self.scroll_queue = deque((), 5) # TODO: this size needs to come from openweather.. 
 
-        self.root_group = displayio.Group()      
+        self.root_group = displayio.Group()
         self._text_group = displayio.Group()
         self._icon_group = displayio.Group()
-        self._scrolling_group = displayio.Group()        
+        self._scrolling_group = displayio.Group()
         self._random_pixel_group = displayio.Group()
         self._random_pixel_group.append(displayio.TileGrid(self._random_pixel, pixel_shader=self._pallete))
 
@@ -54,7 +53,7 @@ class WeatherDisplay(displayio.Group):
         self._icon_group.x = 48
         self._icon_group.y = 0
 
-        self.temperature = bitmap_label.Label(self._small_font, color=COLOR_TEMP)        
+        self.temperature = bitmap_label.Label(self._small_font, color=COLOR_TEMP)
         self.temperature.x = 1
         self.temperature.y = 5
 
@@ -82,8 +81,8 @@ class WeatherDisplay(displayio.Group):
         gc.collect()
 
 
-    def set_display_mode(self, darkmode):        
-        if self._dark_mode == darkmode:            
+    def set_display_mode(self, darkmode) -> None:
+        if self._dark_mode == darkmode:
             pass # No change
         else:
             self._dark_mode = darkmode # Only change once
@@ -97,30 +96,22 @@ class WeatherDisplay(displayio.Group):
                 self._icon_sprite.hidden = False
 
 
-    def set_temperature(self, temp):        
-        self.temperature.text = self.get_temperature(temp)
+    def set_temperature(self, temp_text) -> None:
+        self.temperature.text = temp_text
 
 
-    def get_temperature(self, temp):        
-        if self.units == 'metric':
-            unit = "%d°C"
-        else:
-            unit = "%d°F"                  
-        return unit % temp
-
-
-    def hide_temperature(self):
+    def hide_temperature(self) -> None:
         self.temperature.text = ""
         if self._icon_group:
-            self._icon_group.pop()        
+            self._icon_group.pop()
 
 
-    def set_icon(self, name):
+    def set_icon(self, name) -> None:
         if self._current_icon == name:
             return
         self._current_icon = name
 
-        icon_map = ("01", "02", "03", "04", "09", "10", "11", "13", "50")        
+        icon_map = ("01", "02", "03", "04", "09", "10", "11", "13", "50")
         if self._icon_group:
             self._icon_group.pop()
         if name is not None:
@@ -154,11 +145,16 @@ class WeatherDisplay(displayio.Group):
 
 
     def set_feels_like(self, feels_like):
-        self.scroll_queue.append("Feels Like " + self.get_temperature(feels_like))
+        #self.scroll_queue.append("Feels Like " + self.get_temperature(feels_like))
+        self.scroll_queue.append("Feels Like " + str(feels_like))
 
 
     def set_date(self, date_text):        
         self.scroll_queue.append(date_text)       
+
+
+    def add_scroll_text(self, text) -> None:
+        self.scroll_queue.append(text)
 
 
     def set_wind(self, wind):       

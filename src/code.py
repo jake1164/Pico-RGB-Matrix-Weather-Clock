@@ -82,7 +82,7 @@ key_input = KeyProcessing(settings, datetime, buzzer)
 weather_display = WeatherDisplay(display, icons)
 
 try:
-    weather = OpenWeather(weather_display, datetime, network)
+    weather = OpenWeather(weather_display, network, datetime)
 except Exception as e:
     print("Unable to configure weather, exiting")
     exit()
