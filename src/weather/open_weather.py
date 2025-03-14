@@ -1,7 +1,7 @@
 ## Pulls the weather from the openweathermap.org api. 
 import os
 
-# NOTE: https seems to cause an issue but http works fine for this api
+DEBUG = False
 GEO_URL = 'http{}://api.openweathermap.org/geo/1.0/zip?zip={},{}&appid={}'
 URL = 'http{}://api.openweathermap.org/data/2.5/weather?lat={}&lon={}&units={}&appid={}'
 
@@ -87,12 +87,11 @@ class OpenWeather():
             print('Unable to get weather', ex)
             weather = None
 
-        # TODO: is this missing from tempest or extranious here?
         # Always add the date so there is something to scroll. 
         self._weather_display.add_scroll_text(
             self._datetime.get_date()
         )
-        
+
         if not weather or 'main' not in weather or len(weather['main']) == 0:
             if not self._enabled:
                 return
@@ -114,7 +113,8 @@ class OpenWeather():
 
         try:
             # Weather units are located here: https://openweathermap.org/weather-data
-            print('weather', weather)
+            if DEBUG:
+                print('weather', weather)
             self._apply_reading(weather, ('weather', 0, 'icon'), self._weather_display.set_icon)
             self._apply_reading(weather, ('main', 'temp'), self._weather_display.set_temperature, "{field1:.0f}°{field2}", {'field2' :'F' if self._imperial_units else 'C'})
 
