@@ -89,7 +89,7 @@ class OpenWeather():
 
         # TODO: is this missing from tempest or extranious here?
         # Always add the date so there is something to scroll. 
-        self._weather_display.set_date(
+        self._weather_display.add_scroll_text(
             self._datetime.get_date()
         )
         

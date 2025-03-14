@@ -135,33 +135,9 @@ class WeatherDisplay(displayio.Group):
             return True
         return False
 
-    
-    def set_humidity(self, humidity):
-        self.scroll_queue.append(f'{humidity}% humidity')        
-
-
-    def set_description(self, description_text):
-        self.scroll_queue.append(description_text)
-
-
-    def set_feels_like(self, feels_like):
-        #self.scroll_queue.append("Feels Like " + self.get_temperature(feels_like))
-        self.scroll_queue.append("Feels Like " + str(feels_like))
-
-
-    def set_date(self, date_text):        
-        self.scroll_queue.append(date_text)       
-
 
     def add_scroll_text(self, text) -> None:
         self.scroll_queue.append(text)
-
-
-    def set_wind(self, wind):       
-        if self.units == "imperial":
-            self.scroll_queue.append(f'wind {wind:.1f} mph')
-        else:
-            self.scroll_queue.append(f'wind {wind:.1f} m/s')
 
 
     def add_text_display(self, text):
