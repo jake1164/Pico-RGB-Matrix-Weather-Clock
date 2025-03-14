@@ -10,6 +10,7 @@ class CommonDisplay(displayio.Group):
         ICON_Y = 1
         DISPLAY_WIDTH = 64
         DISPLAY_HEIGHT = 32
+        
         try:
             icon = displayio.OnDiskBitmap(icon_file)
             icon_width = icon.width
@@ -34,7 +35,7 @@ class CommonDisplay(displayio.Group):
             color=0xFFFF00,  # Yellow color
             text=message,
             max_characters=len(message),
-            animate_time=0.3
+            animate_time=0.8
         )
 
         self.message_label.anchor_point = (1.0, 1.0)
