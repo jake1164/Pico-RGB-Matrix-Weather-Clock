@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: checkout the current repo
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         submodules: true
 
@@ -18,10 +18,10 @@ jobs:
         echo '{ "version":"${{ github.event.release.tag_name }}" }' > src/.version
     
     - name: Run MPY Action
-      uses: adafruit/build-mpy@v1
+      #uses: adafruit/build-mpy@v2
+      uses: jake1164/build-mpy@static-mpy-cross      
       with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        circuitpy-tag: "8.0.0"
+        github-token: ${{ secrets.GITHUB_TOKEN }}        
         mpy-directory: "src"
         mpy-manifest-file: "mpy-manifest.txt"
         mpy-manifest-type: "exclude"
