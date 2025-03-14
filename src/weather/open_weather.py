@@ -32,6 +32,7 @@ class OpenWeather():
         if default_units is not None and default_units not in ['imperial', 'metric']:
             raise Exception('Missing required UNITS environment variables')
 
+        self._imperial_units = default_units == 'imperial'
         https = 's' if os.getenv('OWM_USE_HTTPS') == 1 else ''
 
         geo_url = GEO_URL.format(https, zip, country, token)
@@ -60,20 +61,19 @@ class OpenWeather():
         return weather
 
 
-    def _apply_reading(self, field: tuple, weather, func) -> None:
+    def _apply_reading(self, weather, field: tuple, func, format="{field1}", formatData=None) -> None:
         if isinstance(field[0], int) and isinstance(weather, list) and field[0] < len(weather):
-            self._apply_reading(field[1:], weather[field[0]], func)
+            self._apply_reading(weather[field[0]], field[1:], func, format, formatData)
         elif field and field[0] in weather:
             try:
-                # Recursively try each field in the tuple
+                # Recursively follow each element in the tuple
                 if len(field) > 1:
-                    self._apply_reading(field[1:], weather[field[0]], func)
+                    self._apply_reading(weather[field[0]], field[1:], func, format, formatData)
                 else:
-                    # switch to apply the units based on field here. 
-                    if field[0] == 'temp': # do temperatue conversion here
-                        func(str(weather[field[0]]) + '°')
-                    else:
-                        func(str(weather[field[0]]))
+                    if(formatData is None):
+                        formatData = {}
+
+                    func(format.format(field1=weather[field[0]], **formatData))
             except Exception as ex:
                 print('Unable to apply reading', ex)
         else:
@@ -113,22 +113,15 @@ class OpenWeather():
             self._missed_weather = 0
 
         try:
+            # Weather units are located here: https://openweathermap.org/weather-data
             print('weather', weather)
-            #self._weather_display.set_icon(weather["weather"][0]["icon"])
-            self._apply_reading(('weather', 0, 'icon'), weather, self._weather_display.set_icon)
+            self._apply_reading(weather, ('weather', 0, 'icon'), self._weather_display.set_icon)
+            self._apply_reading(weather, ('main', 'temp'), self._weather_display.set_temperature, "{field1:.0f}°{field2}", {'field2' :'F' if self._imperial_units else 'C'})
 
-            #self._weather_display.set_temperature(str(weather["main"]["temp"]))
-            self._apply_reading(('main', 'temp'), weather, self._weather_display.set_temperature)
-            # add Scrolling items
-            # TODO: These should really be a list of items that can be added and tracked easier.
-            self._apply_reading(('main', 'humidity'), weather, self._weather_display.add_scroll_text)
-            #self._weather_display.set_humidity(weather["main"]["humidity"])
-            self._apply_reading(('main', 'feels_like'), weather, self._weather_display.add_scroll_text)
-            #self._weather_display.set_feels_like(weather["main"]["feels_like"])
-            self._apply_reading(('wind', 'speed'), weather, self._weather_display.add_scroll_text)
-            #self._weather_display.set_wind(weather["wind"]["speed"])
-            self._apply_reading(('weather', 0, 'description'), weather, self._weather_display.add_scroll_text)
-            #self._weather_display.set_description(weather["weather"][0]["description"])
+            self._apply_reading(weather, ('main', 'humidity'), self._weather_display.add_scroll_text, "{field1}% humidity")
+            self._apply_reading(weather, ('main', 'feels_like'), self._weather_display.add_scroll_text, "Feels Like {field1}°{field2}", {'field2' :'F' if self._imperial_units else 'C'})
+            self._apply_reading(weather, ('wind', 'speed'), self._weather_display.add_scroll_text, "Wind {field1:.1f} {field2}", {'field2' :'mph' if self._imperial_units else 'm/s'})
+            self._apply_reading(weather, ('weather', 0, 'description'), self._weather_display.add_scroll_text)
         except Exception as e:
             print('Unable to display weather', e)
         finally:
