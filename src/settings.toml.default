@@ -21,4 +21,8 @@ OWM_API_TOKEN="Your Token"
 OWM_ZIP="zip/post code"
 OWM_COUNTRY="US" # Please use ISO 3166 country codes
 # Set to 1 to enable using https:// urls
-OWM_USE_HTTPS=0 
+OWM_USE_HTTPS=0
+
+# seconds without a successful weather update before automatic restart.
+# Set to 0 or omit to use the built-in default (300 seconds).
+WEATHER_TIMEOUT=300
