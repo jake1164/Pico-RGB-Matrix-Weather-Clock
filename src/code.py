@@ -187,12 +187,16 @@ while True:
             if not buzzer.is_beeping():
                 if weather.weather_complete() and (time.monotonic() - last_weather > weather.get_update_interval()):
                     try:
-                        weather.show_weather()
-                        last_weather = time.monotonic()
+                        try:
+                            weather.show_weather()
+                            last_weather = time.monotonic()
+                        except Exception as e:
+                            print('Initial weather update failed:', e)
+                            last_weather = None
                     except Exception as e:
                         print('Weather update failed:', e)
                 weather_display.scroll_label(key_input)
-            if (time.monotonic() - last_weather > WEATHER_TIMEOUT):
+            if last_weather is not None and (time.monotonic() - last_weather > WEATHER_TIMEOUT):
                 print('No weather update for', WEATHER_TIMEOUT, 'seconds during active period. Restarting controller...')
                 microcontroller.reset()
 
