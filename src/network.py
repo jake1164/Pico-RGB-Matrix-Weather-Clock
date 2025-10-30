@@ -29,7 +29,6 @@ class WifiNetwork:
 
         self._last_ntp_sync = None
         self.connect()
-        self._pool = socketpool.SocketPool(wifi.radio)
         ssl_context = adafruit_connection_manager.get_radio_ssl_context(wifi.radio)
         self._pool = adafruit_connection_manager.get_radio_socketpool(wifi.radio)
         self._requests = adafruit_requests.Session(self._pool, ssl_context)
