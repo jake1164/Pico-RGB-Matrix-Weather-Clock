@@ -49,7 +49,7 @@ print(f'Version: {version.get_version_string()}')
 # release displays  before creating a new one.
 displayio.release_displays()
 
-calcuated_width = BASE_WIDTH * CHAIN_ACROSS
+calculated_width = BASE_WIDTH * CHAIN_ACROSS
 calculated_height = BASE_HEIGHT * TILE_DOWN
 
 # This next call creates the RGB Matrix object itself. It has the given width
@@ -59,7 +59,7 @@ calculated_height = BASE_HEIGHT * TILE_DOWN
 # Otherwise, try 3, 4 and 5 to see which effect you like best.
 
 matrix = RGBMatrix(
-    width = calcuated_width,
+    width = calculated_width,
     height=calculated_height,
     bit_depth=BIT_DEPTH_VALUE,
     rgb_pins=RGB_PINS,
@@ -71,7 +71,7 @@ matrix = RGBMatrix(
     serpentine=SERPENTINE_VALUE,
     doublebuffer=True,
 )
-del calcuated_width, calculated_height
+del calculated_width, calculated_height
 
 # Associate the RGB matrix with a Display so that we can use displayio features
 display = framebufferio.FramebufferDisplay(matrix, auto_refresh=True)

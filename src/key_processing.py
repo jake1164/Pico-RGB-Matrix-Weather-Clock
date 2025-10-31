@@ -2,13 +2,16 @@ import board
 import digitalio
 from settings_display import SETTINGS
 
+# Define key pin constants for clarity
+KEY_0, KEY_1, KEY_2 = board.GP15, board.GP19, board.GP21
+
 class KeyProcessing:
     """ Key processing is all handled with the KeyProcessing class
     """
     def __init__(self, settings, date_processing, buzzer) -> None:
         """ Initiates the keys used by the board.
         """
-        _KEYPRESS_PINS = [board.GP15, board.GP19, board.GP21]
+        _KEYPRESS_PINS = [KEY_0, KEY_1, KEY_2]
         self._KEY_MENU = 0
         self._KEY_DOWN = 1
         self._KEY_UP = 2
