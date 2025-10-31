@@ -61,7 +61,9 @@ class WifiNetwork:
             try:
                 ntp = adafruit_ntp.NTP(self._pool, tz_offset=self.TZ, server=self.NTP_HOST[ntp_try])
                 self._last_ntp_sync = ntp.datetime
-                return ntp.datetime
+                dt = ntp.datetime
+                del ntp
+                return dt
             except Exception as ex:
                 print(f'Unable to connect to NTP Server {self.NTP_HOST[ntp_try]} with exception:', ex)
                 ntp_try += 1

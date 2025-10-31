@@ -2,6 +2,7 @@ import terminalio
 import displayio
 
 from adafruit_display_text.scrolling_label import ScrollingLabel
+from adafruit_display_text import label
 
 class CommonDisplay(displayio.Group):
     def __init__(self, icon_file, message) -> None:
@@ -13,34 +14,45 @@ class CommonDisplay(displayio.Group):
         
         try:
             icon = displayio.OnDiskBitmap(icon_file)
-            icon_width = icon.width
-            icon_height = icon.height
+            image_width = icon.width
+            image_height = icon.height
 
             bg = displayio.TileGrid(
                 icon,
                 pixel_shader=getattr(icon, 'pixel_shader', displayio.ColorConverter()),
                 width=1,
                 height=1,
-                tile_width=icon_width,
-                tile_height=icon_height,
+                tile_width=image_width,
+                tile_height=image_height,
                 x=ICON_X,
                 y=ICON_Y
             )
             self.append(bg)
         except Exception as e:
-            print('Unable to load icon', e)
+            print('Error loading icon:', e)
 
-        self.message_label = ScrollingLabel(
-            terminalio.FONT, 
-            color=0xFFFF00,  # Yellow color
-            text=message,
-            max_characters=len(message),
-            animate_time=0.8
-        )
+        # Use a non-scrolling label for short text, scrolling for longer
+        if len(message) < 20:
+            self._scroll_label = False
+            self.message_label = label.Label(
+                terminalio.FONT,
+                text=message,
+                color=0xFFFF00,  # Yellow
+            )
+        else:
+            self._scroll_label = True
+            self.message_label = ScrollingLabel(
+                terminalio.FONT, 
+                color=0xFFFF00,  # Yellow color
+                text=message,
+                max_characters=len(message),
+                animate_time=0.8
+            )
 
         self.message_label.anchor_point = (1.0, 1.0)
         self.message_label.anchored_position = (DISPLAY_WIDTH, DISPLAY_HEIGHT)
         self.append(self.message_label)
 
     def scroll(self) -> None:
-        self.message_label.update()
+        if getattr(self, '_scroll_label', False):
+            self.message_label.update()
