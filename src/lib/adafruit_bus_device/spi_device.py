@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: MIT
 
-# pylint: disable=too-few-public-methods
-
 """
 `adafruit_bus_device.spi_device` - SPI Bus Device
 ====================================================
@@ -12,8 +10,8 @@
 import time
 
 try:
-    from typing import Optional, Type
     from types import TracebackType
+    from typing import Optional, Type
 
     # Used only for type annotations.
     from busio import SPI
@@ -22,7 +20,7 @@ except ImportError:
     pass
 
 
-__version__ = "5.2.11"
+__version__ = "5.2.14"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_BusDevice.git"
 
 
@@ -79,7 +77,7 @@ class SPIDevice:
         baudrate: int = 100000,
         polarity: int = 0,
         phase: int = 0,
-        extra_clocks: int = 0
+        extra_clocks: int = 0,
     ) -> None:
         self.spi = spi
         self.baudrate = baudrate
@@ -94,9 +92,7 @@ class SPIDevice:
     def __enter__(self) -> SPI:
         while not self.spi.try_lock():
             time.sleep(0)
-        self.spi.configure(
-            baudrate=self.baudrate, polarity=self.polarity, phase=self.phase
-        )
+        self.spi.configure(baudrate=self.baudrate, polarity=self.polarity, phase=self.phase)
         if self.chip_select:
             self.chip_select.value = self.cs_active_value
         return self.spi

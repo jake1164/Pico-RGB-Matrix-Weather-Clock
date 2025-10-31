@@ -23,14 +23,15 @@ Implementation Notes
 """
 
 try:
-    from typing import Union, Iterable
+    from typing import Iterable, Union
+
     from fontio import Glyph
 except ImportError:
     pass
 
 import gc
 
-__version__ = "2.1.4"
+__version__ = "2.3.2"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_Bitmap_Font.git"
 
 

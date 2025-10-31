@@ -23,17 +23,20 @@ Implementation Notes
 """
 
 try:
-    from typing import Union, Optional, Tuple, Iterable
     from io import FileIO
+    from typing import Iterable, Optional, Tuple, Union
+
     from displayio import Bitmap
 except ImportError:
     pass
 
 import gc
+
 from fontio import Glyph
+
 from .glyph_cache import GlyphCache
 
-__version__ = "2.1.4"
+__version__ = "2.3.2"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_Bitmap_Font.git"
 
 
@@ -121,7 +124,6 @@ class BDF(GlyphCache):
         return self._boundingbox
 
     def load_glyphs(self, code_points: Union[int, str, Iterable[int]]) -> None:
-        # pylint: disable=too-many-statements,too-many-branches,too-many-nested-blocks,too-many-locals
         metadata = True
         character = False
         code_point = None

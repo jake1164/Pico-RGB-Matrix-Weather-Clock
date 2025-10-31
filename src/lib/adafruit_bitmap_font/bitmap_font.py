@@ -24,22 +24,26 @@ Implementation Notes
 
 try:
     from typing import Optional, Union
+
     from displayio import Bitmap
-    from . import bdf
-    from . import pcf
-    from . import ttf
+
+    from . import bdf, lvfontbin, pcf, ttf
 except ImportError:
     pass
 
-__version__ = "2.1.4"
+__version__ = "2.3.2"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_Bitmap_Font.git"
+
+
+# The LVGL file starts with the size of the 'head' section. It hasn't changed in five years so
+# we can treat it like a magic number.
+LVGL_HEADER_SIZE = b"\x30\x00\x00\x00"
 
 
 def load_font(
     filename: str, bitmap: Optional[Bitmap] = None
-) -> Union[bdf.BDF, pcf.PCF, ttf.TTF]:
+) -> Union[bdf.BDF, lvfontbin.LVGLFont, pcf.PCF, ttf.TTF]:
     """Loads a font file. Returns None if unsupported."""
-    # pylint: disable=import-outside-toplevel, redefined-outer-name, consider-using-with
     if not bitmap:
         import displayio
 
@@ -58,5 +62,12 @@ def load_font(
         from . import ttf
 
         return ttf.TTF(font_file, bitmap)
+
+    if (
+        filename.endswith("bin") or filename.endswith("lvfontbin")
+    ) and first_four == LVGL_HEADER_SIZE:
+        from . import lvfontbin
+
+        return lvfontbin.LVGLFont(font_file, bitmap)
 
     raise ValueError("Unknown magic number %r" % first_four)

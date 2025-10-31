@@ -24,7 +24,7 @@ try:
 except ImportError:
     pass
 
-__version__ = "1.24.1"
+__version__ = "1.24.5"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad.git"
 
 
@@ -38,6 +38,7 @@ def load(
     """
     Load a P4 'PBM' binary image into the Bitmap
     """
+    padded_width = (width + 7) // 8 * 8
     x = 0
     y = 0
     while True:
@@ -45,9 +46,10 @@ def load(
         if not next_byte:
             break  # out of bits
         for bit in iterbits(next_byte):
-            bitmap[x, y] = bit
+            if x < width:
+                bitmap[x, y] = bit
             x += 1
-            if x > width - 1:
+            if x > padded_width - 1:
                 y += 1
                 x = 0
             if y > height - 1:

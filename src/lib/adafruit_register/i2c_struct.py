@@ -1,7 +1,6 @@
 # SPDX-FileCopyrightText: 2016 Scott Shawcroft for Adafruit Industries
 #
 # SPDX-License-Identifier: MIT
-# pylint: disable=too-few-public-methods
 
 """
 `adafruit_register.i2c_struct`
@@ -12,13 +11,14 @@ Generic structured registers based on `struct`
 * Author(s): Scott Shawcroft
 """
 
-__version__ = "1.10.2"
+__version__ = "1.11.1"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_Register.git"
 
 import struct
 
 try:
-    from typing import Optional, Type, Tuple, Any, NoReturn
+    from typing import Any, NoReturn, Optional, Tuple, Type
+
     from circuitpython_typing.device_drivers import I2CDeviceDriver
 except ImportError:
     pass
