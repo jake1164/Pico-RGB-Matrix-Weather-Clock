@@ -21,7 +21,8 @@ jobs:
       #uses: adafruit/build-mpy@v2
       uses: jake1164/build-mpy@static-mpy-cross      
       with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}        
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        circuitpy-version: 10.0.3        
         mpy-directory: "src"
         mpy-manifest-file: "mpy-manifest.txt"
         mpy-manifest-type: "exclude"
