@@ -1,11 +1,14 @@
 import board
 from digitalio import DigitalInOut, Direction
 
+# Buzzer pin constant
+BUZZ_PIN = board.GP27
+
 
 class Buzzer:
     def __init__(self, settings) -> None:
         """ Setup the buzzer and initate values stored by class """
-        self._buzzer = DigitalInOut(board.GP27)
+        self._buzzer = DigitalInOut(BUZZ_PIN)
         self._buzzer.direction = Direction.OUTPUT
         self._settings = settings
         self._start_beep = False

@@ -3,6 +3,9 @@ import busio
 import board
 import adafruit_ds3231
 
+# I2C pin constants
+SCL_PIN, SDA_PIN = board.GP7, board.GP6
+
 class DateTimeProcessing:
 
 
@@ -16,7 +19,7 @@ class DateTimeProcessing:
         # NOTE: these are only used during the settings display (changing time / date)
         self.time = [0, 0, 0]
         self.date = [0, 0, 0]
-        i2c = busio.I2C(board.GP7,board.GP6)  # uses board.SCL and board.SDA
+        i2c = busio.I2C(SCL_PIN, SDA_PIN)  # uses board.SCL and board.SDA
         self.rtc = adafruit_ds3231.DS3231(i2c)
         self.is_display_on = True
 

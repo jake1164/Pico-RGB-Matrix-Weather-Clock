@@ -182,7 +182,6 @@ class WeatherDisplay(displayio.Group):
 
     
     def show_pixel(self, x, y):
-        print('show pixel', x, y)
         #TODO: only run this once.
         self._display.root_group = self._random_pixel_group
         #TODO: This is what is changed:

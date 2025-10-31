@@ -1,11 +1,14 @@
 import board
 from analogio import AnalogIn
 
+# Light sensor pin constant
+LS_PIN = board.GP26
+
 class LightSensor:
     def __init__(self, settings) -> None:
         self.LIGHT_THRESHOLD = 2800 # Lower the value the brighter the light.
         self._settings = settings
-        self._analog_in = AnalogIn(board.GP26)        
+        self._analog_in = AnalogIn(LS_PIN)
         self.dark_mode = False 
 
 
