@@ -45,7 +45,7 @@ SETTINGS = [
         "type": "time"
     },
     {
-        "text": "NTP ON",
+        "text": "NET TIME",
         "type": "bool"
     }
     ]

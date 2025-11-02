@@ -38,10 +38,11 @@ A settings.toml.default file has been provided with the required settings for th
 ## Persistent Settings
 To enable you must rename the _boot.py file to boot.py on your device.  
 
-With this setting enabled any changes to the in menu setting ( Buzzer/ Autodim / 12/24 hr clock / DST Adjust ) will persist when you turn the device off and turn it back on again. 
+With this setting enabled any changes to the in menu setting ( Buzzer/ Autodim / 12/24 hr clock / Net Time / DST Adjust ) will persist when you turn the device off and turn it back on again. 
 
 Settings:
-* APPLY DST - Moves time ahead by 1 hour (you must manually turn it on and off) ** Only Works with NTP enabled **
+* NET TIME - Enables automatic time synchronization from Network Time Protocol (NTP) server. When enabled, time is automatically fetched from the internet based on your timezone offset. **Note: NET TIME does not automatically handle Daylight Saving Time - you must manually toggle APPLY DST.**
+* APPLY DST - Adds 1 hour for Daylight Saving Time. When NET TIME is enabled, this adjusts the NTP time by +1 hour. When NET TIME is disabled, this manually adjusts the clock by +1 hour. You must manually turn this on/off when entering or leaving DST.
 * BEEP SET - Turns the beeping for button presses on and off 
 * AUTODIM - When the light sensor detects darkness it will dim the display (turn the LED display off). 
 * 12/24 HR - Changes the clock between 12 and 24 hour display.
