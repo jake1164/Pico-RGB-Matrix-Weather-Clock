@@ -7,12 +7,12 @@ BUZZ_PIN = board.GP27
 
 class Buzzer:
     def __init__(self, settings) -> None:
-        """ Setup the buzzer and initate values stored by class """
+        """ Setup the buzzer and initiate values stored by class """
         self._buzzer = DigitalInOut(BUZZ_PIN)
         self._buzzer.direction = Direction.OUTPUT
         self._settings = settings
-        self._start_beep = False
-        self.beep_count = 0
+        self._beep_counter = 0
+        self._beep_active = False
 
 
     def buzzer_start(self):
@@ -25,19 +25,26 @@ class Buzzer:
         self._buzzer.value = False
 
     def judgment_buzzer_switch(self):    
-        if self.is_beeping():
+        """ Check if beeping is enabled and start a beep """
+        if self._settings.beep:
+            self._beep_active = True
+            self._beep_counter = 0
             self.buzzer_start()
-        self._start_beep = True
 
     def three_beep(self):
-        """ beep over the cource of 3 ticks """
-        if self.is_beeping():
+        """ Start a short beep (will last for 3 update cycles) """
+        if self._settings.beep:
             self.judgment_buzzer_switch()
-            self.beep_count += 1
-            if self.beep_count == 3:
+
+    def update(self):
+        """ Update the buzzer state - should be called regularly in the main loop """
+        if self._beep_active:
+            self._beep_counter += 1
+            if self._beep_counter >= 3:
                 self.buzzer_stop()
-                self.beep_count = 0
-                self._start_beep = False
+                self._beep_active = False
+                self._beep_counter = 0
 
     def is_beeping(self):
-        return self._start_beep and self._settings.beep
+        """ Check if the buzzer is currently active """
+        return self._beep_active and self._settings.beep

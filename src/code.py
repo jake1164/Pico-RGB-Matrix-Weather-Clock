@@ -166,6 +166,12 @@ while True:
     # Always process keys first
     key_value = key_input.get_key_value()
     key_input.key_processing(key_value)
+    
+    # Update buzzer timing
+    buzzer.update()
+    
+    # Small delay to prevent rapid-fire key processing
+    time.sleep(0.05)  # 50ms delay
 
     if key_value is None and key_input.page_id == 0: # normal display
         if settings_visited:
