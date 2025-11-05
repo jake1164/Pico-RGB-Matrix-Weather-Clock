@@ -173,7 +173,7 @@ while True:
     # Small delay to prevent rapid-fire key processing
     time.sleep(0.05)  # 50ms delay
 
-    if key_value is None and key_input.page_id == 0: # normal display
+    if key_input.page_id == 0: # normal display
         if settings_visited:
             settings_visited = False
             del settings_display
@@ -181,36 +181,38 @@ while True:
                 weather_display.scroll_queue.popleft()
             weather.show_weather()
             gc.collect()
-            
-        # current_time in seconds > start_time in seconds + interval in seconds.
-        if time.monotonic() - last_ntp > datetime.get_interval():
-            datetime.update_from_ntp()
-            last_ntp = time.monotonic()
-        if weather.show_datetime(): # returns true if autodim enabled and outside of time
-            darkmode = light_sensor.get_display_mode()
-            weather_display.set_display_mode(darkmode)
-            #This is a hack to try to stop buzzer from buzzing while doing something that might hang.
-            if not buzzer.is_beeping():
-                if weather.weather_complete() and time.monotonic() - last_weather > weather.get_update_interval():
-                    try:
+        
+        # Only do weather updates and scrolling when no key is pressed
+        if key_value is None:
+            # current_time in seconds > start_time in seconds + interval in seconds.
+            if time.monotonic() - last_ntp > datetime.get_interval():
+                datetime.update_from_ntp()
+                last_ntp = time.monotonic()
+            if weather.show_datetime(): # returns true if autodim enabled and outside of time
+                darkmode = light_sensor.get_display_mode()
+                weather_display.set_display_mode(darkmode)
+                #This is a hack to try to stop buzzer from buzzing while doing something that might hang.
+                if not buzzer.is_beeping():
+                    if weather.weather_complete() and time.monotonic() - last_weather > weather.get_update_interval():
                         try:
-                            weather.show_weather()
-                            last_weather = time.monotonic()
+                            try:
+                                weather.show_weather()
+                                last_weather = time.monotonic()
+                            except Exception as e:
+                                print('Initial weather update failed:', e)
+                                last_weather = None
                         except Exception as e:
-                            print('Initial weather update failed:', e)
-                            last_weather = None
-                    except Exception as e:
-                        print('Weather update failed:', e)
-                weather_display.scroll_label(key_input)
-            if last_weather is not None and (time.monotonic() - last_weather > WEATHER_TIMEOUT):
-                print('No weather update for', WEATHER_TIMEOUT, 'seconds during active period. Restarting controller...')
-                microcontroller.reset()
+                            print('Weather update failed:', e)
+                    weather_display.scroll_label(key_input)
+                if last_weather is not None and (time.monotonic() - last_weather > WEATHER_TIMEOUT):
+                    print('No weather update for', WEATHER_TIMEOUT, 'seconds during active period. Restarting controller...')
+                    microcontroller.reset()
 
     elif key_input.page_id == 1: # Process settings pages
         if not settings_visited:
             weather.display_off()
             settings_visited = True
-        settings_display = SettingsDisplay(display, datetime)
+            settings_display = SettingsDisplay(display, datetime)
         settings_display.showSetListPage(key_input.select_setting_options)
         
     elif key_input.page_id == 2: # Process settings pages

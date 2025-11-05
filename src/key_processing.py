@@ -25,6 +25,8 @@ class KeyProcessing:
         self._buzzer = buzzer
         self._dst_adjusted = False
         self._dst_setting = self._settings.dst_adjust
+        self._long_press_threshold = 20  # Threshold for long press detection
+        self._long_press_triggered = False  # Flag to prevent processing key release after long press
 
         # used outside of this class
         self.page_id = 0
@@ -60,6 +62,7 @@ class KeyProcessing:
     def key_processing(self, keyValue) -> None:
         """ When a value is passed in this function will interperate the button press.
         """
+        # Increment counters when buttons are pressed
         if keyValue == self._KEY_MENU:
             self._key_menu_value += 1
         if keyValue == self._KEY_DOWN:
@@ -73,6 +76,28 @@ class KeyProcessing:
 
         #print(f'key_processing - key: {keyValue} menu: {self._key_menu_value}')
 
+        # Check for long press on any key while in settings (page_id > 0)
+        # Exit immediately when threshold is reached, even while button is still held
+        if self.page_id > 0 and not self._long_press_triggered:
+            if self._key_menu_value >= self._long_press_threshold or self._key_down_value >= self._long_press_threshold or self._key_up_value >= self._long_press_threshold:
+                self.key_exit_processing_function()
+                self._buzzer.judgment_buzzer_switch()
+                # Set flag to prevent processing the key release AND prevent retriggering
+                self._long_press_triggered = True
+                # Don't reset counters yet - let them reset on key release
+                return  # Exit early to prevent further processing
+
+        # If long press was triggered, wait for button to be fully released before allowing any action
+        if self._long_press_triggered:
+            # Check if button is released
+            if keyValue is None:
+                # Reset all counters
+                self._key_menu_value = 0
+                self._key_down_value = 0
+                self._key_up_value = 0
+                self._long_press_triggered = False
+            return  # Don't process anything while flag is set
+
         # I think the premise is they wait for none to tell if the key has been released, but it only really relates to key 3
         # Without the None key it will keypress twice. 
         # Menu key should work for any duration of press
@@ -81,20 +106,18 @@ class KeyProcessing:
             self._buzzer.judgment_buzzer_switch() # When the menu exits it beeps also
             self._key_menu_value = 0
 
-        if self._key_down_value > 0 and self._key_down_value < 20 and keyValue is None:
+        if self._key_down_value > 0 and self._key_down_value < self._long_press_threshold and keyValue is None:
             self.key_press_processing(up_key=False)
             self._buzzer.judgment_buzzer_switch()
             self._key_down_value = 0
-        elif self._key_down_value >= 20 and keyValue is None:
+        elif self._key_down_value >= self._long_press_threshold and keyValue is None:
             self._key_down_value = 0
 
-        if self._key_up_value > 0 and self._key_up_value < 20 and keyValue is None:
+        if self._key_up_value > 0 and self._key_up_value < self._long_press_threshold and keyValue is None:
             self.key_press_processing(up_key=True)
             self._buzzer.judgment_buzzer_switch()
             self._key_up_value = 0
-        elif self._key_up_value >= 20 and keyValue is None: # Long press UP to exit
-            self.key_exit_processing_function()
-            self._buzzer.judgment_buzzer_switch()
+        elif self._key_up_value >= self._long_press_threshold and keyValue is None:
             self._key_up_value = 0
 
 
