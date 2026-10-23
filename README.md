@@ -1,6 +1,10 @@
 # Pico-RGB-Matrix-Weather-Clock
 LED Matrix Clock with Open Weather Map enabled weather running on a Raspberry Pico W and a WaveShare [Pico-RGB-Matrix-P3-64x32](https://www.waveshare.com/wiki/Pico-RGB-Matrix-P3-64x32)
 
+[♥ Support this project](#support-development)
+
+Have a WeatherFlow Tempest station? See [Tempest LED Weather Clock](https://github.com/jake1164/tempest-led-weather-clock), which requires a Pico 2 W.
+
 ## NOTE: Works with CircuitPython 9.x or 10.x
 This project requires that you use [CircuitPython 9.x or 10.x](https://circuitpython.org/board/raspberry_pi_pico_w/). 
 If you still wish to use 8.x you will need to use an older [release](https://github.com/jake1164/Pico-RGB-Matrix-Weather-Clock/releases/tag/v0.54.0)
@@ -97,3 +101,18 @@ to your `.vscode/settings.json` config file.
       "reportShadowedImports": "none"
   },
 ```
+
+## More Projects
+
+**Pimoroni & Maker Projects:** [Presto AI Dash](https://github.com/jake1164/presto-ai-dash) (AI usage dashboard) · [Presto Snake](https://github.com/jake1164/presto-snake) · [Awesome Pimoroni Presto](https://github.com/jake1164/awesome-Pimoroni-Presto) · [Tempest LED Weather Clock](https://github.com/jake1164/tempest-led-weather-clock) (WeatherFlow Tempest on a Pico 2 W)
+
+**Self-Hosted Software:** [Family Librarian](https://github.com/jake1164/family-librarian) (family ebook and audiobook requests) · [M3Undle](https://github.com/Sydney-Elvis/M3Undle) (IPTV lineup manager and proxy)
+
+## Support Development
+
+If Pico RGB Matrix Weather Clock is useful, giving it a GitHub star helps others discover it. GitHub sponsorships and coffee donations are optional ways to support continued development, hardware testing, and maintenance.
+
+<p align="center">
+  <a href="https://github.com/sponsors/jake1164"><img src="docs/images/sponsor-github.svg" alt="Support jake1164 on GitHub Sponsors" height="35"></a>
+  <a href="https://buymeacoffee.com/jake1164s"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Support jake1164 on Buy Me a Coffee" height="35"></a>
+</p>
